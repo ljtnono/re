@@ -21,7 +21,7 @@ import java.io.Serializable;
 @RestController
 @RequestMapping("/link_type")
 @Slf4j
-public class ReLinkTypeController extends AbstractReController<ReLinkType> {
+public class ReLinkTypeController {
 
     /**
      * 获取实体类的所有列表
@@ -30,7 +30,6 @@ public class ReLinkTypeController extends AbstractReController<ReLinkType> {
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult listEntityAll() {
         return null;
     }
@@ -45,7 +44,6 @@ public class ReLinkTypeController extends AbstractReController<ReLinkType> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult saveEntity(ReLinkType entity) {
         return null;
     }
@@ -61,7 +59,6 @@ public class ReLinkTypeController extends AbstractReController<ReLinkType> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult updateEntityById(Serializable id, ReLinkType entity) {
         return null;
     }
@@ -76,7 +73,6 @@ public class ReLinkTypeController extends AbstractReController<ReLinkType> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult deleteEntityById(Serializable id) {
         return null;
     }
@@ -91,7 +87,6 @@ public class ReLinkTypeController extends AbstractReController<ReLinkType> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult getEntityById(Serializable id) {
         return null;
     }

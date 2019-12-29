@@ -11,6 +11,7 @@ import cn.ljtnono.re.service.common.IReEntityService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
-public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> implements IReConfigService {
+@Slf4j
+public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> implements IReConfigService, IReEntityService<ReConfig> {
 
-    private static Logger logger = LoggerFactory.getLogger(ReConfigServiceImpl.class);
+    private final RedisUtil redisUtil;
 
     @Autowired
-    private RedisUtil redisUtil;
+    public ReConfigServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 新增单个实体类
@@ -202,7 +206,7 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
                     .replace(":id", ":" + reConfig.getId())
                     .replace(":key", ":" + reConfig.getKey()), reConfig, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有配置项列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有配置项列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reConfigList, reConfigList.size());
         success.setMessage("操作成功");
         return success;

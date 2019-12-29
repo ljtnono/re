@@ -10,6 +10,7 @@ import cn.ljtnono.re.service.IReUserRoleService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class ReUserRoleServiceImpl extends ServiceImpl<ReUserRoleMapper, ReUserRole> implements IReUserRoleService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReTimelineServiceImpl.class);
+    @Autowired
+    public ReUserRoleServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
 
     /**
@@ -197,7 +201,7 @@ public class ReUserRoleServiceImpl extends ServiceImpl<ReUserRoleMapper, ReUserR
             redisUtil.set(ReEntityRedisKeyEnum.RE_USER_ROLE_KEY.getKey()
                     .replace(":id", ":" + reUserRole.getId()), reUserRole, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有用户角色列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有用户角色列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reUserRoleList, reUserRoleList.size());
         success.setMessage("操作成功");
         return success;

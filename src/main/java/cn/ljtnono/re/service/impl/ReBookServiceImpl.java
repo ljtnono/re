@@ -10,6 +10,7 @@ import cn.ljtnono.re.service.IReBookService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,15 @@ import java.util.Optional;
  * @date 2019/11/23
  */
 @Service
+@Slf4j
 public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> implements IReBookService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReBookServiceImpl.class);
+    @Autowired
+    public ReBookServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 新增单个实体类
@@ -214,7 +218,7 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                     .replace(":author", ":" + reBook.getAuthor())
                     .replace(":type", ":" + reBook.getType()), reBook, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有书籍列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有书籍列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reBookList, reBookList.size());
         success.setMessage("操作成功");
         return success;

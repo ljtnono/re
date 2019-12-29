@@ -10,8 +10,7 @@ import cn.ljtnono.re.service.IReTimelineService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +26,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimeline> implements IReTimelineService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReTimelineServiceImpl.class);
+    @Autowired
+    public ReTimelineServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
 
     /**
@@ -196,7 +198,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             redisUtil.set(ReEntityRedisKeyEnum.RE_TIMELINE_KEY.getKey()
                     .replace(":id", ":" + reTimeline.getId()), reTimeline, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有时间轴列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有时间轴列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reTimelineList, reTimelineList.size());
         success.setMessage("操作成功");
         return success;

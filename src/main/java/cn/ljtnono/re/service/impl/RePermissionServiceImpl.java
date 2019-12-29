@@ -10,6 +10,8 @@ import cn.ljtnono.re.service.IRePermissionService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, RePermission> implements IRePermissionService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(RePermissionServiceImpl.class);
+    @Autowired
+    public RePermissionServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
 
     /**
@@ -202,7 +207,7 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
                     .replace(":id", ":" + rePermission.getId())
                     .replace(":res", ":" + rePermission.getRes()), rePermission, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有权限列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有权限列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(rePermissionList, rePermissionList.size());
         success.setMessage("操作成功");
         return success;
