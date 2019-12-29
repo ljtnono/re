@@ -19,7 +19,7 @@ public abstract class AbstractReController<T> {
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    public abstract JsonResult listEntityAll();
+    public JsonResult listEntityAll() { return null;}
 
     /**
      * 新增单个实体类
@@ -30,7 +30,7 @@ public abstract class AbstractReController<T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    public abstract JsonResult saveEntity(T entity);
+    public JsonResult saveEntity(T entity) { return null; }
 
     /**
      * 根据id更新一个实体类
@@ -42,7 +42,7 @@ public abstract class AbstractReController<T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    public abstract JsonResult updateEntityById(Serializable id, T entity);
+    public JsonResult updateEntityById(Serializable id, T entity) { return null; }
 
     /**
      * 根据id删除一个实体类
@@ -53,7 +53,7 @@ public abstract class AbstractReController<T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    public abstract JsonResult deleteEntityById(Serializable id);
+    public JsonResult deleteEntityById(Serializable id) { return null; }
 
     /**
      * 根据id获取一个实体类
@@ -64,5 +64,5 @@ public abstract class AbstractReController<T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    public abstract JsonResult getEntityById(Serializable id);
+    public JsonResult getEntityById(Serializable id) { return null; }
 }

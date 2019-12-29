@@ -4,6 +4,7 @@ package cn.ljtnono.re.controller;
 import cn.ljtnono.re.entity.ReImage;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.pojo.JsonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -22,6 +23,7 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/image")
+@Slf4j
 public class ReImageController extends AbstractReController<ReImage> {
 
 

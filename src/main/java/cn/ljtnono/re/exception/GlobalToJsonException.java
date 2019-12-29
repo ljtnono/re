@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 全局返回Json数据异常
  * @author ljt
  * @date 2019/11/9
- * @version 1.1
+ * @version 1.0.2
  */
 public class GlobalToJsonException extends RuntimeException implements Serializable {
 

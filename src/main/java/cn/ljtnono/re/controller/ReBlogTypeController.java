@@ -4,6 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogTypeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/blog_type")
+@Slf4j
 public class ReBlogTypeController extends AbstractReController<ReBlogType> {
 
     private IReBlogTypeService iReBlogTypeService;

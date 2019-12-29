@@ -25,7 +25,7 @@ import java.util.*;
  * 博客服务实现类
  *
  * @author ljt
- * @version 1.0
+ * @version 1.0.2
  * @date 2019/11/16
  */
 @Service
@@ -33,8 +33,12 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
 
     private static Logger logger = LoggerFactory.getLogger(ReBlogServiceImpl.class);
 
+    private final RedisUtil redisUtil;
+
     @Autowired
-    private RedisUtil redisUtil;
+    public ReBlogServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 获取首页猜你喜欢
@@ -56,6 +60,26 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     @Override
     public JsonResult listBlogPageByType(Integer page, Integer count, final String type) {
         return null;
+    }
+
+    /**
+     * 获取所有博客的浏览量总数
+     *
+     * @return 所有博客的浏览量总数
+     */
+    @Override
+    public Integer countView() {
+        return baseMapper.countView();
+    }
+
+    /**
+     * 获获取所有博客的评论总数
+     *
+     * @return 获取所有博客的评论总数
+     */
+    @Override
+    public Integer countComment() {
+        return baseMapper.countComment();
     }
 
     /**

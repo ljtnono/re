@@ -3,6 +3,7 @@
 let $scroll_fixed = $("[scroll-fixed]");
 let scroll_fixed_offsetTop = [];
 let scroll_fixed_top = [];
+let IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
 $scroll_fixed.each(function (index, obj) {
     scroll_fixed_offsetTop.push($(obj).offset().top);
     if (index === 0 || index === "0") {
@@ -108,4 +109,20 @@ const editorConfig = {
 
     }
 };
+
+/**
+ * 从markdown内容中提取图片链接，只返回第一个作为图片的封面
+ * @param markDown 要提取的markdown内容
+ * @returns {string|*} 图片链接
+ */
+function getImgUrlFromMarkDown(markDown) {
+    let reg = /!\[.*?\]\((.*?)\)/im;
+    let matches = reg.exec(markDown);
+    // 如果没有的话，那么返回默认图片src
+    if (matches === null || matches === undefined || matches.length === 0) {
+        return IMG_DEFAULT;
+    } else {
+        return matches[1];
+    }
+}
 

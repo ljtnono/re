@@ -91,7 +91,7 @@
         + "                        <div class=\"layui-form-item\">"
         + "                            <label class=\"layui-form-label\">博客简介</label>"
         + "                            <div class=\"layui-input-block\">"
-        + "                                <textarea name=\"summary\" placeholder=\"请输入博客的简介\" lay-verify=\"summary\""
+        + "                                <textarea name=\"summary\" placeholder=\"请输入博客的简介\""
         + "                                          class=\"layui-textarea\"></textarea>"
         + "                            </div>"
         + "                        </div>"
@@ -140,10 +140,16 @@
                                     options.push(item);
                                 });
                                 form.render();
+                            } else {
+                                layer.msg(res.message + ", 错误码：" + res.status, {icon: 2});
                             }
                         },
                         error: function (res) {
-                            layer.msg("请求错误，请检查网络", {icon: 2});
+                            if (res) {
+                                layer.msg(res);
+                            } else {
+                                layer.msg("请求错误，请检查网络", {icon: 2});
+                            }
                         }
                     });
                 }
@@ -163,12 +169,6 @@
                 if (!titleRex.test(value)) {
                     return "作者只能为2-10个字符";
                 }
-            },
-            summary: function (value, item) {
-                let titleRex = /^[\w\W\s\u4e00-\u9fcc]{0,300}$/;
-                if (!titleRex.test(value)) {
-                    return "简介只能为0-300个字符";
-                }
             }
         });
         form.on("submit(form-blog-submit)", function (data) {
@@ -176,8 +176,7 @@
             layer.confirm('确认发表？', {
                 btn: ['确认', '取消']
             }, function (index) {
-                let loadIndex;
-                // TODO 自动识别markdown中的第一张图片作为封面
+                let coverImage = getImgUrlFromMarkDown(blog.contentMarkdown);
                 $.ajax({
                     url: [[${#servletContext.contextPath}]] + "/blog",
                     data: {
@@ -186,16 +185,11 @@
                         summary: blog.summary,
                         type: blog.type,
                         contentMarkdown: blogEditor.getMarkdown(),
-                        contentHtml: blogEditor.getHTML()
+                        contentHtml: blogEditor.getHTML(),
+                        coverImage: coverImage
                     },
                     method: "POST",
                     dateType: "json",
-                    beforeSend: function () {
-                        loadIndex = layer.load(0, {
-                            shade: [0.8, '#262626'],
-                            shadeClose: true
-                        });
-                    },
                     success: function (res) {
                         if (res.request === "success" && res.status === 200) {
                             layer.msg(res.message , {icon: 1});
@@ -205,9 +199,6 @@
                     },
                     error: function () {
                         layer.msg("请求失败，请检查网络", {icon: 2});
-                    },
-                    complete: function () {
-                        layer.close(loadIndex);
                     }
                 });
                 layer.close(index);

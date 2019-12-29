@@ -5,7 +5,7 @@ package cn.ljtnono.re.enumeration;
  * 如果状态跟http错误状态不一致，那么从10000开始递增状态码
  * @author ljt
  * @date 2019/11/4
- * @version 1.0
+ * @version 1.1.2
  */
 public enum GlobalErrorEnum {
     /** 系统错误 */
