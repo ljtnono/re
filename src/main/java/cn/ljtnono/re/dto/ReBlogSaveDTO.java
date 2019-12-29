@@ -40,9 +40,6 @@ public class ReBlogSaveDTO implements Serializable {
     private String type;
 
     /** 博客的摘要信息 */
-    @NotEmpty(message = "博客摘要不能为空")
-    @NotNull(message = "博客摘要不能为null")
-    @Length(min = 40, max = 150, message = "博客的摘要信息为40-150个字符")
     private String summary;
 
     /** 博客的markdown */
