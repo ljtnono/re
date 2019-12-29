@@ -10,6 +10,7 @@ import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkType> implements IReLinkTypeService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReLinkTypeServiceImpl.class);
+    @Autowired
+    public ReLinkTypeServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
 
     /**
@@ -202,7 +206,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                     .replace(":id", ":" + reLinkType.getId())
                     .replace(":name", ":" + reLinkType.getName()), reLinkType, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有链接类型列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有链接类型列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reLinkTypeList, reLinkTypeList.size());
         success.setMessage("操作成功");
         return success;

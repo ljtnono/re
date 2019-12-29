@@ -11,6 +11,7 @@ import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +27,15 @@ import java.util.*;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> implements IReLinkService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReLinkServiceImpl.class);
+    @Autowired
+    public ReLinkServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 获取所有外部链接数据
@@ -53,7 +57,7 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
             });
             return list;
         }
-        logger.info("从缓存中加载全部外链数据");
+        log.info("从缓存中加载全部外链数据");
         return objects;
     }
 
@@ -230,7 +234,7 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
                     .replace(":name", ":" + reLink.getName())
                     .replace(":type", ":" + reLink.getType()), reLink, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有链接列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有链接列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reLinkList, reLinkList.size());
         success.setMessage("操作成功");
         return success;

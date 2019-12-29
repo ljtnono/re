@@ -7,14 +7,14 @@ import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBlogMapper;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
+import cn.ljtnono.re.service.common.IReEntityService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,9 +29,8 @@ import java.util.*;
  * @date 2019/11/16
  */
 @Service
-public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> implements IReBlogService {
-
-    private static Logger logger = LoggerFactory.getLogger(ReBlogServiceImpl.class);
+@Slf4j
+public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> implements IReEntityService<ReBlog>, IReBlogService {
 
     private final RedisUtil redisUtil;
 
@@ -108,13 +107,13 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
         List<?> objects = redisUtil.lGet(redisKey, 0, -1);
         if (!objects.isEmpty()) {
-            logger.info("从缓存中获取" + page + "页博客数据，每页获取" + count + "条");
+            log.info("从缓存中获取" + page + "页博客数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
             return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReBlog> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlog>().orderByDesc("modify_time"));
-            logger.info("获取" + page + "页博客数据，每页获取" + count + "条");
+            log.info("获取" + page + "页博客数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
@@ -249,7 +248,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
                 .replace(":author", ":" + reBlog.getAuthor())
                 .replace(":title", ":" + reBlog.getTitle())
                 .replace(":type", ":" + reBlog.getType()), reBlog, RedisUtil.EXPIRE_TIME_DEFAULT)));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有博客列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有博客列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(blogList, blogList.size());
         success.setMessage("操作成功");
         return success;

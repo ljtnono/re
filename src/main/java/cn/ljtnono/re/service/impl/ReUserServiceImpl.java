@@ -11,6 +11,7 @@ import cn.ljtnono.re.service.IReUserService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +30,16 @@ import java.util.Optional;
  *
  */
 @Service
+@Slf4j
 public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> implements IReUserService {
 
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReUserServiceImpl.class);
+    @Autowired
+    public ReUserServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 根据用户ID查询用户角色列表
@@ -229,7 +233,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                     .replace(":tel", ":" + reUser.getTel())
                     , reUser, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有用户列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有用户列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reUserList, reUserList.size());
         success.setMessage("操作成功");
         return success;

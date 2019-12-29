@@ -11,6 +11,8 @@ import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,15 @@ import java.util.Optional;
  * @version 1.0
  */
 @Service
+@Slf4j
 public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> implements IReImageService {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private static Logger logger = LoggerFactory.getLogger(ReImageServiceImpl.class);
+    @Autowired
+    public ReImageServiceImpl(RedisUtil redisUtil) {
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 获取博主头像
@@ -54,7 +59,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
                     .replace("owner", one.getOwner()), one, RedisUtil.EXPIRE_TIME_DEFAULT);
             return one;
         }
-        logger.info("从缓存中加载用户头像数据");
+        log.info("从缓存中加载用户头像数据");
         return avatar;
     }
 
@@ -76,7 +81,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
                     .replace("owner", one.getOwner()), one, RedisUtil.EXPIRE_TIME_DEFAULT);
             return one;
         }
-        logger.info("从缓存中加载用户微信二维码图片");
+        log.info("从缓存中加载用户微信二维码图片");
         return qrCodeWeChat;
     }
 
@@ -98,7 +103,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
                     .replace("owner", one.getOwner()), one, RedisUtil.EXPIRE_TIME_DEFAULT);
             return one;
         }
-        logger.info("从缓存中加载用户微信扫码支付二维码图片");
+        log.info("从缓存中加载用户微信扫码支付二维码图片");
         return qrCodeWeChatSk;
     }
 
@@ -120,7 +125,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
                     .replace("owner", one.getOwner()), one, RedisUtil.EXPIRE_TIME_DEFAULT);
             return one;
         }
-        logger.info("从缓存中加载用户支付宝支付二维码图片");
+        log.info("从缓存中加载用户支付宝支付二维码图片");
         return qrCodeZfb;
     }
 
@@ -303,7 +308,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
                     .replace(":type", ":" + reImage.getType())
                     .replace(":owner", ":" + reImage.getOwner()), reImage, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有图片列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有图片列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reImageList, reImageList.size());
         success.setMessage("操作成功");
         return success;

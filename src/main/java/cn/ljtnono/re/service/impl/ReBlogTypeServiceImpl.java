@@ -15,8 +15,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,23 +33,18 @@ import java.util.Optional;
  * @date 2019/12/23
  */
 @Service
+@Slf4j
 public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogType> implements IReBlogTypeService {
 
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    private IReBlogService iReBlogService;
+    private final IReBlogService iReBlogService;
 
     @Autowired
-    public void setReBlogTypeServiceImpl(IReBlogService iReBlogService) {
+    public ReBlogTypeServiceImpl(IReBlogService iReBlogService, RedisUtil redisUtil) {
         this.iReBlogService = iReBlogService;
-    }
-
-    @Autowired
-    public void setRedisUtil(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
     }
-
-    private static Logger logger = LoggerFactory.getLogger(ReBlogServiceImpl.class);
 
 
     @Override
@@ -61,7 +55,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
                 .replace(":name", ":*");
         List<ReBlogType> getByPattern = (List<ReBlogType>) redisUtil.getByPattern(redisKey);
         Optional<List<ReBlogType>> optionalGetByPattern = Optional.ofNullable(getByPattern);
-        optionalGetByPattern.ifPresent(l -> logger.info("从缓存中获取所有博客类型列表，总条数：" + l.size()));
+        optionalGetByPattern.ifPresent(l -> log.info("从缓存中获取所有博客类型列表，总条数：" + l.size()));
         List<ReBlogType> reBlogTypeList = optionalGetByPattern.orElseGet(() -> {
             List<ReBlogType> list = list();
             list.forEach(reBlogType -> {
@@ -69,7 +63,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
                         .replace(":id", ":" + reBlogType.getId())
                         .replace(":name", ":" + reBlogType.getName()), reBlogType, RedisUtil.EXPIRE_TIME_DEFAULT);
             });
-            logger.info("从数据库中获取所有博客类型列表，总条数：" + list.size());
+            log.info("从数据库中获取所有博客类型列表，总条数：" + list.size());
             return list;
         });
         return JsonResult.success(reBlogTypeList, reBlogTypeList.size());
@@ -95,13 +89,13 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
         List<?> objects = redisUtil.lGet(redisKey, 0, -1);
         if (!objects.isEmpty()) {
-            logger.info("从缓存中获取" + page + "页ReBlogType数据，每页获取" + count + "条");
+            log.info("从缓存中获取" + page + "页ReBlogType数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
             return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReBlogType> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlogType>().orderByDesc("modify_time"));
-            logger.info("获取" + page + "页ReBlogType数据，每页获取" + count + "条");
+            log.info("获取" + page + "页ReBlogType数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
@@ -230,7 +224,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
                     .replace(":id", ":" + reBlogType.getId())
                     .replace(":name", ":" + reBlogType.getName()), reBlogType, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
-        optionalList.ifPresent(l -> logger.info("从数据库中获取所有博客类型列表，总条数：" + l.size()));
+        optionalList.ifPresent(l -> log.info("从数据库中获取所有博客类型列表，总条数：" + l.size()));
         JsonResult success = JsonResult.success(reBlogTypeList, reBlogTypeList.size());
         success.setMessage("操作成功");
         return success;
