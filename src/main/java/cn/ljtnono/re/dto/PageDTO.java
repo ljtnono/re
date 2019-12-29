@@ -9,7 +9,7 @@ import java.io.Serializable;
  *
  * @author ljt
  * @date 2019/12/12
- * @version 1.0
+ * @version 1.0.1
  */
 @Data
 @ToString
