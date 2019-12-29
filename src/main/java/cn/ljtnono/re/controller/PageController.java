@@ -86,7 +86,7 @@ public class PageController {
      * @param modelMap thymeleaf属性集合
      * @return 跳转到article页面
      */
-    @GetMapping("/article/{id}")
+    @GetMapping("/article/{id:\\d}")
     public String article(@PathVariable final String id, ModelMap modelMap) {
         // 如果参数为空
         if (StringUtil.isEmpty(id)) {
@@ -96,6 +96,7 @@ public class PageController {
         ReBlog byId = iReBlogService.getById(id);
         if (byId == null || byId.getStatus() == 0) {
             // 如果没有查询到或者该博客已经删除，那么返回404页面
+            log.info("博客不存在或已经删除");
             return "forward:/error/404";
         }
         // 每访问一次，将该博客的浏览量 + 1
