@@ -45,21 +45,21 @@ public class ReBlogTypeController extends AbstractReController<ReBlogType> {
 
 
     @Override
-    @PostMapping("/{id}")
+    @PostMapping("/{id:\\d}")
     public JsonResult updateEntityById(@PathVariable(value = "id", required = false) Serializable id, ReBlogType entity) {
         return iReBlogTypeService.updateEntityById(id, entity);
     }
 
 
     @Override
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:\\d}")
     public JsonResult deleteEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogTypeService.deleteEntityById(id);
     }
 
 
     @Override
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d}")
     public JsonResult getEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogTypeService.getEntityById(id);
     }

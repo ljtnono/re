@@ -71,7 +71,7 @@ public class ReBlogController extends AbstractReController<ReBlog> {
                 build.setSummary(build.getSummary());
             }
         }
-        log.info("新发表博客 entity = " + build.toString());
+        log.info("新发表博客请求参数" + reBlogSaveDTO.toString());
         JsonResult jsonResult = iReBlogService.saveEntity(build);
         log.info("新发表博客返回参数：" + jsonResult);
         return jsonResult;
