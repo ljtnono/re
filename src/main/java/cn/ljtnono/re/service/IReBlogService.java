@@ -32,11 +32,23 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
     List<ReBlog> listGuessYouLike();
 
     /**
-     *
+     * 分页查询博客列表
      * @param type 类型
      * @param page 页码
      * @param count 每页显示的条数
      * @return JsonResult
      */
     JsonResult listBlogPageByType(Integer page, Integer count, final String type);
+
+    /**
+     * 获取所有博客的浏览量总数
+     * @return 所有博客的浏览量总数
+     */
+    Integer countView();
+
+    /**
+     * 获获取所有博客的评论总数
+     * @return 获取所有博客的评论总数
+     */
+    Integer countComment();
 }
