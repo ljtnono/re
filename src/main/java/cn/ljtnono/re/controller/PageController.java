@@ -5,13 +5,13 @@ import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * 处理页面路由的Controller
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 @ApiOperation("路由信息")
+@Slf4j
 public class PageController {
 
     private IReBlogService iReBlogService;
@@ -30,8 +31,6 @@ public class PageController {
         this.iReBlogService = iReBlogService;
     }
 
-    private Logger logger = LoggerFactory.getLogger(PageController.class);
-
     @GetMapping("/")
     @ApiOperation(value = "跳转到首页")
     public String fore(ModelMap map) {
@@ -39,23 +38,23 @@ public class PageController {
         return "fore/index";
     }
 
-    @GetMapping("/{page:^(?!swagger-ui.html).*$}")
+    @RequestMapping("/{page:^(?!swagger-ui.html).*$}")
     public String foreTemplates(@PathVariable final String page, final ModelMap map) {
         setActivePage(page, map);
         return "fore/" + page;
     }
 
-    @GetMapping("/admin/login")
+    @RequestMapping("/admin/login")
     public String toLogin() {
         return "back/login";
     }
 
-    @GetMapping({"/admin", "/admin/"})
+    @RequestMapping({"/admin", "/admin/"})
     public String back(ModelMap map) {
         return "back/index";
     }
 
-    @GetMapping("/admin/{page:^(?!\\*\\.html)}")
+    @RequestMapping("/admin/{page}")
     public String backTemplates(@PathVariable String page) {
         return "back/" + page;
     }
@@ -91,7 +90,7 @@ public class PageController {
     public String article(@PathVariable final String id, ModelMap modelMap) {
         // 如果参数为空
         if (StringUtil.isEmpty(id)) {
-            logger.info("博客id不能为空");
+            log.info("博客id不能为空");
             return "forward:/error/404";
         }
         ReBlog byId = iReBlogService.getById(id);

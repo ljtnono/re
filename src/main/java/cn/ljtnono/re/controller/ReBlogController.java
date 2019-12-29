@@ -1,16 +1,15 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReBlogSaveDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
-import cn.ljtnono.re.util.RedisUtil;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import cn.ljtnono.re.controller.common.AbstractReController;
@@ -22,22 +21,20 @@ import java.util.Date;
  * 博客Controller
  *
  * @author ljt
- * @version 1.1
+ * @version 1.0.2
  * @date 2019/11/18
  */
 @RestController
 @RequestMapping("/blog")
-@Api(value = "blog")
+@Slf4j
 public class ReBlogController extends AbstractReController<ReBlog> {
 
-    @Autowired
-    private IReBlogService iReBlogService;
+    private final IReBlogService iReBlogService;
 
     @Autowired
-    private RedisUtil redisUtil;
-
-    private Logger logger = LoggerFactory.getLogger(ReBlogController.class);
-
+    public ReBlogController(IReBlogService iReBlogService) {
+        this.iReBlogService = iReBlogService;
+    }
 
     @Override
     @GetMapping
@@ -47,9 +44,9 @@ public class ReBlogController extends AbstractReController<ReBlog> {
     }
 
     @Override
-    @PostMapping
+//    @PostMapping
     public JsonResult saveEntity(ReBlog entity) {
-        // TODO 这里使用DTO参数，并且校验参数
+        // TODO 这里使用DTO，并且校验参数
         ReBlog build = ReBlog.newBuilder(entity)
                 .status((byte) 1)
                 .createTime(new Date())
@@ -61,9 +58,28 @@ public class ReBlogController extends AbstractReController<ReBlog> {
         if (build.getCoverImage() == null || build.getCoverImage().isEmpty()) {
             build.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
         }
-        // TODO 设置博客简介内容
-        logger.info("新发表博客 entity = " + build.toString());
+        // TODO 设置博客简介内容，如果博客的内容简介是
+        log.info("新发表博客 entity = " + build.toString());
         return iReBlogService.saveEntity(build);
+    }
+
+    @PostMapping
+    public JsonResult saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
+        ReBlog build = ReBlog.newBuilder()
+                .status((byte) 1)
+                .createTime(new Date())
+                .modifyTime(new Date())
+                .view(0)
+                .comment(0)
+                .build();
+        if (build.getCoverImage() == null || build.getCoverImage().isEmpty()) {
+            build.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
+        }
+        // TODO 设置博客简介内容，如果博客的内容简介是
+        log.info("新发表博客 entity = " + build.toString());
+        JsonResult jsonResult = iReBlogService.saveEntity(build);
+        log.info("新发表博客返回参数：" + jsonResult);
+        return jsonResult;
     }
 
 
@@ -85,7 +101,6 @@ public class ReBlogController extends AbstractReController<ReBlog> {
     public JsonResult getEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogService.getEntityById(id);
     }
-
 
     @GetMapping("/listBlogPage")
     public JsonResult listBlogPage(PageDTO reBlogListPageDTO) {

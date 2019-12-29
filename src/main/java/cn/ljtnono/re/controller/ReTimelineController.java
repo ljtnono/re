@@ -4,6 +4,7 @@ package cn.ljtnono.re.controller;
 import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.pojo.JsonResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import cn.ljtnono.re.controller.common.AbstractReController;
@@ -19,6 +20,7 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/timeline")
+@Slf4j
 public class ReTimelineController extends AbstractReController<ReTimeline> {
 
     /**

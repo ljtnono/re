@@ -5,6 +5,7 @@ import cn.ljtnono.re.entity.ReUser;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,10 +25,16 @@ import java.util.Collections;
  */
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class ReUserController extends AbstractReController<ReUser> {
 
+
+    private final IReUserService iReUserService;
+
     @Autowired
-    private IReUserService iReUserService;
+    public ReUserController(IReUserService iReUserService) {
+        this.iReUserService = iReUserService;
+    }
 
     @GetMapping("/{id}")
     public JsonResult getUserById(@PathVariable Integer id, HttpSession session) {
