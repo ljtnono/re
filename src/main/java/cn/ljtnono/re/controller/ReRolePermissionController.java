@@ -21,7 +21,7 @@ import java.io.Serializable;
 @RestController
 @RequestMapping("/role_permission")
 @Slf4j
-public class ReRolePermissionController extends AbstractReController<ReRolePermission> {
+public class ReRolePermissionController {
 
     /**
      * 获取实体类的所有列表
@@ -30,7 +30,6 @@ public class ReRolePermissionController extends AbstractReController<ReRolePermi
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult listEntityAll() {
         return null;
     }
@@ -45,7 +44,6 @@ public class ReRolePermissionController extends AbstractReController<ReRolePermi
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult saveEntity(ReRolePermission entity) {
         return null;
     }
@@ -61,7 +59,6 @@ public class ReRolePermissionController extends AbstractReController<ReRolePermi
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult updateEntityById(Serializable id, ReRolePermission entity) {
         return null;
     }
@@ -76,7 +73,6 @@ public class ReRolePermissionController extends AbstractReController<ReRolePermi
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult deleteEntityById(Serializable id) {
         return null;
     }
@@ -91,7 +87,6 @@ public class ReRolePermissionController extends AbstractReController<ReRolePermi
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult getEntityById(Serializable id) {
         return null;
     }

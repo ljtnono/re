@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import cn.ljtnono.re.controller.common.AbstractReController;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/blog")
 @Slf4j
-public class ReBlogController extends AbstractReController<ReBlog> {
+public class ReBlogController {
 
     private final IReBlogService iReBlogService;
 
@@ -38,7 +37,6 @@ public class ReBlogController extends AbstractReController<ReBlog> {
         this.iReBlogService = iReBlogService;
     }
 
-    @Override
     @GetMapping
     @ApiOperation(value = "/blog/", notes = "获取全部博客信息列表", httpMethod = "GET")
     public JsonResult listEntityAll() {
@@ -78,21 +76,17 @@ public class ReBlogController extends AbstractReController<ReBlog> {
         return jsonResult;
     }
 
-
-    @Override
     @PutMapping("/{id:\\d+}")
     public JsonResult updateEntityById(@PathVariable(value = "id", required = false) Serializable id, ReBlog entity) {
         // TODO 这里调用entity本身实现的参数校验
         return iReBlogService.updateEntityById(id, entity);
     }
 
-    @Override
     @DeleteMapping("/{id:\\d+}")
     public JsonResult deleteEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogService.deleteEntityById(id);
     }
 
-    @Override
     @GetMapping("/{id:\\d+}")
     public JsonResult getEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogService.getEntityById(id);

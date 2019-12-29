@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import cn.ljtnono.re.controller.common.AbstractReController;
 
 import java.io.Serializable;
 
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @RestController
 @RequestMapping("/blog_type")
 @Slf4j
-public class ReBlogTypeController extends AbstractReController<ReBlogType> {
+public class ReBlogTypeController {
 
     private IReBlogTypeService iReBlogTypeService;
 
@@ -30,35 +29,30 @@ public class ReBlogTypeController extends AbstractReController<ReBlogType> {
         this.iReBlogTypeService = iReBlogTypeService;
     }
 
-    @Override
     @GetMapping
     public JsonResult listEntityAll() {
         return iReBlogTypeService.listEntityAll();
     }
 
 
-    @Override
     @PostMapping
     public JsonResult saveEntity(ReBlogType entity) {
         return iReBlogTypeService.saveEntity(entity);
     }
 
 
-    @Override
     @PostMapping("/{id:\\d+}")
     public JsonResult updateEntityById(@PathVariable(value = "id", required = false) Serializable id, ReBlogType entity) {
         return iReBlogTypeService.updateEntityById(id, entity);
     }
 
 
-    @Override
     @DeleteMapping("/{id:\\d+}")
     public JsonResult deleteEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogTypeService.deleteEntityById(id);
     }
 
 
-    @Override
     @GetMapping("/{id:\\d+}")
     public JsonResult getEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogTypeService.getEntityById(id);

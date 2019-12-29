@@ -26,7 +26,7 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/user")
 @Slf4j
-public class ReUserController extends AbstractReController<ReUser> {
+public class ReUserController {
 
 
     private final IReUserService iReUserService;
@@ -65,7 +65,6 @@ public class ReUserController extends AbstractReController<ReUser> {
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult listEntityAll() {
         return null;
     }
@@ -80,7 +79,6 @@ public class ReUserController extends AbstractReController<ReUser> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult saveEntity(ReUser entity) {
         return null;
     }
@@ -96,7 +94,6 @@ public class ReUserController extends AbstractReController<ReUser> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult updateEntityById(Serializable id, ReUser entity) {
         return null;
     }
@@ -111,7 +108,6 @@ public class ReUserController extends AbstractReController<ReUser> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult deleteEntityById(Serializable id) {
         return null;
     }
@@ -126,7 +122,6 @@ public class ReUserController extends AbstractReController<ReUser> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    @Override
     public JsonResult getEntityById(Serializable id) {
         return null;
     }
