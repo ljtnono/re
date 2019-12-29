@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev
   # 配置文件上传
   servlet:
     multipart:
