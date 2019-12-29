@@ -51,6 +51,7 @@ public class ReBlogController extends AbstractReController<ReBlog> {
         ReBlog build = ReBlog.newBuilder()
                 .title(reBlogSaveDTO.getTitle())
                 .author(reBlogSaveDTO.getAuthor())
+                .type(reBlogSaveDTO.getType())
                 .contentHtml(reBlogSaveDTO.getContentHtml())
                 .contentMarkdown(reBlogSaveDTO.getContentMarkdown())
                 .coverImage(reBlogSaveDTO.getCoverImage())
@@ -79,20 +80,20 @@ public class ReBlogController extends AbstractReController<ReBlog> {
 
 
     @Override
-    @PutMapping("/{id:\\d}")
+    @PutMapping("/{id:\\d+}")
     public JsonResult updateEntityById(@PathVariable(value = "id", required = false) Serializable id, ReBlog entity) {
         // TODO 这里调用entity本身实现的参数校验
         return iReBlogService.updateEntityById(id, entity);
     }
 
     @Override
-    @DeleteMapping("/{id:\\d}")
+    @DeleteMapping("/{id:\\d+}")
     public JsonResult deleteEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogService.deleteEntityById(id);
     }
 
     @Override
-    @GetMapping("/{id:\\d}")
+    @GetMapping("/{id:\\d+}")
     public JsonResult getEntityById(@PathVariable(value = "id", required = false) Serializable id) {
         return iReBlogService.getEntityById(id);
     }

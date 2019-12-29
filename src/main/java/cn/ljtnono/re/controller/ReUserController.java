@@ -36,7 +36,7 @@ public class ReUserController extends AbstractReController<ReUser> {
         this.iReUserService = iReUserService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:\\d+}")
     public JsonResult getUserById(@PathVariable Integer id, HttpSession session) {
         ReUser byId = iReUserService.getById(id);
         session.setAttribute("user", byId);

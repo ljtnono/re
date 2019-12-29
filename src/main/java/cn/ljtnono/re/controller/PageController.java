@@ -86,7 +86,7 @@ public class PageController {
      * @param modelMap thymeleaf属性集合
      * @return 跳转到article页面
      */
-    @GetMapping("/article/{id:\\d}")
+    @GetMapping("/article/{id:\\d+}")
     public String article(@PathVariable final String id, ModelMap modelMap) {
         // 如果参数为空
         if (StringUtil.isEmpty(id)) {
