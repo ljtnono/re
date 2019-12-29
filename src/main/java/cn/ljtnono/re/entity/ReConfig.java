@@ -15,7 +15,7 @@ import java.io.Serializable;
  * 配置类
  * @author ljt
  * @date 2019/12/11
- * @version 1.1
+ * @version 1.0.1
  * 使用lombok简化操作
  */
 @Data
