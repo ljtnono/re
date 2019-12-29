@@ -6,6 +6,8 @@ import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.RedisUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/blog")
+@Api(value = "blog")
 public class ReBlogController extends AbstractReController<ReBlog> {
 
     @Autowired
@@ -38,6 +41,7 @@ public class ReBlogController extends AbstractReController<ReBlog> {
 
     @Override
     @GetMapping
+    @ApiOperation(value = "获取信息",notes = "获取信息1",httpMethod = "GET")
     public JsonResult listEntityAll() {
         return iReBlogService.listEntityAll();
     }

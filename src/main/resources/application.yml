@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: dev
   # 配置文件上传
   servlet:
     multipart:
@@ -51,17 +53,11 @@ spring:
   mvc:
     favicon:
       enabled: false
-# 配置debug模式
-debug: true
-
-
 #配置mybatis相关
 mybatis:
   configuration:
     # 配置打印sql
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-
 # 配置tomcat服务器相关
 server:
   servlet:
