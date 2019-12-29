@@ -1,10 +1,10 @@
 package cn.ljtnono.re.util;
 
 /**
- *  文本加解密工具，TODO 改成单例模式
+ *  文本加解密工具
  *  @author ljt
  *  @date 2018/12/9
- *  @version 1.1
+ *  @version 1.0.2
 */
 public class EncryptUtil {
 
@@ -13,12 +13,26 @@ public class EncryptUtil {
      */
     private EncryptUtil(){}
 
+    private static EncryptUtil instance = null;
+
+    public static EncryptUtil getInstance() {
+        if (instance == null) {
+            synchronized (EncryptUtil.class) {
+                if (instance == null) {
+                    instance = new EncryptUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+
     /**
      * 使用MD5对字符串进行加密
      * @param source 源字符串
      * @return MD5加密后的字符串
      */
-    public static String getMd5(String source) {
+    public String getMd5(String source) {
         return getMd5(source.getBytes());
     }
 
@@ -27,7 +41,7 @@ public class EncryptUtil {
      * @param source 源字节数组
      * @return 加密后的字符串
      */
-    private static String getMd5(byte[] source) {
+    private String getMd5(byte[] source) {
         String s = null;
         char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
         try {
@@ -57,7 +71,7 @@ public class EncryptUtil {
      * @param source 源字符串
      * @return MD5小写加密字符串
      */
-    public static String getMd5LowerCase(String source) {
+    public String getMd5LowerCase(String source) {
         return getMd5(source).toLowerCase();
     }
 
@@ -66,7 +80,7 @@ public class EncryptUtil {
      * @param source 源字符串
      * @return MD5大写加密
      */
-    public static String getMd5UpperCase(String source) {
+    public String getMd5UpperCase(String source) {
         return getMd5(source).toUpperCase();
     }
 }
