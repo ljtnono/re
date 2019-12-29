@@ -27,7 +27,7 @@
                         欢迎管理员：
                         <span class="x-red" th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}">admin</span>
                         ！当前时间:
-                        <span th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}"></span>
+                        <span th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}" id="now"></span>
                     </blockquote>
                 </div>
             </div>
@@ -41,42 +41,28 @@
                             <a href="javascript:" class="x-admin-backlog-body">
                                 <h3>文章数</h3>
                                 <p>
-                                    <cite>66</cite></p>
+                                    <cite th:text="${application.blogTotalCount}">66</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-md2 layui-col-xs6">
                             <a href="javascript:" class="x-admin-backlog-body">
                                 <h3>回复数</h3>
                                 <p>
-                                    <cite>99</cite></p>
+                                    <cite th:text="${application.blogCommentTotalCount}">99</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-md2 layui-col-xs6">
                             <a href="javascript:;" class="x-admin-backlog-body">
                                 <h3>浏览数</h3>
                                 <p>
-                                    <cite>1880</cite></p>
+                                    <cite th:text="${application.blogViewTotalCount}">1880</cite></p>
                             </a>
                         </li>
                         <li class="layui-col-md2 layui-col-xs6">
                             <a href="javascript:" class="x-admin-backlog-body">
                                 <h3>分类数</h3>
                                 <p>
-                                    <cite>67</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-md2 layui-col-xs6">
-                            <a href="javascript:" class="x-admin-backlog-body">
-                                <h3>文章数</h3>
-                                <p>
-                                    <cite>67</cite></p>
-                            </a>
-                        </li>
-                        <li class="layui-col-md2 layui-col-xs6 ">
-                            <a href="javascript:" class="x-admin-backlog-body">
-                                <h3>文章数</h3>
-                                <p>
-                                    <cite>6766</cite></p>
+                                    <cite th:text="${application.blogTypeTotalCount}">67</cite></p>
                             </a>
                         </li>
                     </ul>
@@ -91,27 +77,31 @@
                         <tbody>
                         <tr>
                             <th>系统版本</th>
-                            <td>1.0.2</td>
+                            <td th:text="${application.sys_version}"></td>
                         </tr>
                         <tr>
                             <th>服务器地址</th>
-                            <td>139.9.73.191</td>
+                            <td th:text="${application.server_ip}"></td>
                         </tr>
                         <tr>
                             <th>操作系统</th>
-                            <td>Ubuntu18.04LTS</td>
+                            <td th:text="${application.os_name}"></td>
                         </tr>
                         <tr>
-                            <th>运行环境</th>
-                            <td>Nginx</td>
+                            <th>servlet容器</th>
+                            <td th:text="${application.servlet_container}"></td>
+                        </tr>
+                        <tr>
+                            <th>负载均衡</th>
+                            <td th:text="${application.servlet_jhfz}"></td>
                         </tr>
                         <tr>
                             <th>JDK版本</th>
-                            <td>1.8</td>
+                            <td th:text="${application.java_version}"></td>
                         </tr>
                         <tr>
                             <th>MYSQL版本</th>
-                            <td>8</td>
+                            <td th:text="${application.mysql_version}"></td>
                         </tr>
                         </tbody>
                     </table>
@@ -126,7 +116,7 @@
                         <tbody>
                         <tr>
                             <th>版权所有</th>
-                            <td>最后的疼爱
+                            <td>凌家童
                                 <a href="http://www.ljtnono.cn/re" target="_blank">访问博客前台</a></td>
                         </tr>
                         <tr>
@@ -147,5 +137,12 @@
     </div>
 </div>
 </div>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script th:inline="javascript">
+    // 设置当前时间每秒更新
+    layui.use("date", function () {
+
+    });
+</script>
 </body>
 </html>
