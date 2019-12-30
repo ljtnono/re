@@ -299,6 +299,20 @@ public class DateUtil {
         return c.getTime();
     }
 
+    /**
+    *@Description:
+    *@Param:
+    *@return:
+    *@date: 2019/12/30
+    */
+    public static Date formatString(String str,String format) throws Exception{
+        if(StringUtil.isEmpty(str)){
+            return null;
+        }
+        SimpleDateFormat sdf=new SimpleDateFormat(format);
+        return sdf.parse(str);
+    }
+
     public static void main(String[] args) {
         SimpleDateFormat format = new SimpleDateFormat(DateStyleEnum.MM_DD.getValue());
         System.out.println(format.format(new Date()));

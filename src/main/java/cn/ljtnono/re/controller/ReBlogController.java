@@ -4,6 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReBlogSaveDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
+import cn.ljtnono.re.util.BlogIndexUtil;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.HtmlUtil;
@@ -45,7 +46,7 @@ public class ReBlogController {
 
     @PostMapping
     @ApiOperation(value = "/blog/", notes = "新增一个博客实体", httpMethod = "POST")
-    public JsonResult saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
+    public JsonResult saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) throws Exception {
         ReBlog build = ReBlog.newBuilder()
                 .title(reBlogSaveDTO.getTitle())
                 .author(reBlogSaveDTO.getAuthor())
@@ -70,6 +71,10 @@ public class ReBlogController {
                 build.setSummary(build.getSummary());
             }
         }
+        // 创建博文之后 在本地进行分词
+        BlogIndexUtil blogIndexUtil = new BlogIndexUtil();
+        blogIndexUtil.addIndex(build);
+
         log.info("新发表博客请求参数" + reBlogSaveDTO.toString());
         JsonResult jsonResult = iReBlogService.saveEntity(build);
         log.info("新发表博客返回参数：" + jsonResult);
@@ -96,4 +101,8 @@ public class ReBlogController {
     public JsonResult listBlogPage(PageDTO reBlogListPageDTO) {
         return iReBlogService.listBlogPage(reBlogListPageDTO.getPage(), reBlogListPageDTO.getCount());
     }
+
+
+
+
 }
