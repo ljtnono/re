@@ -1,8 +1,6 @@
 package cn.ljtnono.re.util;
 
 import cn.ljtnono.re.entity.ReBlog;
-import cn.ljtnono.re.util.DateUtil;
-import cn.ljtnono.re.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -15,6 +13,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -27,7 +26,6 @@ import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 
@@ -39,148 +37,168 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * User: devin
- * Date: 2019/12/30
- * Time: 12:46
- * Description: No Description
+ * lucene 工具类
+ *
+ * @author devin
+ * @version 1.0.1
+ * @date 2019/12/30
  */
 @Slf4j
 public class BlogIndexUtil {
+
     private FSDirectory dir;
 
-    /**
-    *@Description:  获取IndexWriter实例
-    *@date: 2019/12/30
-    */
-    //private BlogIndexUtil(){};
+    private static final String SAVE_PATH = "D:\\lucene";
 
-    private IndexWriter getWriter() throws Exception {
-        dir= FSDirectory.open(Paths.get("D:\\lucene"));
-        SmartChineseAnalyzer analyzer=new SmartChineseAnalyzer();
-        IndexWriterConfig iwc=new IndexWriterConfig(analyzer);
-        IndexWriter writer=new IndexWriter(dir, iwc);
-        return writer;
+    private BlogIndexUtil() {}
+
+    private static BlogIndexUtil instance = null;
+
+    public static BlogIndexUtil getInstance() {
+        if (instance == null) {
+            synchronized (BlogIndexUtil.class) {
+                if (instance == null) {
+                    instance = new BlogIndexUtil();
+                }
+            }
+        }
+        return instance;
     }
 
     /**
-     * 添加博客索引
-     * @param blog
-     * @throws Exception
+     * 获取索引writer
+     *
+     * @return IndexWrite
+     * @throws IOException 当目录不存在时抛出IO异常
      */
-    public void addIndex(ReBlog reBlog)throws Exception{
-        IndexWriter writer=getWriter();
-        Document doc=new Document();
-        doc.add(new StringField("id",String.valueOf(reBlog.getId()), Field.Store.YES));
-        doc.add(new TextField("title",reBlog.getTitle(),Field.Store.YES));
-        doc.add(new StringField("releaseDate", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd),Field.Store.YES));
-        doc.add(new TextField("content",reBlog.getContentHtml(),Field.Store.YES));
+    private IndexWriter getWriter() throws IOException {
+        dir = FSDirectory.open(Paths.get(SAVE_PATH));
+        SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer();
+        IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+        return new IndexWriter(dir, iwc);
+    }
+
+
+    /**
+     * 添加分词索引
+     *
+     * @param reBlog 需要进行分词的实体对象
+     * @throws IOException 当目录不存在时抛出IO异常
+     */
+    public void addIndex(ReBlog reBlog) throws IOException {
+        IndexWriter writer = getWriter();
+        Document doc = generateDocument(reBlog, reBlog.getContentHtml());
         writer.addDocument(doc);
         writer.close();
-        log.info("对标题为："+reBlog.getTitle()+"进行分词");
+        log.info("对标题为：" + reBlog.getTitle() + "进行分词");
+    }
+
+    /**
+     * 根据blog实体和博客contentHtml字段生成document对象
+     *
+     * @param reBlog      blog实体
+     * @param contentHtml 字段
+     * @return Document对象
+     */
+    private Document generateDocument(ReBlog reBlog, final String contentHtml) {
+        Document doc = new Document();
+        doc.add(new StringField("id", String.valueOf(reBlog.getId()), Field.Store.YES));
+        doc.add(new TextField("title", reBlog.getTitle(), Field.Store.YES));
+        doc.add(new StringField("releaseDate", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd), Field.Store.YES));
+        doc.add(new TextField("content", contentHtml, Field.Store.YES));
+        return doc;
     }
 
 
     /**
      * 更新博客索引
+     *
+     * @param blog 根据博客实体更新索引
      */
-    public void updateIndex(ReBlog blog)throws Exception{
-        IndexWriter writer=getWriter();
-        Document doc=new Document();
-        doc.add(new StringField("id",String.valueOf(blog.getId()),Field.Store.YES));
-        doc.add(new TextField("title",blog.getTitle(),Field.Store.YES));
-        doc.add(new StringField("releaseDate",DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd),Field.Store.YES));
-        doc.add(new TextField("content",blog.getContentMarkdown(),Field.Store.YES));
-        writer.updateDocument(new Term("id",String.valueOf(blog.getId())), doc);
+    public void updateIndex(ReBlog blog) throws IOException {
+        IndexWriter writer = getWriter();
+        Document doc = generateDocument(blog, blog.getContentMarkdown());
+        writer.updateDocument(new Term("id", String.valueOf(blog.getId())), doc);
         writer.close();
     }
 
 
     /**
-     * 删除指定博客的索引
-     * @param blogId,String RootPath
-     * @throws Exception
+     * @param blogId 根据博客id删除索引
+     * @throws IOException 当目录不存在时抛出IO异常
      */
-    public void deleteIndex(String blogId)throws Exception{
-        IndexWriter writer=getWriter();
-        writer.deleteDocuments(new Term("id",blogId));
-        writer.forceMergeDeletes(); // 强制删除
+    public void deleteIndex(String blogId) throws IOException {
+        IndexWriter writer = getWriter();
+        writer.deleteDocuments(new Term("id", blogId));
+        // 强制删除
+        writer.forceMergeDeletes();
         writer.commit();
         writer.close();
     }
 
 
-
     /**
-     * 查询博客信息
-     * @param q
-     * @return
+     * @param keyword 索引关键字
+     * @return 博客列表
      * @throws Exception
      */
-    public List<ReBlog> searchBlog(String q)throws Exception{
-        //dir=FSDirectory.open(Paths.get("/home/lucene/blog"));
-        dir=FSDirectory.open(Paths.get("D:\\lucene"));
-        IndexReader reader= DirectoryReader.open(dir);
-        IndexSearcher is=new IndexSearcher(reader);
-        BooleanQuery.Builder booleanQuery=new BooleanQuery.Builder();
-        SmartChineseAnalyzer analyzer=new SmartChineseAnalyzer();
+    public List<ReBlog> searchBlog(String keyword) throws Exception {
+        dir = FSDirectory.open(Paths.get(SAVE_PATH));
+        IndexReader reader = DirectoryReader.open(dir);
+        IndexSearcher is = new IndexSearcher(reader);
+        BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
+        SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer();
 
-        QueryParser parser=new QueryParser("title", analyzer);
-        Query query=parser.parse(q);
+        QueryParser titleParser = new QueryParser("title", analyzer);
+        Query titleQuery = titleParser.parse(keyword);
 
-        QueryParser parser2=new QueryParser("content", analyzer);
-        Query query2=parser2.parse(q);
+        QueryParser contentParser = new QueryParser("content", analyzer);
+        Query contentQuery = contentParser.parse(keyword);
 
 
-        booleanQuery.add(query, BooleanClause.Occur.SHOULD);
-        booleanQuery.add(query2, BooleanClause.Occur.SHOULD);
+        booleanQuery.add(titleQuery, BooleanClause.Occur.SHOULD);
+        booleanQuery.add(contentQuery, BooleanClause.Occur.SHOULD);
 
-        TopDocs hits=is.search(booleanQuery.build(), 100);
+        TopDocs hits = is.search(booleanQuery.build(), 100);
         //标红
-        QueryScorer scorer=new QueryScorer(booleanQuery.build());
-        Fragmenter fragmenter=new SimpleSpanFragmenter(scorer);
-        SimpleHTMLFormatter simpleHTMLFormatter=new SimpleHTMLFormatter("<b><font color='red'>", "</font></b>");
-        Highlighter highlighter=new Highlighter(simpleHTMLFormatter, scorer);
+        QueryScorer scorer = new QueryScorer(booleanQuery.build());
+        Fragmenter fragmenter = new SimpleSpanFragmenter(scorer);
+        SimpleHTMLFormatter simpleHtmlFormatter = new SimpleHTMLFormatter("<b><font color='red'>", "</font></b>");
+        Highlighter highlighter = new Highlighter(simpleHtmlFormatter, scorer);
         highlighter.setTextFragmenter(fragmenter);
 
-        List<ReBlog> blogList=new LinkedList<ReBlog>();
-        //System.out.println(hits.scoreDocs.length);
-        //if(hits.scoreDocs.length!=0)
-        for(ScoreDoc scoreDoc:hits.scoreDocs){
-            Document doc=is.doc(scoreDoc.doc);
-            ReBlog blog=new ReBlog();
-            //System.out.println(doc.get("id"));
-//            if(doc.get("id") == null)
-//            blog.setId(Integer.parseInt(doc.get("id")));
-            blog.setCreateTime(DateUtil.formatString(doc.get("releaseDate"),"yy-mm-dd"));
-            String title=doc.get("title");
-            if(title!=null){
-                TokenStream tokenStream=analyzer.tokenStream("title", new StringReader(title));
-                String hTitle=highlighter.getBestFragment(tokenStream, title);
-                if(StringUtil.isEmpty(hTitle)){
+        List<ReBlog> blogList = new LinkedList<>();
+        for (ScoreDoc scoreDoc : hits.scoreDocs) {
+            Document doc = is.doc(scoreDoc.doc);
+            ReBlog blog = new ReBlog();
+            blog.setCreateTime(DateUtil.formatString(doc.get("releaseDate"), "yy-mm-dd"));
+            String title = doc.get("title");
+            if (title != null) {
+                TokenStream tokenStream = analyzer.tokenStream("title", new StringReader(title));
+                String hTitle = highlighter.getBestFragment(tokenStream, title);
+                if (StringUtil.isEmpty(hTitle)) {
                     blog.setTitle(title);
-                }else{
+                } else {
                     blog.setTitle(hTitle);
                 }
             }
             //过虑掉html中的<标签>
-
-            String content=doc.get("content");//这个content取得是  notag的content  索引中的
+            String content = doc.get("content");//这个content取得是  notag的content  索引中的
             //把<>转义成   &lt; <    &gt; >
 //            content = content.replace("<", "&lt;");
 ////            content =  content.replace(">", "&gt;");
-            if(content!=null){
-                TokenStream tokenStream=analyzer.tokenStream("content", new StringReader(content));
-                String hContent=highlighter.getBestFragment(tokenStream, content);
-
-                if(StringUtil.isEmpty(hContent)){
-                    if(content.length()<=200){
+            if (content != null) {
+                TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(content));
+                String hContent = highlighter.getBestFragment(tokenStream, content);
+                if (StringUtil.isEmpty(hContent)) {
+                    if (content.length() <= 200) {
                         blog.setContentHtml(content);
 //                        blog.setContent(content);
-                    }else{
-                        blog.setContentHtml(content.substring(0,200));
+                    } else {
+                        blog.setContentHtml(content.substring(0, 200));
                         //blog.setContent(content.substring(0, 200));
                     }
-                }else{
+                } else {
                     blog.setContentMarkdown(hContent);
                 }
             }
@@ -188,6 +206,4 @@ public class BlogIndexUtil {
         }
         return blogList;
     }
-
-
 }
