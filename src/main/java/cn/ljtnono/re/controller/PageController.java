@@ -138,7 +138,7 @@ public class PageController {
 //        modelMap.addAttribute()
         // modelMap.addObject("pageTitle", "搜索关键字'" + q + "'结果页面_java开源博客系统");
         //modelMap.addObject("mainPage", "foreground/blog/result.jsp");
-        BlogIndexUtil blogIndexUtil = new BlogIndexUtil();
+        BlogIndexUtil blogIndexUtil = BlogIndexUtil.getInstance();
 
         List<ReBlog> blogList = blogIndexUtil.searchBlog(keyWord);
 
