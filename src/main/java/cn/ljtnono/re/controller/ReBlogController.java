@@ -72,7 +72,7 @@ public class ReBlogController {
             }
         }
         // 创建博文之后 在本地进行分词
-        BlogIndexUtil blogIndexUtil = new BlogIndexUtil();
+        BlogIndexUtil blogIndexUtil = BlogIndexUtil.getInstance();
         blogIndexUtil.addIndex(build);
 
         log.info("新发表博客请求参数" + reBlogSaveDTO.toString());
