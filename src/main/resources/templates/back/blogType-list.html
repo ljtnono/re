@@ -41,7 +41,7 @@
                                    class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <button class="layui-btn" lay-submit lay-filter = "search">
+                            <button class="layui-btn" lay-submit lay-filter="search">
                                 <i class="layui-icon">&#xe615;</i></button>
                         </div>
                     </form>
@@ -126,7 +126,7 @@
         });
 
         // 监听表单提交事件
-        form.on('submit(search)', function(data){
+        form.on('submit(search)', function (data) {
             //被执行事件的元素DOM对象，一般为button对象
             console.log(data.elem);
             //被执行提交的form对象，一般在存在form标签时才会返回
@@ -137,17 +137,17 @@
             //阻止表单跳转。如果需要表单跳转，去掉这段即可。
             return false;
         });
-
         // 监听操作栏点击事件
         table.on('tool(blogType)', function (obj) {
             let layEvent = obj.event;
             let data = obj.data;
             if ("edit" === layEvent) {
+                // 弹出tab栏修改
 
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {
-                    layer.msg("不能删除已经删除的项！" , {icon: 2});
+                    layer.msg("不能删除已经删除的项！", {icon: 2});
                 } else {
                     layer.confirm('此操作将会删除该分类下所有的博客，确认删除？', {
                         btn: ['确认', '取消']
@@ -156,10 +156,18 @@
                             url: [[${#servletContext.contextPath}]] + "/blog_type/" + data.id,
                             method: "DELETE",
                             success: function (res) {
-                                console.log(res);
+                                if (res.request === "success" && res.status === 200) {
+                                    layer.msg(res.message, {icon: 1});
+                                } else {
+                                    layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                                }
                             },
                             error: function (res) {
-                                console.log(res);
+                                if (res) {
+                                    layer.msg(res);
+                                } else {
+                                    layer.msg("请求错误，请检查网络", {icon: 2});
+                                }
                             }
                         });
                         layer.close(index);
@@ -167,9 +175,32 @@
                 }
             } else if ("restore" === layEvent) {
                 if (data.status === 1) {
-                    layer.msg("不能删恢复正常的项！" , {icon: 2});
+                    layer.msg("不能恢复正常的项！", {icon: 2});
                 } else {
-
+                    // 恢复博客类型相关
+                    layer.confirm('确认恢复？', {
+                        btn: ['确认', '取消']
+                    }, function (index) {
+                        $.ajax({
+                            url: [[${#servletContext.contextPath}]] + "/blog_type/restore/" + data.id,
+                            method: "PUT",
+                            success: function (res) {
+                                if (res.request === "success" && res.status === 200) {
+                                    layer.msg(res.message, {icon: 1});
+                                } else {
+                                    layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                                }
+                            },
+                            error: function (res) {
+                                if (res) {
+                                    layer.msg(res);
+                                } else {
+                                    layer.msg("请求错误，请检查网络", {icon: 2});
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
                 }
             }
         });
