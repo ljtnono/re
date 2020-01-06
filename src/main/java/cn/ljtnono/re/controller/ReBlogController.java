@@ -78,11 +78,10 @@ public class ReBlogController {
         }
         // 创建博文之后 在本地进行分词
         BlogIndexUtil blogIndexUtil = BlogIndexUtil.getInstance();
-        // TODO 处理异常，设置applicationContext中的内容更新
         try {
             blogIndexUtil.addIndex(build);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("分词添加失败");
         }
         log.info("新发表博客请求参数" + reBlogSaveDTO.toString());
         JsonResult jsonResult = iReBlogService.saveEntity(build);
