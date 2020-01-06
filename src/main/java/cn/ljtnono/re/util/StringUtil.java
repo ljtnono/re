@@ -46,4 +46,21 @@ public class StringUtil {
         }
         return str;
     }
+
+
+    /**
+     * 将id数组，替换成 1,2,3,4 类型 方便sql 使用 in 语句
+     * @return 拼接好的字符串
+     */
+    public static String toSqlInCondition(String[] params) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < params.length; i++) {
+            if (i == params.length - 1) {
+                builder.append(params[i]);
+            } else {
+                builder.append(params[i]).append(",");
+            }
+        }
+        return builder.toString();
+    }
 }
