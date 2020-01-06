@@ -1,10 +1,9 @@
 package cn.ljtnono.re.ftp;
 
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -13,9 +12,10 @@ import java.util.Optional;
 /**
  * 封装ftpClient的对象
  * @author ljt
- * @version 1.2
- * @date 2019/11/26
+ * @version 1.0.2
+ * @date 2020/1/6
  */
+@Slf4j
 public class ReFtpClient {
 
     /** ftpClient 相关配置*/
@@ -23,9 +23,6 @@ public class ReFtpClient {
 
     /** ftpClient */
     private FTPClient ftpClient;
-
-    /** 打印日志 */
-    private static Logger logger = LoggerFactory.getLogger(ReFtpClient.class);
 
     public ReFtpClient(ReFtpClientConfig reFtpClientConfig) throws IOException {
         if (reFtpClientConfig == null) {
@@ -72,9 +69,9 @@ public class ReFtpClient {
      */
     public void disConnect() throws IOException {
         if (isActive()) {
-            logger.info("退出登陆=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
+            log.info("退出登陆=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
             ftpClient.logout();
-            logger.info("断开连接");
+            log.info("断开连接");
             ftpClient.disconnect();
         }
     }
@@ -87,19 +84,19 @@ public class ReFtpClient {
      */
     public boolean connect() throws IOException {
         if (ftpClient != null) {
-            logger.info("连接ftp服务器=====>" + reFtpClientConfig.getFtpServerAddr());
+            log.info("连接ftp服务器=====>" + reFtpClientConfig.getFtpServerAddr());
             // 连接FTP服务器
             ftpClient.connect(reFtpClientConfig.getFtpServerAddr(), reFtpClientConfig.getFtpServerPort());
-            logger.info("登陆ftp服务器=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
+            log.info("登陆ftp服务器=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
             ftpClient.login(reFtpClientConfig.getFtpServerUser(), reFtpClientConfig.getFtpServerPassword());
             if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
-                logger.info("连接ftp服务器失败，断开连接");
+                log.info("连接ftp服务器失败，断开连接");
                 ftpClient.disconnect();
                 return false;
             }
             return true;
         } else {
-            logger.info("ftpClient未初始化");
+            log.info("ftpClient未初始化");
             return false;
         }
     }
@@ -118,13 +115,13 @@ public class ReFtpClient {
      * @throws IOException 当出现IO异常时抛出异常
      */
     private void changeWorkingDirectory(final String filePath) throws IOException {
-        logger.info("切换目录=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+        log.info("切换目录=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
         if (!ftpClient.changeWorkingDirectory(reFtpClientConfig.getFtpServerDirBase() + filePath)) {
             //如果目录不存在创建目录
-            logger.info("目录不存在，进行创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+            log.info("目录不存在，进行创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
             String[] dirs = filePath.split("/");
             String tempPath = reFtpClientConfig.getFtpServerDirBase();
-            logger.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+            log.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
             for (String dir : dirs) {
                 if (null == dir || "".equals(dir)) {
                     continue;
@@ -132,7 +129,7 @@ public class ReFtpClient {
                 tempPath += "/" + dir;
                 if (!ftpClient.changeWorkingDirectory(tempPath)) {
                     if (!ftpClient.makeDirectory(tempPath)) {
-                        logger.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath + "成功");
+                        log.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath + "成功");
                         break;
                     } else {
                         ftpClient.changeWorkingDirectory(tempPath);
@@ -204,7 +201,7 @@ public class ReFtpClient {
         try {
             validateUploadFileParameters(filePath, fileName, input);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             return null;
         }
         connect();
@@ -222,7 +219,7 @@ public class ReFtpClient {
             ftpClient.storeFile(fileName, input);
             disConnect();
         } catch (IOException e) {
-            logger.error("上传文件" + fileName + "=====>" + "失败");
+            log.error("上传文件" + fileName + "=====>" + "失败");
             e.printStackTrace();
             return null;
         } finally {
@@ -231,7 +228,7 @@ public class ReFtpClient {
                     input.close();
                 }
             } catch (IOException e) {
-                logger.error("关闭输入流失败");
+                log.error("关闭输入流失败");
                 e.printStackTrace();
             }
         }
