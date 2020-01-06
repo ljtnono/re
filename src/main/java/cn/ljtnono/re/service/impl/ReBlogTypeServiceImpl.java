@@ -152,7 +152,14 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
      */
     @Override
     public JsonResult search(final String name) {
-        return null;
+        Optional<String> optionalName = Optional.ofNullable(name);
+        optionalName.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
+        List<ReBlogType> queryResult = getBaseMapper().selectList(new QueryWrapper<ReBlogType>().like("name", name));
+        if (queryResult != null) {
+            return JsonResult.success(queryResult, queryResult.size());
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+        }
     }
 
     @Override

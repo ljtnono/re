@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="x-admin-sm" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>编写博客</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/static/back/css/font.css}">
+    <link rel="stylesheet" th:href="@{/static/back/css/xadmin.css}">
+    <script th:src="@{/static/back/lib/layui/layui.js}" charset="utf-8"></script>
+    <script th:src="@{/static/back/js/xadmin.js}"></script>
+    <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+    <!-- editor.md编辑器相关 -->
+    <link rel="stylesheet" th:href="@{/static/fore/lib/editor.md-1.5.0/css/editormd.min.css}">
+    <script th:src="@{/static/fore/lib/editor.md-1.5.0/editormd.min.js}"></script>
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- nav导航 -->
+<div class="x-nav">
+    <span class="layui-breadcrumb">
+        <a href="javascript:">首页</a>
+        <a href="javascript:">博客管理</a>
+        <a href="javascript:"><cite>编写博客</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <fieldset class="layui-elem-field layui-field-title site-title">
+                        <legend><a name="default">博客内容</a></legend>
+                    </fieldset>
+                    <div id="blog-editormd">
+                        <textarea style="display:none;"></textarea>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="margin-left: 0;">
+                            <button class="layui-btn layui-btn-fluid" id="confirm">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/static/fore/js/common.js}"></script>
+<script th:inline="javascript">
+    <!-- 发表博客弹出层 -->
+    let publishLayerHtml = "<div id=\"publish-layer\" class=\"layui-card-body\">"
+        + "    <form class=\"layui-form\" lay-filter=\"form-blog\">"
+        + "        <div class=\"layui-row layui-col-space15\">"
+        + "            <div class=\"layui-col-md12\">"
+        + "                <div class=\"layui-card\">"
+        + "                    <div class=\"layui-card-body\">"
+        + "                        <div class=\"layui-form-item\">"
+        + "                            <label class=\"layui-form-label\">博客标题</label>"
+        + "                            <div class=\"layui-input-block\">"
+        + "                                <input type=\"text\" name=\"title\" autocomplete=\"off\" lay-verify=\"title\""
+        + "                                       class=\"layui-input\">"
+        + "                            </div>"
+        + "                        </div>"
+        + "                        <div class=\"layui-form-item\">"
+        + "                            <label class=\"layui-form-label\">博客作者</label>"
+        + "                            <div class=\"layui-input-block\">"
+        + "                                <input type=\"text\" name=\"author\" autocomplete=\"off\" lay-verify=\"author\""
+        + "                                       class=\"layui-input\">"
+        + "                            </div>"
+        + "                        </div>"
+        + "                        <div class=\"layui-form-item\">"
+        + "                            <label class=\"layui-form-label\">博客类型</label>"
+        + "                            <div class=\"layui-input-block\">"
+        + "                                <select name=\"type\" id=\"type\" lay-verify=\"required\">"
+        + "                                    <option>博客标签分类</option>"
+        + "                                </select>"
+        + "                            </div>"
+        + "                        </div>"
+        + "                        <div class=\"layui-form-item\">"
+        + "                            <label class=\"layui-form-label\">博客简介</label>"
+        + "                            <div class=\"layui-input-block\">"
+        + "                                <textarea name=\"summary\" placeholder=\"请输入博客的简介\""
+        + "                                          class=\"layui-textarea\"></textarea>"
+        + "                            </div>"
+        + "                        </div>"
+        + "                    </div>"
+        + "                    <div class=\"layui-card-body\">"
+        + "                        <div class=\"layui-form-item\">"
+        + "                            <div class=\"layui-input-block\" style=\"margin-left: 0;\">"
+        + "                                <button type=\"reset\" class=\"layui-btn layui-btn-fluid\">重置</button>"
+        + "                            </div>"
+        + "                            <div class=\"layui-input-block\" style=\"margin-left: 0;\">"
+        + "                                <button class=\"layui-btn layui-btn-fluid\" lay-submit lay-filter=\"form-blog-submit\">提交"
+        + "                                </button>"
+        + "                            </div>"
+        + "                        </div>"
+        + "                    </div>"
+        + "                </div>"
+        + "            </div>"
+        + "        </div>"
+        + "    </form>"
+        + "</div>";
+    // 初始化markdown编辑器
+    let blogEditor;
+    blogEditor = editormd("blog-editormd", editorConfig);
+    layui.use(['layer', 'form'], function () {
+        let layer = layui.layer;
+        let form = layui.form;
+        let publishLayer;
+        let options = [];
+        $("#confirm").on("click", function () {
+            publishLayer = layer.open({
+                type: 1,
+                area: ["60%"],
+                shadeClose: true,
+                title: "发布博客",
+                content: publishLayerHtml,
+                success: function () {
+                    $.ajax({
+                        url: [[${#servletContext.contextPath}]] + "/blog_type",
+                        method: "GET",
+                        dataType: "json",
+                        success: function (res) {
+                            // 请求成功，将option拼接到下拉框中去
+                            if (res.request === "success" && res.status === 200) {
+                                $.each(res.data, function (index, item) {
+                                    $('#type').append(new Option(item.name, item.name));
+                                    options.push(item);
+                                });
+                                form.render();
+                            } else {
+                                layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                            }
+                        },
+                        error: function (res) {
+                            if (res) {
+                                layer.msg(res);
+                            } else {
+                                layer.msg("请求错误，请检查网络", {icon: 2});
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        // 设置表单校验
+        form.verify({
+            title: function (value, item) {
+                // 验证只能4-30个字符 包括中文、字母、数字下划线
+                let titleRex = /^[\w\W\s\u4e00-\u9fcc]{4,30}$/;
+                if (!titleRex.test(value)) {
+                    return "标题只能为4-64个字符的字符串";
+                }
+            },
+            author: function (value, item) {
+                let titleRex = /^[\w\W\s\u4e00-\u9fcc]{2,10}$/;
+                if (!titleRex.test(value)) {
+                    return "作者只能为2-10个字符";
+                }
+            }
+        });
+        form.on("submit(form-blog-submit)", function (data) {
+            let blog = data.field;
+            layer.confirm('确认发表？', {
+                btn: ['确认', '取消']
+            }, function (index) {
+                let coverImage = getImgUrlFromMarkDown(blog.contentMarkdown);
+                $.ajax({
+                    url: [[${#servletContext.contextPath}]] + "/blog",
+                    data: {
+                        title: blog.title,
+                        author: blog.author,
+                        summary: blog.summary,
+                        type: blog.type,
+                        contentMarkdown: blogEditor.getMarkdown(),
+                        contentHtml: blogEditor.getHTML(),
+                        coverImage: coverImage
+                    },
+                    method: "POST",
+                    dateType: "json",
+                    success: function (res) {
+                        if (res.request === "success" && res.status === 200) {
+                            layer.msg(res.message , {icon: 1});
+                        } else {
+                            layer.msg(res.message , {icon: 2});
+                        }
+                    },
+                    error: function () {
+                        layer.msg("请求失败，请检查网络", {icon: 2});
+                    }
+                });
+                layer.close(index);
+            });
+            return false;
+        });
+    });
+</script>
+</html>

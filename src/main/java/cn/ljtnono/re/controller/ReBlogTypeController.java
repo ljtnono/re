@@ -2,8 +2,11 @@ package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlogType;
+import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogTypeService;
+import cn.ljtnono.re.util.StringUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -74,8 +77,12 @@ public class ReBlogTypeController {
     @PostMapping("/search")
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
     public JsonResult search(final String name) {
-
-        return null;
+        if (StringUtil.isEmpty(name)) {
+            if (null == name) {
+                throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
+            }
+            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR);
+        }
+        return iReBlogTypeService.search(name);
     }
-
 }
