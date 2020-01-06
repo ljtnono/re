@@ -5,11 +5,13 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.Serializable;
+
 /**
  * 博客类型服务接口
  * @author ljt
- * @date 2019/11/16
- * @version 1.0
+ * @date 2020/1/6
+ * @version 1.0.3
  */
 public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityService<ReBlogType> {
 
@@ -26,4 +28,18 @@ public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityServi
      * @return JsonResult 对象
      */
     JsonResult listBlogTypePage(Integer page, Integer count);
+
+    /**
+     * 恢复删除的博客类型
+     * @param id 需要恢复的博客类型id
+     * @return JsonResult 对象
+     */
+    JsonResult restore(Serializable id);
+
+    /**
+     * 博客类型名称模糊查询
+     * @param name 博客类型名称
+     * @return JsonResult 对象
+     */
+    JsonResult search(final String name);
 }

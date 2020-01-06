@@ -239,7 +239,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     @Override
     public JsonResult listEntityAll() {
         // 直接从数据库中获取所有 这里mybatis-plus 会返回空集合
-        List<ReBlog> blogList = list(new QueryWrapper<ReBlog>().orderByDesc("view", "modify_time").last("LIMIT 6"));
+        List<ReBlog> blogList = list(new QueryWrapper<ReBlog>());
         // 将数据写入缓存中
         Optional<List<ReBlog>> optionalList = Optional.ofNullable(blogList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -253,12 +253,4 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         success.setMessage("操作成功");
         return success;
     }
-
-    /**
-    *@Description:
-    *@Param:
-    *@return:
-    *@date: 2019/12/30
-    */
-
 }

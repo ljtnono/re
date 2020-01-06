@@ -102,6 +102,59 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         }
     }
 
+    /**
+     * 恢复删除的博客类型
+     *
+     * @param id 需要恢复的博客类型id
+     * @return JsonResult 对象
+     */
+    @Override
+    public JsonResult restore(Serializable id) {
+        Optional<Serializable> optionalId = Optional.ofNullable(id);
+        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        Integer blogTypeId = Integer.parseInt(id.toString());
+        if (blogTypeId >= 1) {
+            // 更新状态
+            boolean update = update(new UpdateWrapper<ReBlogType>().set("status", 1).eq("id", id));
+            // 更新相关博客的状态
+            ReBlogType reBlogType = getById(blogTypeId);
+            boolean updateResult = iReBlogService.update(new UpdateWrapper<ReBlog>().set("status", 1).eq("type", reBlogType.getName()));
+            if (updateResult && update) {
+                // 删除所有相关缓存
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
+                        .getKey().replace(":id", ":*")
+                        .replace(":name", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_TOTAL_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                // 删除所有的blog缓存相关
+                redisUtil.deleteByPattern("re_blog:*");
+                redisUtil.deleteByPattern("re_blog_page:*");
+                redisUtil.deleteByPattern("re_blog_page_total:*");
+                redisUtil.deleteByPattern("re_blog_page_type:*");
+                return JsonResult.success(Collections.singletonList(reBlogType), 1);
+            } else {
+                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            }
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+        }
+    }
+
+    /**
+     * 博客类型名称模糊查询
+     *
+     * @param name 博客类型名称
+     * @return JsonResult 对象
+     */
+    @Override
+    public JsonResult search(final String name) {
+        return null;
+    }
+
     @Override
     public JsonResult saveEntity(ReBlogType entity) {
         Optional<ReBlogType> optionalReBlogType = Optional.ofNullable(entity);
@@ -140,6 +193,11 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
                 redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_TOTAL_KEY
                         .getKey().replace(":page", ":*")
                         .replace(":count", ":*"));
+                // 删除所有的blog缓存相关
+                redisUtil.deleteByPattern("re_blog:*");
+                redisUtil.deleteByPattern("re_blog_page:*");
+                redisUtil.deleteByPattern("re_blog_page_total:*");
+                redisUtil.deleteByPattern("re_blog_page_type:*");
                 return JsonResult.success(Collections.singletonList(reBlogType), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
@@ -159,14 +217,21 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         if (blogTypeId >= 1) {
             boolean updateResult = update(new UpdateWrapper<ReBlogType>().setEntity(entity).eq("id", blogTypeId));
             if (updateResult) {
-                // 更新操作
-                String key = ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY.getKey()
-                        .replace(":id", ":" + entity.getId())
-                        .replace(":name", ":" + entity.getName());
-                boolean b = redisUtil.hasKey(key);
-                if (b) {
-                    redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-                }
+                // 删除所有的缓存
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
+                        .getKey().replace(":id", ":*")
+                        .replace(":name", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_TOTAL_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                // 删除所有的blog缓存相关
+                redisUtil.deleteByPattern("re_blog:*");
+                redisUtil.deleteByPattern("re_blog_page:*");
+                redisUtil.deleteByPattern("re_blog_page_total:*");
+                redisUtil.deleteByPattern("re_blog_page_type:*");
                 return JsonResult.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
