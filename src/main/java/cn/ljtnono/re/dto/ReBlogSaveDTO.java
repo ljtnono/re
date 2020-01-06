@@ -57,5 +57,4 @@ public class ReBlogSaveDTO implements Serializable {
     @NotNull(message = "博客封面不能为null")
     @URL(message = "博客封面必须是有效的url")
     private String coverImage;
-
 }
