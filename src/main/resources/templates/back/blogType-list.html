@@ -124,11 +124,29 @@
                 ]
             ]
         });
-
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
             $.ajax({
-
+                url: [[${#servletContext.contextPath}]] + "/blog_type/search",
+                data: {
+                    name: data.name
+                },
+                method: "POST",
+                success: function (res) {
+                    if (res.request === "success" && res.status === 200) {
+                        // TODO 重新渲染表格
+                        table.render();
+                    } else {
+                        layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                    }
+                },
+                error: function (res) {
+                    if (res) {
+                        layer.msg(res);
+                    } else {
+                        layer.msg("请求错误，请检查网络", {icon: 2});
+                    }
+                }
             });
             return false;
         });
