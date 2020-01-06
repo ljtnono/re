@@ -21,7 +21,6 @@
         <commons-net.version>3.6</commons-net.version>
         <commons-pool2.version>2.7.0</commons-pool2.version>
         <alibaba-fastjson.version>1.2.52.sec06</alibaba-fastjson.version>
-        <guava.version>28.1-jre</guava.version>
         <lombok.version>1.18.10</lombok.version>
         <swagger.version>2.9.2</swagger.version>
     </properties>
@@ -131,12 +130,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <!-- guava包 -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
         <!-- 添加swagger包 -->
         <dependency>
