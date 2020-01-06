@@ -3,20 +3,15 @@ package cn.ljtnono.re.ftp;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * ftpClient连接池工厂
  * @author ljt
- * @date 2019/11/25
- * @version 1.1
+ * @date 2020/1/6
+ * @version 1.0.2
  */
 public class ReFtpClientPooledObjectFactory extends BasePooledObjectFactory<ReFtpClient> {
-
-    /** 日志记录器 */
-    private static Logger logger = LoggerFactory.getLogger(ReFtpClientPooledObjectFactory.class);
 
     @Override
     public ReFtpClient create() throws Exception {
