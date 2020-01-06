@@ -5,6 +5,7 @@ import cn.ljtnono.re.util.BlogIndexUtil;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.List;
  * @version 1.0.1
  */
 @Controller
-@ApiOperation("路由信息")
+@Api(value = "页面路由Controller")
 @Slf4j
 public class PageController {
 
@@ -54,7 +55,7 @@ public class PageController {
     }
 
     @RequestMapping({"/admin", "/admin/"})
-    public String back(ModelMap map) {
+    public String back() {
         return "back/index";
     }
 
