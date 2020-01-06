@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * springboot 启动类
  * @author ljt
- * @date 2019/11/23
- * @version 1.1
+ * @date 2020/1/6
+ * @version 1.0.2
  */
 @SpringBootApplication
 @MapperScan(value = {"cn.ljtnono.re.mapper"})
