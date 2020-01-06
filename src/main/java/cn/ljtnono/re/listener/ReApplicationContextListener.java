@@ -6,6 +6,7 @@ import cn.ljtnono.re.service.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -27,6 +28,7 @@ import java.util.List;
  * @date 2019/10/30
  */
 @Component
+@Slf4j
 public class ReApplicationContextListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
     @Autowired
@@ -43,8 +45,6 @@ public class ReApplicationContextListener implements ApplicationListener<Context
 
     @Autowired
     private IReImageService iReImageService;
-
-    private static Logger logger = LoggerFactory.getLogger(ReApplicationContextListener.class);
 
     private ApplicationContext applicationContext;
 
@@ -86,13 +86,13 @@ public class ReApplicationContextListener implements ApplicationListener<Context
         });
         // 获取总的文章数
         int blogTotalCount = iReBlogService.count();
-        logger.info("文章总数：" + blogTotalCount);
+        log.info("文章总数：" + blogTotalCount);
         int blogViewTotalCount = iReBlogService.countView();
-        logger.info("文章浏览量总数：" + blogViewTotalCount);
+        log.info("文章浏览量总数：" + blogViewTotalCount);
         int blogTypeTotalCount = iReBlogTypeService.count();
-        logger.info("文章类型总数：" + blogTypeTotalCount);
+        log.info("文章类型总数：" + blogTypeTotalCount);
         int blogCommentTotalCount = iReBlogService.countComment();
-        logger.info("文章评论总数：" + blogCommentTotalCount);
+        log.info("文章评论总数：" + blogCommentTotalCount);
         servletContext.setAttribute("indexBlogListFirstPage", jsonResult.getData());
         servletContext.setAttribute("guessYouLikeList", listGuessYouLike);
         servletContext.setAttribute("blogTypeList", listBlogTypeResult);
@@ -113,9 +113,9 @@ public class ReApplicationContextListener implements ApplicationListener<Context
     private void setSysConfigInfo() {
         // 获取系统信息
         String javaVersion = System.getProperty("java.version");
-        logger.info("java.version = " + javaVersion);
+        log.info("java.version = " + javaVersion);
         String osName = System.getProperty("os.name");
-        logger.info("os.name = " + osName);
+        log.info("os.name = " + osName);
         iReConfigService.update(new UpdateWrapper<ReConfig>().set("`value`", javaVersion).eq("`key`", "java_version"));
         iReConfigService.update(new UpdateWrapper<ReConfig>().set("`value`", osName).eq("`key`", "os_name"));
     }
