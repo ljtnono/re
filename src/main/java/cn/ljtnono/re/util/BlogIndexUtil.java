@@ -13,7 +13,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -183,10 +182,8 @@ public class BlogIndexUtil {
                 }
             }
             //过虑掉html中的<标签>
-            String content = doc.get("content");//这个content取得是  notag的content  索引中的
-            //把<>转义成   &lt; <    &gt; >
-//            content = content.replace("<", "&lt;");
-////            content =  content.replace(">", "&gt;");
+            String content = doc.get("content");
+            //这个content取得是  notag的content  索引中的
             if (content != null) {
                 TokenStream tokenStream = analyzer.tokenStream("content", new StringReader(content));
                 String hContent = highlighter.getBestFragment(tokenStream, content);
