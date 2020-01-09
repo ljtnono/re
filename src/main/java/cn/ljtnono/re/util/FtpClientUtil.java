@@ -20,7 +20,7 @@ public class FtpClientUtil {
     private ReFtpClientPool reFtpClientPool;
 
     /** 实例 */
-    private static FtpClientUtil instance = null;
+    private volatile static FtpClientUtil instance = null;
 
     /** 单例模式 */
     private FtpClientUtil(){}

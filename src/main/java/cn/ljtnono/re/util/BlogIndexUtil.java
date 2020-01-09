@@ -51,7 +51,7 @@ public class BlogIndexUtil {
 
     private BlogIndexUtil() {}
 
-    private static BlogIndexUtil instance = null;
+    private volatile static BlogIndexUtil instance = null;
 
     public static BlogIndexUtil getInstance() {
         if (instance == null) {

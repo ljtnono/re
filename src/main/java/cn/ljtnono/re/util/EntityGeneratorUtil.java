@@ -24,7 +24,7 @@ public class EntityGeneratorUtil {
     /**
      * 实例对象
      */
-    private static EntityGeneratorUtil instance = null;
+    private volatile static EntityGeneratorUtil instance = null;
 
     /**
      * 单例模式获取实例

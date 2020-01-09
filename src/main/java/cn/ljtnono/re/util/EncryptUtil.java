@@ -13,7 +13,7 @@ public class EncryptUtil {
      */
     private EncryptUtil(){}
 
-    private static EncryptUtil instance = null;
+    private volatile static EncryptUtil instance = null;
 
     public static EncryptUtil getInstance() {
         if (instance == null) {
