@@ -27,22 +27,26 @@ import java.util.List;
 @Slf4j
 public class ReApplicationContextListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
-    @Autowired
-    private IReBlogService iReBlogService;
+    private final IReBlogService iReBlogService;
 
-    @Autowired
-    private IReLinkService iReLinkService;
+    private final IReLinkService iReLinkService;
 
-    @Autowired
-    private IReBlogTypeService iReBlogTypeService;
+    private final IReBlogTypeService iReBlogTypeService;
 
-    @Autowired
-    private IReConfigService iReConfigService;
+    private final IReConfigService iReConfigService;
 
-    @Autowired
-    private IReImageService iReImageService;
+    private final IReImageService iReImageService;
 
     private ApplicationContext applicationContext;
+
+    @Autowired
+    public ReApplicationContextListener(IReBlogService iReBlogService, IReLinkService iReLinkService, IReBlogTypeService iReBlogTypeService, IReConfigService iReConfigService, IReImageService iReImageService) {
+        this.iReBlogService = iReBlogService;
+        this.iReLinkService = iReLinkService;
+        this.iReBlogTypeService = iReBlogTypeService;
+        this.iReConfigService = iReConfigService;
+        this.iReImageService = iReImageService;
+    }
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -77,9 +81,7 @@ public class ReApplicationContextListener implements ApplicationListener<Context
         ReImage qrCodeWeChatSk = iReImageService.getQrCodeWeChatSk();
         ReImage qrCodeZfb = iReImageService.getQrCodeZfb();
         // 将每一个配置项设置到application域
-        list.forEach(reConfig -> {
-            servletContext.setAttribute(reConfig.getKey(), reConfig.getValue());
-        });
+        list.forEach(reConfig -> servletContext.setAttribute(reConfig.getKey(), reConfig.getValue()));
         // 获取总的文章数
         int blogTotalCount = iReBlogService.count();
         log.info("文章总数：" + blogTotalCount);
