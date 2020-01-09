@@ -83,10 +83,7 @@ public class ReBlogController {
         } catch (IOException e) {
             log.info("分词添加失败");
         }
-        log.info("新发表博客请求参数" + reBlogSaveDTO.toString());
-        JsonResult jsonResult = iReBlogService.saveEntity(build);
-        log.info("新发表博客返回参数：" + jsonResult);
-        return jsonResult;
+        return iReBlogService.saveEntity(build);
     }
 
     @PutMapping("/{id:\\d+}")
