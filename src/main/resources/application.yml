@@ -51,14 +51,16 @@ spring:
   mvc:
     favicon:
       enabled: false
-#配置mybatis相关
-mybatis:
-  configuration:
-    # 配置打印sql
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 # 配置tomcat服务器相关
 server:
   servlet:
     context-path: /re
-#  port: 8080
-  port: 80
+  port: 8080
+#  port: 80
+
+# 配置mybatis相关
+mybatis-plus:
+  configuration:
+    log-prefix: mybatis.sql
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
