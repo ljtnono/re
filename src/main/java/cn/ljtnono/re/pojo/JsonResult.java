@@ -226,4 +226,16 @@ public class JsonResult implements Serializable {
             return new JsonResult(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "JsonResult{" +
+                "totalCount=" + totalCount +
+                ", request='" + request + '\'' +
+                ", status=" + status +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                ", fields=" + fields +
+                '}';
+    }
 }
