@@ -170,7 +170,7 @@ public class BlogIndexUtil {
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document doc = is.doc(scoreDoc.doc);
             ReBlog blog = new ReBlog();
-            blog.setCreateTime(DateUtil.formatString(doc.get("releaseDate"), "yy-mm-dd"));
+            blog.setCreateTime(DateUtil.formatFromString(doc.get("releaseDate"), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
             String title = doc.get("title");
             if (title != null) {
                 TokenStream tokenStream = analyzer.tokenStream("title", new StringReader(title));

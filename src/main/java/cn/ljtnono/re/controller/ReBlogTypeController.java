@@ -76,13 +76,10 @@ public class ReBlogTypeController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
-    public JsonResult search(final String name) {
-        if (StringUtil.isEmpty(name)) {
-            if (null == name) {
-                throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
-            }
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR);
+    public JsonResult search(final String name, PageDTO pageDTO) {
+        if (null == name) {
+            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
         }
-        return iReBlogTypeService.search(name);
+        return iReBlogTypeService.search(name, pageDTO);
     }
 }

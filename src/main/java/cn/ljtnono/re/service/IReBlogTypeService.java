@@ -1,5 +1,6 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
@@ -39,7 +40,8 @@ public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityServi
     /**
      * 博客类型名称模糊查询
      * @param name 博客类型名称
+     * @param pageDTO 页码对象
      * @return JsonResult 对象
      */
-    JsonResult search(final String name);
+    JsonResult search(final String name, PageDTO pageDTO);
 }

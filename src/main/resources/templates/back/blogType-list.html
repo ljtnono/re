@@ -70,6 +70,7 @@
         table.render({
             elem: '.layui-table',
             height: 450,
+            id: "blogTypeTable",
             url: [[${#servletContext.contextPath}]] + "/blog_type/listBlogTypePage",
             page: true,
             method: "get",
@@ -126,26 +127,26 @@
         });
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
-            $.ajax({
+            table.reload("blogTypeTable", {
                 url: [[${#servletContext.contextPath}]] + "/blog_type/search",
-                data: {
-                    name: data.name
+                where: {
+                    name: data.field.name
                 },
                 method: "POST",
-                success: function (res) {
-                    if (res.request === "success" && res.status === 200) {
-                        // TODO 重新渲染表格
-                        table.render();
-                    } else {
-                        layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
-                    }
+                parseData: function (res) {
+                    return {
+                        "status": res.status,
+                        "count": res.fields.totalCount,
+                        "message": res.message,
+                        "data": res.data
+                    };
                 },
-                error: function (res) {
-                    if (res) {
-                        layer.msg(res);
-                    } else {
-                        layer.msg("请求错误，请检查网络", {icon: 2});
-                    }
+                response: {
+                    statusName: "status",
+                    statusCode: 200,
+                    msgName: "message",
+                    countName: "count",
+                    dataName: "data"
                 }
             });
             return false;
@@ -156,7 +157,7 @@
             let data = obj.data;
             if ("edit" === layEvent) {
                 // 弹出tab栏修改
-
+                window.parent.xadmin.add_tab(data.name, "/re/admin/blogType-detail?blogTypeId=" + data.id)
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {

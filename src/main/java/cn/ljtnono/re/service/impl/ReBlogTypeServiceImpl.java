@@ -1,5 +1,6 @@
 package cn.ljtnono.re.service.impl;
 
+import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
@@ -148,15 +149,16 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
      * 博客类型名称模糊查询
      *
      * @param name 博客类型名称
+     * @param pageDTO 页码对象
      * @return JsonResult 对象
      */
     @Override
-    public JsonResult search(final String name) {
+    public JsonResult search(final String name, PageDTO pageDTO) {
         Optional<String> optionalName = Optional.ofNullable(name);
         optionalName.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
-        List<ReBlogType> queryResult = getBaseMapper().selectList(new QueryWrapper<ReBlogType>().like("name", name));
-        if (queryResult != null) {
-            return JsonResult.success(queryResult, queryResult.size());
+        IPage<ReBlogType> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), new QueryWrapper<ReBlogType>().like("name", name));
+        if (pageResult != null) {
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }

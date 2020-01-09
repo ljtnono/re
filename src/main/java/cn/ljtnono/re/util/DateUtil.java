@@ -300,16 +300,17 @@ public class DateUtil {
     }
 
     /**
-    *@Description:
-    *@Param:
-    *@return:
-    *@date: 2019/12/30
-    */
-    public static Date formatString(String str,String format) throws Exception{
+     * 从字符串格式化Date对象
+     * @param str 字符串类型格式
+     * @param style 日期格式化风格
+     * @return 格式化的Date对象
+     * @throws Exception 格式化异常时抛出
+     */
+    public static Date formatFromString(String str, DateStyleEnum style) throws Exception{
         if(StringUtil.isEmpty(str)){
             return null;
         }
-        SimpleDateFormat sdf=new SimpleDateFormat(format);
+        SimpleDateFormat sdf = new SimpleDateFormat(style.getValue());
         return sdf.parse(str);
     }
 

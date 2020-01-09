@@ -15,8 +15,7 @@ package cn.ljtnono.re.enumeration;
  *
  * @author ljt
  * @date 2019/11/12
- * @since 1.0
- * @version 1.1
+ * @version 1.1.2
  */
 public enum ReEntityRedisKeyEnum {
 
