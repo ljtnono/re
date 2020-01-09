@@ -1,5 +1,6 @@
 package cn.ljtnono.re.advice;
 
+import cn.ljtnono.re.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * 统一打印Controller访问日志
@@ -51,7 +53,7 @@ public class ReControllerLogAdvice {
         HttpServletRequest request = attributes.getRequest();
         //打印请求的内容
         startTime = System.currentTimeMillis();
-        log.info("请求开始时间：{}", LocalDateTime.now());
+        log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求Url : {}", request.getRequestURL().toString());
         log.info("请求方式 : {}", request.getMethod());
         log.info("请求ip : {}", request.getRemoteAddr());
@@ -69,7 +71,7 @@ public class ReControllerLogAdvice {
     @AfterReturning(returning = "ret", pointcut = "webLogPointcut()")
     public void doAfterReturning(Object ret) {
         endTime = System.currentTimeMillis();
-        log.info("请求结束时间：{}", LocalDateTime.now());
+        log.info("请求结束时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求耗时：{}", (endTime - startTime));
         // 处理完请求，返回内容
         log.info("请求返回 : {}", ret);
