@@ -8,5 +8,5 @@ package cn.ljtnono.re.enumeration;
  * @version 1.0.1
  */
 public enum CommonFileTypeEnum {
-
+    
 }
