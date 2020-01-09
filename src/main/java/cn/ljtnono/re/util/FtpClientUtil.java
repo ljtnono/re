@@ -2,6 +2,7 @@ package cn.ljtnono.re.util;
 
 import cn.ljtnono.re.ftp.ReFtpClient;
 import cn.ljtnono.re.ftp.ReFtpClientPool;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,30 +15,14 @@ import java.io.*;
  * @version 1.0
  */
 @Component
+@Slf4j
 public class FtpClientUtil {
 
+    private final ReFtpClientPool reFtpClientPool;
+
     @Autowired
-    private ReFtpClientPool reFtpClientPool;
-
-    /** 实例 */
-    private volatile static FtpClientUtil instance = null;
-
-    /** 单例模式 */
-    private FtpClientUtil(){}
-
-    /**
-     * 单例模式获取实例
-     * @return 返回工具类实例
-     */
-    public static FtpClientUtil getInstance() {
-        if (instance == null) {
-            synchronized (FtpClientUtil.class) {
-                if (instance == null) {
-                    instance =  new FtpClientUtil();
-                }
-            }
-        }
-        return instance;
+    public FtpClientUtil(ReFtpClientPool reFtpClientPool) {
+        this.reFtpClientPool = reFtpClientPool;
     }
 
     /**
