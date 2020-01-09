@@ -9,7 +9,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -87,7 +86,7 @@ public class ReControllerLogAdvice {
     @AfterThrowing(value = "webLogPointcut()", throwing = "throwable")
     public void doAfterThrowing(Throwable throwable) {
         // 保存异常日志记录
-        log.error("发生异常时间：{}", LocalDateTime.now());
+        log.error("发生异常时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.error("抛出异常：{}", throwable.getMessage());
     }
 }
