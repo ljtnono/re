@@ -1,5 +1,6 @@
 package cn.ljtnono.re.ftp;
 
+import cn.ljtnono.re.enumeration.CommonFileTypeEnum;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
@@ -69,7 +70,7 @@ public class ReFtpClient {
      */
     public void disConnect() throws IOException {
         if (isActive()) {
-            log.info("退出登陆=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
+            log.info("退出登陆, user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
             ftpClient.logout();
             log.info("断开连接");
             ftpClient.disconnect();
@@ -84,10 +85,10 @@ public class ReFtpClient {
      */
     public boolean connect() throws IOException {
         if (ftpClient != null) {
-            log.info("连接ftp服务器=====>" + reFtpClientConfig.getFtpServerAddr());
+            log.info("连接ftp服务器: " + reFtpClientConfig.getFtpServerAddr());
             // 连接FTP服务器
             ftpClient.connect(reFtpClientConfig.getFtpServerAddr(), reFtpClientConfig.getFtpServerPort());
-            log.info("登陆ftp服务器=====>user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
+            log.info("登陆ftp服务器, user = " + reFtpClientConfig.getFtpServerUser() + " password = " + reFtpClientConfig.getFtpServerPassword());
             ftpClient.login(reFtpClientConfig.getFtpServerUser(), reFtpClientConfig.getFtpServerPassword());
             if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
                 log.info("连接ftp服务器失败，断开连接");
@@ -115,13 +116,13 @@ public class ReFtpClient {
      * @throws IOException 当出现IO异常时抛出异常
      */
     private void changeWorkingDirectory(final String filePath) throws IOException {
-        log.info("切换目录=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+        log.info("切换目录: " + reFtpClientConfig.getFtpServerDirBase() + filePath);
         if (!ftpClient.changeWorkingDirectory(reFtpClientConfig.getFtpServerDirBase() + filePath)) {
             //如果目录不存在创建目录
-            log.info("目录不存在，进行创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+            log.info("目录不存在，进行创建: " + reFtpClientConfig.getFtpServerDirBase() + filePath);
             String[] dirs = filePath.split("/");
             String tempPath = reFtpClientConfig.getFtpServerDirBase();
-            log.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath);
+            log.info("循环创建: " + reFtpClientConfig.getFtpServerDirBase() + filePath);
             for (String dir : dirs) {
                 if (null == dir || "".equals(dir)) {
                     continue;
@@ -129,7 +130,7 @@ public class ReFtpClient {
                 tempPath += "/" + dir;
                 if (!ftpClient.changeWorkingDirectory(tempPath)) {
                     if (!ftpClient.makeDirectory(tempPath)) {
-                        log.info("循环创建=====>" + reFtpClientConfig.getFtpServerDirBase() + filePath + "成功");
+                        log.info("循环创建: " + reFtpClientConfig.getFtpServerDirBase() + filePath + "成功");
                         break;
                     } else {
                         ftpClient.changeWorkingDirectory(tempPath);
@@ -144,15 +145,27 @@ public class ReFtpClient {
      * @param filePath 上传文件的
      * @param fileName 文件名（存储在ftp服务器上的文件名）
      * @param input 文件的输入流
-     * @throws RuntimeException 参数为不正确时抛出该异常
+     * @throws IllegalArgumentException 参数为不正确时抛出该异常
      * 校验成功返回true，校验失败抛出异常
      */
     private void validateUploadFileParameters(String filePath, String fileName, final InputStream input) {
-        Optional.ofNullable(filePath).orElseThrow(() -> new RuntimeException("filePath is not null"));
-        Optional.ofNullable(input).orElseThrow(() -> new RuntimeException("fileName is not null"));
-        // TODO 检查文件名是否正确
-
+        Optional.ofNullable(filePath).orElseThrow(() -> new IllegalArgumentException("filePath不能为null"));
+        Optional.ofNullable(input).orElseThrow(() -> new IllegalArgumentException("fileName不能为null"));
+        String fileExtName = fileName.substring(fileName.lastIndexOf(".") + 1);
+        boolean flag = false;
+        for (CommonFileTypeEnum file : CommonFileTypeEnum.values()) {
+            if (file.getValue().equalsIgnoreCase(fileExtName)) {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) {
+            log.error("文件格式错误 {}", fileExtName);
+            throw new IllegalArgumentException("文件格式错误");
+        }
     }
+
+
 
     /**
      * @param filePath 上传的文件路径 例如 /images/abc/  /re/images/abc
@@ -201,7 +214,6 @@ public class ReFtpClient {
         try {
             validateUploadFileParameters(filePath, fileName, input);
         } catch (Exception e) {
-            log.error(e.getMessage());
             return null;
         }
         connect();
@@ -219,7 +231,7 @@ public class ReFtpClient {
             ftpClient.storeFile(fileName, input);
             disConnect();
         } catch (IOException e) {
-            log.error("上传文件" + fileName + "=====>" + "失败");
+            log.error("上传文件 " + fileName + " 失败");
             e.printStackTrace();
             return null;
         } finally {
@@ -228,8 +240,7 @@ public class ReFtpClient {
                     input.close();
                 }
             } catch (IOException e) {
-                log.error("关闭输入流失败");
-                e.printStackTrace();
+                log.error("关闭输入流失败 {}", e.getMessage());
             }
         }
         return contractPath(filePath, fileName);
@@ -240,5 +251,6 @@ public class ReFtpClient {
     public static void main(String[] args) throws IOException {
         ReFtpClient reFtpClient = new ReFtpClient();
         reFtpClient.uploadFile("/", "失败.txt", new FileInputStream("C:\\Users\\GEEK\\Desktop\\失败.txt"));
+//        reFtpClient.validateUploadFileParameters("", "aa.txt", new FileInputStream("C:\\Users\\ljt\\Desktop\\参数校验.png"));
     }
 }
