@@ -1,6 +1,7 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReBlogTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
@@ -10,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -47,8 +49,14 @@ public class ReBlogTypeController {
     }
 
     @PutMapping("/{id:\\d+}")
-    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReBlogType entity) {
-        return iReBlogTypeService.updateEntityById(id, entity);
+    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogTypeUpdateDTO reBlogTypeUpdateDTO) {
+        ReBlogType reBlogType = new ReBlogType();
+        reBlogType.setName(reBlogTypeUpdateDTO.getName());
+        reBlogType.setId(reBlogTypeUpdateDTO.getId());
+        reBlogType.setDescription(reBlogTypeUpdateDTO.getDescription());
+        // 这里如果不设置为1，会默认设置status为0
+        reBlogType.setStatus((byte) 1);
+        return iReBlogTypeService.updateEntityById(id, reBlogType);
     }
 
     @DeleteMapping("/{id:\\d+}")

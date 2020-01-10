@@ -146,7 +146,7 @@ public class BlogIndexUtil {
     /**
      * @param keyword 索引关键字
      * @return 博客列表
-     * @throws Exception
+     * @throws Exception 查找失败抛出异常
      */
     public List<ReBlog> searchBlog(String keyword) throws Exception {
         dir = FSDirectory.open(Paths.get(SAVE_PATH));

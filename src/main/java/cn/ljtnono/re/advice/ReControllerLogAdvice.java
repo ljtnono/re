@@ -1,5 +1,6 @@
 package cn.ljtnono.re.advice;
 
+import cn.ljtnono.re.enumeration.DateStyleEnum;
 import cn.ljtnono.re.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -52,7 +53,7 @@ public class ReControllerLogAdvice {
         HttpServletRequest request = attributes.getRequest();
         //打印请求的内容
         startTime = System.currentTimeMillis();
-        log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
+        log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求Url : {}", request.getRequestURL().toString());
         log.info("请求方式 : {}", request.getMethod());
         log.info("请求ip : {}", request.getRemoteAddr());
@@ -70,7 +71,7 @@ public class ReControllerLogAdvice {
     @AfterReturning(returning = "ret", pointcut = "webLogPointcut()")
     public void doAfterReturning(Object ret) {
         endTime = System.currentTimeMillis();
-        log.info("请求结束时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
+        log.info("请求结束时间：{}", DateUtil.formatDate(new Date(), DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求耗时：{}", (endTime - startTime));
         // 处理完请求，返回内容
         log.info("请求返回 : {}", ret);
@@ -86,7 +87,7 @@ public class ReControllerLogAdvice {
     @AfterThrowing(value = "webLogPointcut()", throwing = "throwable")
     public void doAfterThrowing(Throwable throwable) {
         // 保存异常日志记录
-        log.error("发生异常时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
+        log.error("发生异常时间：{}", DateUtil.formatDate(new Date(), DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.error("抛出异常：{}", throwable.getMessage());
     }
 }
