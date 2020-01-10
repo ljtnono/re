@@ -22,9 +22,11 @@ public class EntityGeneratorUtil {
     private EntityGeneratorUtil() {}
 
     /**
-     * 实例对象
+     * 私有内部类单例
      */
-    private volatile static EntityGeneratorUtil instance = null;
+    private static class Holder {
+        private static EntityGeneratorUtil instance = new EntityGeneratorUtil();
+    }
 
     /**
      * 单例模式获取实例
@@ -32,14 +34,7 @@ public class EntityGeneratorUtil {
      * @return 返回工具类实例
      */
     public static EntityGeneratorUtil getInstance() {
-        if (instance == null) {
-            synchronized (EntityGeneratorUtil.class) {
-                if (instance == null) {
-                    instance = new EntityGeneratorUtil();
-                }
-            }
-        }
-        return instance;
+        return Holder.instance;
     }
 
     /**
