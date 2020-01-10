@@ -1,6 +1,7 @@
 package cn.ljtnono.re.util;
 
 import cn.ljtnono.re.entity.ReBlog;
+import cn.ljtnono.re.enumeration.DateStyleEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -109,7 +110,7 @@ public class BlogIndexUtil {
         Document doc = new Document();
         doc.add(new StringField("id", String.valueOf(reBlog.getId()), Field.Store.YES));
         doc.add(new TextField("title", reBlog.getTitle(), Field.Store.YES));
-        doc.add(new StringField("releaseDate", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd), Field.Store.YES));
+        doc.add(new StringField("releaseDate", DateUtil.formatDate(new Date(), DateStyleEnum.yyyy_MM_dd), Field.Store.YES));
         doc.add(new TextField("content", contentHtml, Field.Store.YES));
         return doc;
     }
@@ -176,7 +177,7 @@ public class BlogIndexUtil {
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document doc = is.doc(scoreDoc.doc);
             ReBlog blog = new ReBlog();
-            blog.setCreateTime(DateUtil.formatFromString(doc.get("releaseDate"), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
+            blog.setCreateTime(DateUtil.formatFromString(doc.get("releaseDate"), DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
             String title = doc.get("title");
             if (title != null) {
                 TokenStream tokenStream = analyzer.tokenStream("title", new StringReader(title));
