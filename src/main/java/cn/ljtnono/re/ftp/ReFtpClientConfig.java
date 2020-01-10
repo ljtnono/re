@@ -7,7 +7,7 @@ import java.io.Serializable;
  * ftpClient服务器相关配置
  * @author ljt
  * @date 2019/11/2
- * @version 1.0
+ * @version 1.0.2
  */
 public class ReFtpClientConfig extends GenericObjectPoolConfig<ReFtpClient> implements Serializable {
 
