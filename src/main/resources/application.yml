@@ -48,19 +48,17 @@ spring:
         max-wait: -1
   session:
     store-type: redis
-  mvc:
-    favicon:
-      enabled: false
 
 # 配置tomcat服务器相关
 server:
   servlet:
     context-path: /re
   port: 8080
-#  port: 80
 
 # 配置mybatis相关
 mybatis-plus:
   configuration:
     log-prefix: mybatis.sql
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    cache-enabled: true
+    local-cache-scope: session
