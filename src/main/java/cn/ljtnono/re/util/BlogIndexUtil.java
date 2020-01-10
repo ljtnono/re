@@ -51,17 +51,23 @@ public class BlogIndexUtil {
 
     private BlogIndexUtil() {}
 
-    private volatile static BlogIndexUtil instance = null;
+    private enum BlogIndexUtilEnum {
+        /** 枚举单例 */
+        INSTANCE;
+
+        private final BlogIndexUtil instance;
+
+        BlogIndexUtilEnum() {
+            instance = new BlogIndexUtil();
+        }
+
+        public BlogIndexUtil getInstance() {
+            return instance;
+        }
+    }
 
     public static BlogIndexUtil getInstance() {
-        if (instance == null) {
-            synchronized (BlogIndexUtil.class) {
-                if (instance == null) {
-                    instance = new BlogIndexUtil();
-                }
-            }
-        }
-        return instance;
+        return BlogIndexUtilEnum.INSTANCE.getInstance();
     }
 
     /**
