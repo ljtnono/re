@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
  * spring security 配置
  *
  * @author 凌家童
- * @version 1.0
- * @date 2019/10/6
+ * @version 1.0.2
+ * @date 2020/1/11
  */
 @SpringBootConfiguration
 @EnableWebSecurity
