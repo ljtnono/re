@@ -1,6 +1,7 @@
 package cn.ljtnono.re.service;
 
 import cn.ljtnono.re.entity.ReLink;
+import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -19,4 +20,12 @@ public interface IReLinkService extends IService<ReLink>, IReEntityService<ReLin
      * @return 所有外部链接数据
      */
     List<ReLink> listOutLinkAll();
+
+    /**
+     * 分页获取链接列表
+     * @param page 页数
+     * @param count 每页获取的条数
+     * @return JsonResult对象
+     */
+    JsonResult listLinkPage(Integer page, Integer count);
 }
