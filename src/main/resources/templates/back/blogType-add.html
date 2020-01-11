@@ -41,13 +41,6 @@
                                 <h2 class="layui-colla-title">博客类型属性<i class="layui-icon layui-colla-icon"></i></h2>
                                 <div class="layui-colla-content layui-show">
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">博客类型Id</label>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="id" autocomplete="off"
-                                                   class="layui-input" disabled>
-                                        </div>
-                                    </div>
-                                    <div class="layui-form-item">
                                         <label class="layui-form-label">博客类型名</label>
                                         <div class="layui-input-block">
                                             <input type="text" name="name" autocomplete="off" lay-verify="name"
@@ -57,7 +50,8 @@
                                     <div class="layui-form-item">
                                         <label class="layui-form-label">博客类型描述</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="description" autocomplete="off" lay-verify="description"
+                                            <input type="text" name="description" autocomplete="off"
+                                                   lay-verify="description"
                                                    class="layui-input" placeholder="请输入博客描述">
                                         </div>
                                     </div>
@@ -71,7 +65,8 @@
                                 <button type="reset" class="layui-btn layui-btn-fluid">重置</button>
                             </div>
                             <div class="layui-input-block" style="margin-left: 0;">
-                                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="form-blogType-submit">提交
+                                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="form-blogType-submit">
+                                    提交
                                 </button>
                             </div>
                         </div>
@@ -84,6 +79,58 @@
 </body>
 <script th:src="@{/static/fore/js/common.js}"></script>
 <script th:inline="javascript">
-
+    layui.use(["form", "layer"], function () {
+        let form = layui.form;
+        let layer = layui.layer;
+        // 设置表单校验
+        form.verify({
+            name: function (value, item) {
+                let nameRex = /^[\w\W\s\u4e00-\u9fcc]{2,20}$/;
+                if (!nameRex.test(value)) {
+                    return "博客类型名只能为2-20个字符";
+                }
+            },
+            description: function (value, item) {
+                // 验证只能4-30个字符 包括中文、字母、数字下划线
+                let descriptionRex = /^[\w\W\s\u4e00-\u9fcc]{0,255}$/;
+                if (!descriptionRex.test(value)) {
+                    return "博客类型简介只能为0-255个字符";
+                }
+            }
+        });
+        // 监听提交事件
+        form.on('submit(form-blogType-submit)', function (data) {
+            let blogType = data.field;
+            layer.confirm('确认提交？', {
+                btn: ['确认', '取消']
+            }, function (index) {
+                $.ajax({
+                    url: [[${#servletContext.contextPath}]] + "/blog_type",
+                    data: {
+                        name: blogType.name,
+                        description: blogType.description
+                    },
+                    method: "POST",
+                    dateType: "json",
+                    success: function (res) {
+                        if (res.request === "success" && res.status === 200) {
+                            layer.msg(res.message , {icon: 1});
+                        } else {
+                            layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
+                        }
+                    },
+                    error: function (res) {
+                        if (res) {
+                            layer.msg(res);
+                        } else {
+                            layer.msg("请求错误，请检查网络", {icon: 2});
+                        }
+                    }
+                });
+                layer.close(index);
+            });
+            return false;
+        });
+    });
 </script>
 </html>

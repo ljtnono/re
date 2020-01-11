@@ -1,6 +1,7 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReBlogTypeSaveDTO;
 import cn.ljtnono.re.dto.ReBlogTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 博客类型Controller
@@ -44,11 +46,19 @@ public class ReBlogTypeController {
     }
 
     @PostMapping
-    public JsonResult saveEntity(ReBlogType entity) {
+    @ApiOperation(value = "新增一个博客类型", httpMethod = "POST")
+    public JsonResult saveEntity(@Validated ReBlogTypeSaveDTO reBlogTypeSaveDTO) {
+        ReBlogType entity = new ReBlogType();
+        entity.setStatus((byte) 1);
+        entity.setDescription(reBlogTypeSaveDTO.getDescription());
+        entity.setName(reBlogTypeSaveDTO.getName());
+        entity.setCreateTime(new Date());
+        entity.setModifyTime(new Date());
         return iReBlogTypeService.saveEntity(entity);
     }
 
     @PutMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id更新博客类型", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogTypeUpdateDTO reBlogTypeUpdateDTO) {
         ReBlogType reBlogType = new ReBlogType();
         reBlogType.setName(reBlogTypeUpdateDTO.getName());
@@ -66,11 +76,13 @@ public class ReBlogTypeController {
     }
 
     @GetMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id获取博客类型", httpMethod = "GET")
     public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.getEntityById(id);
     }
 
     @GetMapping("/listBlogTypePage")
+    @ApiOperation(value = "分页获取博客类型列表", httpMethod = "GET")
     public JsonResult listBlogTypePage(PageDTO pageDTO) {
         return iReBlogTypeService.listBlogTypePage(pageDTO.getPage(), pageDTO.getCount());
     }

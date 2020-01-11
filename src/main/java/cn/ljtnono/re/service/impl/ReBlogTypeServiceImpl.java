@@ -113,14 +113,18 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
     public JsonResult restore(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogTypeId = Integer.parseInt(id.toString());
+        int blogTypeId = Integer.parseInt(id.toString());
         if (blogTypeId >= 1) {
             // 更新状态
             boolean update = update(new UpdateWrapper<ReBlogType>().set("status", 1).eq("id", id));
             // 更新相关博客的状态
             ReBlogType reBlogType = getById(blogTypeId);
-            boolean updateResult = iReBlogService.update(new UpdateWrapper<ReBlog>().set("status", 1).eq("type", reBlogType.getName()));
-            if (updateResult && update) {
+            // 查看是否有相关类型的博客
+            List<ReBlog> type = iReBlogService.list(new QueryWrapper<ReBlog>().eq("type", reBlogType.getName()));
+            if (null != type && type.size() > 0) {
+                iReBlogService.update(new UpdateWrapper<ReBlog>().set("status", 1).eq("type", reBlogType.getName()));
+            }
+            if (update) {
                 // 删除所有相关缓存
                 redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
                         .getKey().replace(":id", ":*")
@@ -169,12 +173,22 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         Optional<ReBlogType> optionalReBlogType = Optional.ofNullable(entity);
         optionalReBlogType.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
-        String key = ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY.getKey()
-                .replace(":id", ":" + entity.getId())
-                .replace(":name", ":" + entity.getName());
         if (save) {
-            // 将实体类存储到缓存中去
-            redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
+            // 删除所有相关缓存
+            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
+                    .getKey().replace(":id", ":*")
+                    .replace(":name", ":*"));
+            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_KEY
+                    .getKey().replace(":page", ":*")
+                    .replace(":count", ":*"));
+            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_TOTAL_KEY
+                    .getKey().replace(":page", ":*")
+                    .replace(":count", ":*"));
+            // 删除所有的blog缓存相关
+            redisUtil.deleteByPattern("re_blog:*");
+            redisUtil.deleteByPattern("re_blog_page:*");
+            redisUtil.deleteByPattern("re_blog_page_total:*");
+            redisUtil.deleteByPattern("re_blog_page_type:*");
             return JsonResult.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
@@ -185,13 +199,17 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
     public JsonResult deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogTypeId = Integer.parseInt(id.toString());
+        int blogTypeId = Integer.parseInt(id.toString());
         if (blogTypeId >= 1) {
             // 在数据库中更新相关标签的状态
-            boolean updateResult = update(new UpdateWrapper<ReBlogType>().set("status", 0).eq("id", blogTypeId));
+            boolean update = update(new UpdateWrapper<ReBlogType>().set("status", 0).eq("id", blogTypeId));
             ReBlogType reBlogType = getById(blogTypeId);
-            boolean update = iReBlogService.update(new UpdateWrapper<ReBlog>().set("status", 0).eq("type", reBlogType.getName()));
-            if (updateResult && update) {
+            // 查看是否有相关类型的博客
+            List<ReBlog> type = iReBlogService.list(new QueryWrapper<ReBlog>().eq("type", reBlogType.getName()));
+            if (null != type && type.size() > 0) {
+                iReBlogService.update(new UpdateWrapper<ReBlog>().set("status", 0).eq("type", reBlogType.getName()));
+            }
+            if (update) {
                 // 删除所有相关缓存
                 redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
                         .getKey().replace(":id", ":*")
@@ -222,7 +240,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         Optional<ReBlogType> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogTypeId = Integer.parseInt(id.toString());
+        int blogTypeId = Integer.parseInt(id.toString());
         if (blogTypeId >= 1) {
             boolean updateResult = update(entity, new UpdateWrapper<ReBlogType>().eq("id", blogTypeId));
             if (updateResult) {
@@ -254,7 +272,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
     public JsonResult getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogTypeId = Integer.parseInt(id.toString());
+        int blogTypeId = Integer.parseInt(id.toString());
         if (blogTypeId >= 1) {
             JsonResult jsonResult;
             // 如果缓存中存在，那么首先从缓存中获取
