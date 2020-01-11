@@ -25,16 +25,18 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Qualifier("reUserDetailService")
-    @Autowired
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    @Qualifier("rePasswordEncoder")
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
     @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
+    public SpringSecurityConfig(@Qualifier("reUserDetailService") UserDetailsService userDetailsService, @Qualifier("rePasswordEncoder") PasswordEncoder passwordEncoder, AuthenticationSuccessHandler authenticationSuccessHandler) {
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
