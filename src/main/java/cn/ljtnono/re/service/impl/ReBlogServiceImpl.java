@@ -25,8 +25,8 @@ import java.util.*;
  * 博客服务实现类
  *
  * @author ljt
- * @version 1.0.2
- * @date 2019/11/16
+ * @version 1.0.3
+ * @date 2020/1/11
  */
 @Service
 @Slf4j
@@ -94,10 +94,6 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalPage.filter(p -> p >= 0 && p <= 1000)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR));
-        optionalCount.filter(c -> c >= 0 && c <= 60)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR));
         String redisKey = ReEntityRedisKeyEnum.RE_BLOG_PAGE_KEY.getKey()
                 .replace(":page", ":" + page)
                 .replace(":count", ":" + count);
@@ -147,7 +143,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     public JsonResult deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogId = Integer.parseInt(id.toString());
+        int blogId = Integer.parseInt(id.toString());
         if (blogId >= 10001) {
             boolean deleteResult = update(new UpdateWrapper<ReBlog>().set("status", 0).eq("id", blogId));
             if (deleteResult) {
@@ -174,7 +170,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         Optional<ReBlog> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogId = Integer.parseInt(id.toString());
+        int blogId = Integer.parseInt(id.toString());
         if (blogId >= 10001) {
             boolean updateResult = update(entity, new UpdateWrapper<ReBlog>().eq("id", blogId));
             if (updateResult) {
@@ -198,7 +194,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     public JsonResult getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer blogId = Integer.parseInt(id.toString());
+        int blogId = Integer.parseInt(id.toString());
         if (blogId >= 10001) {
             JsonResult jsonResult;
             // 如果缓存中存在，那么首先从缓存中获取
@@ -215,7 +211,6 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
                 if (reBlog == null || reBlog.getStatus() == 0) {
                     throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
                 }
-                jsonResult = JsonResult.success(Collections.singletonList(reBlog), 1);
             } else {
                 reBlog = getById(blogId);
                 // 如果不存在，那么返回 找不到资源错误
@@ -227,8 +222,8 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
                         .replace(":author", ":" + reBlog.getAuthor())
                         .replace(":title", ":" + reBlog.getTitle())
                         .replace(":type", ":" + reBlog.getType()), reBlog, RedisUtil.EXPIRE_TIME_DEFAULT);
-                jsonResult = JsonResult.success(Collections.singletonList(reBlog), 1);
             }
+            jsonResult = JsonResult.success(Collections.singletonList(reBlog), 1);
             jsonResult.setMessage("操作成功");
             return jsonResult;
         } else {
@@ -239,7 +234,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     @Override
     public JsonResult listEntityAll() {
         // 直接从数据库中获取所有 这里mybatis-plus 会返回空集合
-        List<ReBlog> blogList = list(new QueryWrapper<ReBlog>());
+        List<ReBlog> blogList = list(new QueryWrapper<>());
         // 将数据写入缓存中
         Optional<List<ReBlog>> optionalList = Optional.ofNullable(blogList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
