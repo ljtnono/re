@@ -1,5 +1,7 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
@@ -36,4 +38,12 @@ public interface IReLinkService extends IService<ReLink>, IReEntityService<ReLin
      * @return JsonResult 对象
      */
     JsonResult restore(Serializable id);
+
+    /**
+     * 链接分页条件查询
+     * @param reLinkSearchDTO 条件查询条件DTO
+     * @param pageDTO 分页对象
+     * @return JsonResult 对象
+     */
+    JsonResult search(final ReLinkSearchDTO reLinkSearchDTO, PageDTO pageDTO);
 }

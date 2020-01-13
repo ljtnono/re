@@ -2,9 +2,14 @@ package cn.ljtnono.re.controller;
 
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReLinkSearchDTO;
+import cn.ljtnono.re.dto.ReLinkUpdateDTO;
 import cn.ljtnono.re.entity.ReLink;
+import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReLinkService;
+import cn.ljtnono.re.util.StringUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * 链接controller
@@ -35,8 +41,15 @@ public class ReLinkController {
         return null;
     }
 
-    public JsonResult updateEntityById(Serializable id, ReLink entity) {
-        return null;
+    @PutMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id更新链接", httpMethod = "PUT")
+    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReLinkUpdateDTO reLinkUpdateDTO) {
+        ReLink reLink = new ReLink();
+        reLink.setName(reLinkUpdateDTO.getName());
+        reLink.setType(reLinkUpdateDTO.getType());
+        reLink.setUrl(reLinkUpdateDTO.getUrl());
+        reLink.setStatus((byte) 1);
+        return iReLinkService.updateEntityById(id, reLink);
     }
 
     @DeleteMapping("/{id:\\d+}")
@@ -61,5 +74,11 @@ public class ReLinkController {
     @ApiOperation(value = "分页获取链接", httpMethod = "GET")
     public JsonResult listLinkPage(@Validated PageDTO pageDTO) {
         return iReLinkService.listLinkPage(pageDTO.getPage(), pageDTO.getCount());
+    }
+
+    @PostMapping("/search")
+    @ApiOperation(value = "根据链接name和url还有type模糊查询", notes = "根据链接name和url还有type模糊查询", httpMethod = "POST")
+    public JsonResult search(ReLinkSearchDTO reLinkSearchDTO, @Validated PageDTO pageDTO) {
+        return iReLinkService.search(reLinkSearchDTO, pageDTO);
     }
 }

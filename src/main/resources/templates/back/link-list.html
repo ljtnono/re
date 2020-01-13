@@ -34,11 +34,20 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-                <div class="layui-card-body ">
+                <div class="layui-card-body">
                     <form class="layui-form layui-col-space5">
                         <div class="layui-inline layui-show-xs-block">
-                            <input type="text" name="name" placeholder="请输入关键字" autocomplete="off"
+                            <input type="text" name="name" placeholder="请输入链接名" autocomplete="off"
                                    class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="url" placeholder="请输入链接地址" autocomplete="off"
+                                   class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <select name="type" id="type">
+                                <option value="">链接标签分类</option>
+                            </select>
                         </div>
                         <div class="layui-inline layui-show-xs-block">
                             <button class="layui-btn" lay-submit lay-filter="search">
@@ -47,7 +56,7 @@
                     </form>
                 </div>
                 <div class="layui-card-body">
-                    <table class="layui-table" lay-filter="blogType"></table>
+                    <table class="layui-table" lay-filter="link"></table>
                 </div>
             </div>
         </div>
@@ -67,11 +76,33 @@
         let form = layui.form;
         let table = layui.table;
         let util = layui.util;
+        // 获取下拉选择框的值
+        $.ajax({
+            url: [[${#servletContext.contextPath}]] + "/link_type",
+            method: "GET",
+            dataType: "json",
+            success: function (res) {
+                // 请求成功，将option拼接到下拉框中去
+                if (res.request === "success" && res.status === 200) {
+                    $.each(res.data, function (index, item) {
+                        $('#type').append(new Option(item.name, item.id));
+                    });
+                    form.render();
+                }
+            },
+            error: function (res) {
+                if (res) {
+                    layer.msg(res);
+                } else {
+                    layer.msg("请求错误，请检查网络", {icon: 2});
+                }
+            }
+        });
         table.render({
             elem: '.layui-table',
             height: 450,
-            id: "blogTypeTable",
-            url: [[${#servletContext.contextPath}]] + "/blog_type/listBlogTypePage",
+            id: "linkTable",
+            url: [[${#servletContext.contextPath}]] + "/link/listLinkPage",
             page: true,
             method: "get",
             toolbar: true,
@@ -97,8 +128,11 @@
             },
             cols: [
                 [
+                    {type: 'checkbox', fixed: 'left'},
                     {field: 'id', title: 'ID', width: 80, sort: true},
-                    {field: 'name', title: '博客类型', width: 230},
+                    {field: 'url', title: 'url', width: 230},
+                    {field: 'name', title: '链接名', width: 230},
+                    {field: 'type', title: '链接类型', width: 230},
                     {
                         field: 'createTime', title: '创建时间', width: 170,
                         templet: function (d) {
@@ -127,10 +161,12 @@
         });
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
-            table.reload("blogTypeTable", {
-                url: [[${#servletContext.contextPath}]] + "/blog_type/search",
+            table.reload("linkTable", {
+                url: [[${#servletContext.contextPath}]] + "/link/search",
                 where: {
-                    name: data.field.name
+                    name: data.field.name,
+                    url: data.field.url,
+                    type: data.field.type
                 },
                 method: "POST",
                 parseData: function (res) {
@@ -152,22 +188,21 @@
             return false;
         });
         // 监听操作栏点击事件
-        table.on('tool(blogType)', function (obj) {
+        table.on('tool(link)', function (obj) {
             let layEvent = obj.event;
             let data = obj.data;
             if ("edit" === layEvent) {
-                // 弹出tab栏修改
-                window.parent.xadmin.add_tab(data.name, "/re/admin/blogType-detail?blogTypeId=" + data.id)
+                window.parent.xadmin.add_tab(data.name, "/re/admin/link-detail?linkId=" + data.id)
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {
                     layer.msg("不能删除已经删除的项！", {icon: 2});
                 } else {
-                    layer.confirm('此操作将会删除该分类下所有的博客，确认删除？', {
+                    layer.confirm('确认删除？', {
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/blog_type/" + data.id,
+                            url: [[${#servletContext.contextPath}]] + "/link/" + data.id,
                             method: "DELETE",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {
@@ -196,7 +231,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/blog_type/restore/" + data.id,
+                            url: [[${#servletContext.contextPath}]] + "/link/restore/" + data.id,
                             method: "PUT",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {

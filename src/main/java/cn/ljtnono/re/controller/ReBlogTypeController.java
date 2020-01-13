@@ -95,7 +95,7 @@ public class ReBlogTypeController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
-    public JsonResult search(final String name, PageDTO pageDTO) {
+    public JsonResult search(final String name, @Validated PageDTO pageDTO) {
         if (null == name) {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
         }

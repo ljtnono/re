@@ -1,13 +1,18 @@
 package cn.ljtnono.re.service.impl;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.entity.ReLink;
+import cn.ljtnono.re.entity.ReLinkType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReLinkMapper;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReLinkService;
+import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.util.RedisUtil;
+import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,9 +27,10 @@ import java.util.*;
 
 /**
  * 链接服务实现类
+ *
  * @author ljt
- * @date 2019/11/23
  * @version 1.0
+ * @date 2019/11/23
  */
 @Service
 @Slf4j
@@ -32,9 +38,12 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
 
     private final RedisUtil redisUtil;
 
+    private IReLinkTypeService iReLinkTypeService;
+
     @Autowired
-    public ReLinkServiceImpl(RedisUtil redisUtil) {
+    public ReLinkServiceImpl(RedisUtil redisUtil, IReLinkTypeService iReLinkTypeService) {
         this.redisUtil = redisUtil;
+        this.iReLinkTypeService = iReLinkTypeService;
     }
 
     /**
@@ -126,6 +135,36 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
         }
     }
 
+    /**
+     * 链接分页条件查询
+     *
+     * @param reLinkSearchDTO 条件查询条件DTO
+     * @param pageDTO         分页对象
+     * @return JsonResult 对象
+     */
+    @Override
+    public JsonResult search(ReLinkSearchDTO reLinkSearchDTO, PageDTO pageDTO) {
+        Optional<ReLinkSearchDTO> optionalReLinkSearchDTO = Optional.ofNullable(reLinkSearchDTO);
+        optionalReLinkSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
+        QueryWrapper<ReLink> reLinkQueryWrapper = new QueryWrapper<>();
+        if (!StringUtil.isEmpty(reLinkSearchDTO.getName())) {
+            reLinkQueryWrapper.like("name", reLinkSearchDTO.getName());
+        }
+        if (!StringUtil.isEmpty(reLinkSearchDTO.getUrl())) {
+            reLinkQueryWrapper.like("url", reLinkSearchDTO.getUrl());
+        }
+        if (!StringUtil.isEmpty(reLinkSearchDTO.getType())) {
+            ReLinkType byId = iReLinkTypeService.getById(reLinkSearchDTO.getType());
+            reLinkQueryWrapper.eq("type", byId.getName());
+        }
+        IPage<ReLink> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reLinkQueryWrapper);
+        if (pageResult != null) {
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+        }
+    }
+
 
     @Override
     public JsonResult saveEntity(ReLink entity) {
@@ -176,19 +215,15 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
         Optional<ReLink> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer linkId = Integer.parseInt(id.toString());
-        if (linkId >= 1) {
-            boolean updateResult = update(new UpdateWrapper<ReLink>().setEntity(entity).eq("id", linkId));
+        int linkId = Integer.parseInt(id.toString());
+        if (linkId >= 1001) {
+            boolean updateResult = update(entity, new UpdateWrapper<ReLink>().eq("id", linkId));
             if (updateResult) {
-                // 更新操作
-                String key = ReEntityRedisKeyEnum.RE_LINK_KEY.getKey()
-                        .replace(":id", ":" + entity.getId())
-                        .replace(":name", ":" + entity.getName())
-                        .replace(":type", ":" + entity.getType());
-                boolean b = redisUtil.hasKey(key);
-                if (b) {
-                    redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-                }
+                // 如果缓存中有的话，那么淘汰缓存
+                // 删除所有缓存
+                redisUtil.deleteByPattern("re_link:*");
+                redisUtil.deleteByPattern("re_link_page:*");
+                redisUtil.deleteByPattern("re_link_page_total:*");
                 return JsonResult.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
@@ -218,7 +253,6 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
                 if (reLink == null || reLink.getStatus() == 0) {
                     throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
                 }
-                jsonResult = JsonResult.success(Collections.singletonList(reLink), 1);
             } else {
                 reLink = getById(linkId);
                 // 如果不存在，那么返回 找不到资源错误
@@ -229,8 +263,8 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
                         .replace(":id", ":" + reLink.getId())
                         .replace(":name", ":" + reLink.getName())
                         .replace(":type", ":" + reLink.getType()), reLink, RedisUtil.EXPIRE_TIME_DEFAULT);
-                jsonResult = JsonResult.success(Collections.singletonList(reLink), 1);
             }
+            jsonResult = JsonResult.success(Collections.singletonList(reLink), 1);
             jsonResult.setMessage("操作成功");
             return jsonResult;
         } else {
