@@ -5,6 +5,7 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -28,4 +29,11 @@ public interface IReLinkService extends IService<ReLink>, IReEntityService<ReLin
      * @return JsonResult对象
      */
     JsonResult listLinkPage(Integer page, Integer count);
+
+    /**
+     * 恢复删除的链接
+     * @param id 需要恢复的链接id
+     * @return JsonResult 对象
+     */
+    JsonResult restore(Serializable id);
 }

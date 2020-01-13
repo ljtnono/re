@@ -14,8 +14,8 @@ package cn.ljtnono.re.enumeration;
  * 任意字符串都可以作为键值
  *
  * @author ljt
- * @date 2019/11/12
- * @version 1.1.2
+ * @date 2020/1/13
+ * @version 1.1.3
  */
 public enum ReEntityRedisKeyEnum {
 
@@ -54,6 +54,12 @@ public enum ReEntityRedisKeyEnum {
 
     /** ReLink实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_LINK_KEY("re_link:id:name:type"),
+
+    /** ReLink实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_LINK_PAGE_KEY("re_link_page:page:count"),
+
+    /** ReLink实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_LINK_PAGE_TOTAL_KEY("re_link_page_total:page:count"),
 
     /** ReLinkType实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_LINK_TYPE_KEY("re_link_type:id:name"),

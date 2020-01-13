@@ -9,10 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 
@@ -42,18 +39,27 @@ public class ReLinkController {
         return null;
     }
 
-    public JsonResult deleteEntityById(Serializable id) {
-        return null;
+    @DeleteMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id删除一个链接", notes = "id只能为数字类型", httpMethod = "DELETE")
+    public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
+        return iReLinkService.deleteEntityById(id);
     }
 
-    public JsonResult getEntityById(Serializable id) {
-        return null;
+    @GetMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id获取一个链接", notes = "id只能为数字类型", httpMethod = "GET")
+    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+        return iReLinkService.getEntityById(id);
     }
 
+    @PutMapping("/restore/{id:\\d+}")
+    @ApiOperation(value = "恢复删除的链接", notes = "id只能为数字类型", httpMethod = "PUT")
+    public JsonResult restore(@PathVariable(value = "id") Serializable id) {
+        return iReLinkService.restore(id);
+    }
 
     @GetMapping("/listLinkPage")
     @ApiOperation(value = "分页获取链接", httpMethod = "GET")
     public JsonResult listLinkPage(@Validated PageDTO pageDTO) {
-        return null;
+        return iReLinkService.listLinkPage(pageDTO.getPage(), pageDTO.getCount());
     }
 }

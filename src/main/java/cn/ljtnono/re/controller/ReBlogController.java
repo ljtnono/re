@@ -87,19 +87,19 @@ public class ReBlogController {
     }
 
     @PutMapping("/{id:\\d+}")
-    @ApiOperation(value = "根据id更新一个博客实体类", notes = "id只能是数字类型", httpMethod = "PUT")
+    @ApiOperation(value = "根据id更新一个博客实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReBlog entity) {
         return iReBlogService.updateEntityById(id, entity);
     }
 
     @DeleteMapping("/{id:\\d+}")
-    @ApiOperation(value = "根据id删除一个博客实体类", notes = "id只能是数字类型", httpMethod = "DELETE")
+    @ApiOperation(value = "根据id删除一个博客实体", notes = "id只能是数字类型", httpMethod = "DELETE")
     public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.deleteEntityById(id);
     }
 
     @GetMapping("/{id:\\d+}")
-    @ApiOperation(value = "根据id获取一个博客实体类", notes = "id只能是数字类型", httpMethod = "GET")
+    @ApiOperation(value = "根据id获取一个博客实体", notes = "id只能是数字类型", httpMethod = "GET")
     public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.getEntityById(id);
     }

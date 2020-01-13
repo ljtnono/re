@@ -10,6 +10,8 @@ import cn.ljtnono.re.service.IReLinkService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +74,56 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        // 首先从缓存中获取
+        String redisKey = ReEntityRedisKeyEnum.RE_LINK_PAGE_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        String totalRedisKey = ReEntityRedisKeyEnum.RE_LINK_PAGE_TOTAL_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
+        List<?> objects = redisUtil.lGet(redisKey, 0, -1);
+        if (!objects.isEmpty()) {
+            log.info("从缓存中获取" + page + "页链接数据，每页获取" + count + "条");
+            String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
+            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+        } else {
+            // 按照时间降序排列
+            IPage<ReLink> pageResult = page(new Page<>(page, count), new QueryWrapper<ReLink>().orderByDesc("modify_time"));
+            log.info("获取" + page + "页链接数据，每页获取" + count + "条");
+            redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        }
+    }
 
-        return null;
+    /**
+     * 恢复删除的链接
+     *
+     * @param id 需要恢复的链接id
+     * @return JsonResult 对象
+     */
+    @Override
+    public JsonResult restore(Serializable id) {
+        Optional<Serializable> optionalId = Optional.ofNullable(id);
+        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        int linkId = Integer.parseInt(id.toString());
+        if (linkId >= 1001) {
+            // 更新状态
+            boolean update = update(new UpdateWrapper<ReLink>().set("status", 1).eq("id", linkId));
+            if (update) {
+                // 删除缓存中的相关数据
+                ReLink reLink = getById(linkId);
+                redisUtil.deleteByPattern("re_link:*");
+                redisUtil.deleteByPattern("re_link_page:*");
+                redisUtil.deleteByPattern("re_link_page_total:*");
+                return JsonResult.success(Collections.singletonList(reLink), 1);
+            } else {
+                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            }
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+        }
     }
 
 
@@ -100,21 +150,16 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
     public JsonResult deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer linkId = Integer.parseInt(id.toString());
-        if (linkId >= 1) {
+        int linkId = Integer.parseInt(id.toString());
+        if (linkId >= 1001) {
             // 在数据库中更新
-            boolean updateResult = update(new UpdateWrapper<ReLink>().set("`delete`", 0).eq("id", linkId));
+            boolean updateResult = update(new UpdateWrapper<ReLink>().set("status", 0).eq("id", linkId));
             if (updateResult) {
                 // 删除缓存中的相关数据
                 ReLink reLink = getById(linkId);
-                String key = ReEntityRedisKeyEnum.RE_LINK_KEY.getKey()
-                        .replace(":id", ":" + reLink.getId())
-                        .replace(":name", ":" + reLink.getName())
-                        .replace(":type", ":" + reLink.getType());
-                boolean b = redisUtil.hasKey(key);
-                if (b) {
-                    redisUtil.del(key);
-                }
+                redisUtil.deleteByPattern("re_link:*");
+                redisUtil.deleteByPattern("re_link_page:*");
+                redisUtil.deleteByPattern("re_link_page_total:*");
                 return JsonResult.success(Collections.singletonList(reLink), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
@@ -157,8 +202,8 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
     public JsonResult getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer linkId = Integer.parseInt(id.toString());
-        if (linkId >= 1) {
+        int linkId = Integer.parseInt(id.toString());
+        if (linkId >= 1001) {
             JsonResult jsonResult;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_LINK_KEY.getKey()
