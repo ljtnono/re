@@ -64,6 +64,12 @@ public enum ReEntityRedisKeyEnum {
     /** ReLinkType实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_LINK_TYPE_KEY("re_link_type:id:name"),
 
+    /** ReLinkType实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_LINK_TYPE_PAGE_KEY("re_link_type_page:page:count"),
+
+    /** ReLinkType实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_LINK_TYPE_PAGE_TOTAL_KEY("re_link_type_page_total:page:count"),
+
     /** RePermission实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_PERMISSION_KEY("re_permission:id:res"),
 
