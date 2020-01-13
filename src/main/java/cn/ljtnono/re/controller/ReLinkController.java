@@ -2,14 +2,12 @@ package cn.ljtnono.re.controller;
 
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReLinkSaveDTO;
 import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.dto.ReLinkUpdateDTO;
 import cn.ljtnono.re.entity.ReLink;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReLinkService;
-import cn.ljtnono.re.util.StringUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Date;
 
 /**
  * 链接controller
@@ -37,8 +35,17 @@ public class ReLinkController {
         this.iReLinkService = iReLinkService;
     }
 
-    public JsonResult saveEntity(ReLink entity) {
-        return null;
+    @PostMapping
+    @ApiOperation(value = "新增一个链接类型", httpMethod = "POST")
+    public JsonResult saveEntity(@Validated ReLinkSaveDTO reLinkSaveDTO) {
+        ReLink reLink = new ReLink();
+        reLink.setStatus((byte) 1);
+        reLink.setUrl(reLinkSaveDTO.getUrl());
+        reLink.setType(reLinkSaveDTO.getType());
+        reLink.setName(reLinkSaveDTO.getName());
+        reLink.setCreateTime(new Date());
+        reLink.setModifyTime(new Date());
+        return iReLinkService.saveEntity(reLink);
     }
 
     @PutMapping("/{id:\\d+}")

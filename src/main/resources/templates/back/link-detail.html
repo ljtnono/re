@@ -48,10 +48,10 @@
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">链接url</label>
+                                        <label class="layui-form-label">链接地址</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="url" autocomplete="off" lay-verify="required|url"
-                                                   class="layui-input" placeholder="请输入url">
+                                            <input type="text" name="url" autocomplete="off" lay-verify="required|url" lay-reqText="链接地址必须为url地址"
+                                                   class="layui-input" placeholder="请输入链接地址">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
@@ -190,7 +190,7 @@
                 name: function (value, item) {
                     let nameRex = /^[\w\W\s\u4e00-\u9fcc]{2,20}$/;
                     if (!nameRex.test(value)) {
-                        return "博客类型名只能为2-20个字符";
+                        return "链接名只能为2-20个字符";
                     }
                 }
             });

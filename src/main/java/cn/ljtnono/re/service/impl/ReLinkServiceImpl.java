@@ -38,12 +38,9 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
 
     private final RedisUtil redisUtil;
 
-    private IReLinkTypeService iReLinkTypeService;
-
     @Autowired
-    public ReLinkServiceImpl(RedisUtil redisUtil, IReLinkTypeService iReLinkTypeService) {
+    public ReLinkServiceImpl(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
-        this.iReLinkTypeService = iReLinkTypeService;
     }
 
     /**
@@ -154,8 +151,7 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
             reLinkQueryWrapper.like("url", reLinkSearchDTO.getUrl());
         }
         if (!StringUtil.isEmpty(reLinkSearchDTO.getType())) {
-            ReLinkType byId = iReLinkTypeService.getById(reLinkSearchDTO.getType());
-            reLinkQueryWrapper.eq("type", byId.getName());
+            reLinkQueryWrapper.eq("type", reLinkSearchDTO.getType());
         }
         IPage<ReLink> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reLinkQueryWrapper);
         if (pageResult != null) {
@@ -178,6 +174,8 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
+            redisUtil.deleteByPattern("re_link_page:*");
+            redisUtil.deleteByPattern("re_link_page_total:*");
             return JsonResult.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);

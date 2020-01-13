@@ -41,18 +41,25 @@
                                 <h2 class="layui-colla-title">博客类型属性<i class="layui-icon layui-colla-icon"></i></h2>
                                 <div class="layui-colla-content layui-show">
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">博客类型名</label>
+                                        <label class="layui-form-label">链接地址</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="name" autocomplete="off" lay-verify="name"
-                                                   class="layui-input" placeholder="请输入博客类型名">
+                                            <input type="text" name="url" autocomplete="off" lay-verify="required|url" lay-reqText="链接地址必须为url地址"
+                                                   class="layui-input" placeholder="请输入链接地址">
                                         </div>
                                     </div>
                                     <div class="layui-form-item">
-                                        <label class="layui-form-label">博客类型描述</label>
+                                        <label class="layui-form-label">链接名</label>
                                         <div class="layui-input-block">
-                                            <input type="text" name="description" autocomplete="off"
-                                                   lay-verify="description"
-                                                   class="layui-input" placeholder="请输入博客描述">
+                                            <input type="text" name="name" autocomplete="off" lay-verify="name"
+                                                   class="layui-input" placeholder="请输入链接名">
+                                        </div>
+                                    </div>
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">链接类型</label>
+                                        <div class="layui-input-block">
+                                            <select name="type" id="type">
+                                                <option value="">链接标签分类</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +72,7 @@
                                 <button type="reset" class="layui-btn layui-btn-fluid">重置</button>
                             </div>
                             <div class="layui-input-block" style="margin-left: 0;">
-                                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="form-blogType-submit">
+                                <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="form-link-submit">
                                     提交
                                 </button>
                             </div>
@@ -82,33 +89,49 @@
     layui.use(["form", "layer"], function () {
         let form = layui.form;
         let layer = layui.layer;
+        // 获取下拉选择框的值
+        $.ajax({
+            url: [[${#servletContext.contextPath}]] + "/link_type",
+            method: "GET",
+            dataType: "json",
+            success: function (res) {
+                // 请求成功，将option拼接到下拉框中去
+                if (res.request === "success" && res.status === 200) {
+                    $.each(res.data, function (index, item) {
+                        $('#type').append(new Option(item.name, item.name));
+                    });
+                    form.render();
+                }
+            },
+            error: function (res) {
+                if (res) {
+                    layer.msg(res);
+                } else {
+                    layer.msg("请求错误，请检查网络", {icon: 2});
+                }
+            }
+        });
         // 设置表单校验
         form.verify({
             name: function (value, item) {
                 let nameRex = /^[\w\W\s\u4e00-\u9fcc]{2,20}$/;
                 if (!nameRex.test(value)) {
-                    return "博客类型名只能为2-20个字符";
-                }
-            },
-            description: function (value, item) {
-                // 验证只能4-30个字符 包括中文、字母、数字下划线
-                let descriptionRex = /^[\w\W\s\u4e00-\u9fcc]{0,255}$/;
-                if (!descriptionRex.test(value)) {
-                    return "博客类型简介只能为0-255个字符";
+                    return "链接名只能为2-20个字符";
                 }
             }
         });
         // 监听提交事件
-        form.on('submit(form-blogType-submit)', function (data) {
-            let blogType = data.field;
+        form.on('submit(form-link-submit)', function (data) {
+            let link = data.field;
             layer.confirm('确认提交？', {
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/blog_type",
+                    url: [[${#servletContext.contextPath}]] + "/link",
                     data: {
-                        name: blogType.name,
-                        description: blogType.description
+                        url: link.url,
+                        name: link.name,
+                        type: link.type
                     },
                     method: "POST",
                     dateType: "json",

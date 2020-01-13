@@ -173,11 +173,13 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         Optional<ReBlogType> optionalReBlogType = Optional.ofNullable(entity);
         optionalReBlogType.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
+        String key = ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY.getKey()
+                .replace(":id", ":" + entity.getId())
+                .replace(":name", ":" + entity.getName());
         if (save) {
             // 删除所有相关缓存
-            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY
-                    .getKey().replace(":id", ":*")
-                    .replace(":name", ":*"));
+            // 将实体类存储到缓存中去
+            redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_KEY
                     .getKey().replace(":page", ":*")
                     .replace(":count", ":*"));
@@ -185,7 +187,6 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
                     .getKey().replace(":page", ":*")
                     .replace(":count", ":*"));
             // 删除所有的blog缓存相关
-            redisUtil.deleteByPattern("re_blog:*");
             redisUtil.deleteByPattern("re_blog_page:*");
             redisUtil.deleteByPattern("re_blog_page_total:*");
             redisUtil.deleteByPattern("re_blog_page_type:*");

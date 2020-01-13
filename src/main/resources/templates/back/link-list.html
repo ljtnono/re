@@ -85,7 +85,7 @@
                 // 请求成功，将option拼接到下拉框中去
                 if (res.request === "success" && res.status === 200) {
                     $.each(res.data, function (index, item) {
-                        $('#type').append(new Option(item.name, item.id));
+                        $('#type').append(new Option(item.name, item.name));
                     });
                     form.render();
                 }
