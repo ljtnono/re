@@ -6,17 +6,17 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Root Element 根元素</title>
-<!--    <link rel="stylesheet" th:href="@{/static/fore/lib/bootstrap/css/bootstrap.min.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/static/fore/lib/font-awesome-4.7.0/css/font-awesome.min.css}">-->
-<!--    <link rel="stylesheet" th:href="@{/static/fore/lib/swiper4.5.1/css/swiper.min.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/bootstrap/css/bootstrap.min.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/font-awesome-4.7.0/css/font-awesome.min.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/swiper4.5.1/css/swiper.min.css}">-->
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/Swiper/4.5.1/css/swiper.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/static/fore/css/style.min.css}">
-<!--    <script th:src="@{/static/fore/lib/jquery-1.11.0.min.js}"></script>-->
-<!--    <script th:src="@{/static/fore/lib/swiper4.5.1/js/swiper.min.js}"></script>-->
-<!--    <script th:src="@{/static/fore/lib/bootstrap/js/bootstrap.min.js}"></script>-->
-<!--    <script th:src="@{/static/fore/lib/echarts.min.js}"></script>-->
+    <!--    <script th:src="@{/static/fore/lib/jquery-1.11.0.min.js}"></script>-->
+    <!--    <script th:src="@{/static/fore/lib/swiper4.5.1/js/swiper.min.js}"></script>-->
+    <!--    <script th:src="@{/static/fore/lib/bootstrap/js/bootstrap.min.js}"></script>-->
+    <!--    <script th:src="@{/static/fore/lib/echarts.min.js}"></script>-->
     <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/Swiper/4.5.1/js/swiper.min.js"></script>
     <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -40,7 +40,8 @@
             <div class="flex flex-direction-column flex-align-items-center">
                 <a href="javascript:" class="mt10"><img class="avatar"
                                                         th:src="${application.avatar.url}"
-                                                        th:alt="${application.author_nick_name}" th:title="application.author_nick_name"></a>
+                                                        th:alt="${application.author_nick_name}"
+                                                        th:title="application.author_nick_name"></a>
                 <p class="nick-name fb f20 m10" th:text="${application.author_nick_name}">最后的疼爱</p>
                 <p class="m10">Java菜鸟一枚</p>
                 <p class="m10">喜欢折腾各种技术，web、linux、数据库、前端等</p>
@@ -58,8 +59,10 @@
             <h1 class="f16 fb p10 name">与我联系</h1>
             <div class="icons">
                 <a href="javascript:"><i class="fa fa-weibo" aria-hidden="true"></i></a>
-                <a href="https://mail.qq.com/cgi-bin/loginpage" data-toggle="tooltip" data-placement="top" title="给我发送邮件"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
-                <a href="https://github.com/ljtnono" data-toggle="tooltip" data-placement="top" title="https://github.com/ljtnono"><i class="fa fa-github" aria-hidden="true"></i></a>
+                <a href="https://mail.qq.com/cgi-bin/loginpage" data-toggle="tooltip" data-placement="top"
+                   title="给我发送邮件"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                <a href="https://github.com/ljtnono" data-toggle="tooltip" data-placement="top"
+                   title="https://github.com/ljtnono"><i class="fa fa-github" aria-hidden="true"></i></a>
                 <a href="javascript:"><i class="fa fa-rss" aria-hidden="true"></i></a>
             </div>
             <div class="apply-btn f16 cursor-pointer">
@@ -86,6 +89,10 @@
     });
     const color = ["#49c085", "#f2b63c", "#f58a87", "#6f92ff", "#7782d1", "#d56464"];
     let myChart = echarts.init($(".chart")[0]);
+    // 获取所有的技能列表
+    $.ajax({
+        url: ""
+    });
     let option = {
         left: "100%",
         top: "100%",

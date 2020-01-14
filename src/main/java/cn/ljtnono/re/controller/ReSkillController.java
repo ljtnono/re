@@ -1,44 +1,94 @@
 package cn.ljtnono.re.controller;
 
 
+import cn.ljtnono.re.dto.*;
 import cn.ljtnono.re.entity.ReSkill;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.service.IReSkillService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 技能controller
  * @author ljt
- * @date 2019/11/23
- * @version 1.0
+ * @date 2020/1/14
+ * @version 1.0.2
  */
 @RestController
 @RequestMapping("/skill")
 @Slf4j
 public class ReSkillController {
 
+    private IReSkillService iReSkillService;
+
+    @Autowired
+    public ReSkillController(IReSkillService iReSkillService) {
+        this.iReSkillService = iReSkillService;
+    }
+
+    @GetMapping
+    @ApiOperation(value = "获取所有的技能列表", httpMethod = "GET")
     public JsonResult listEntityAll() {
-        return null;
+        return iReSkillService.listEntityAll();
     }
 
-    public JsonResult saveEntity(ReSkill entity) {
-        return null;
+    @PostMapping
+    @ApiOperation(value = "新增技能", httpMethod = "POST")
+    public JsonResult saveEntity(@Validated ReSkillSaveDTO reSkillSaveDTO) {
+        ReSkill reSkill = new ReSkill();
+        reSkill.setStatus((byte) 1);
+        reSkill.setCreateTime(new Date());
+        reSkill.setModifyTime(new Date());
+        reSkill.setPercent(reSkillSaveDTO.getPercent());
+        reSkill.setOwner(reSkillSaveDTO.getOwner());
+        reSkill.setName(reSkillSaveDTO.getName());
+        return iReSkillService.saveEntity(reSkill);
     }
 
-    public JsonResult updateEntityById(Serializable id, ReSkill entity) {
-        return null;
+    @PutMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id更新一个技能实体", notes = "id只能是数字类型", httpMethod = "PUT")
+    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReSkillUpdateDTO reSkillUpdateDTO) {
+        ReSkill reSkill = new ReSkill();
+        reSkill.setName(reSkillUpdateDTO.getName());
+        reSkill.setOwner(reSkillUpdateDTO.getOwner());
+        reSkill.setPercent(reSkillUpdateDTO.getPercent());
+        reSkill.setStatus((byte) 1);
+        return iReSkillService.updateEntityById(id, reSkill);
     }
 
-    public JsonResult deleteEntityById(Serializable id) {
-        return null;
+    @DeleteMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id删除一个skill记录", notes = "id只能为数字类型", httpMethod = "DELETE")
+    public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
+        return iReSkillService.deleteEntityById(id);
     }
 
-    public JsonResult getEntityById(Serializable id) {
-        return null;
+    @PutMapping("/restore/{id:\\d+}")
+    @ApiOperation(value = "恢复删除的技能", notes = "id只能为数字类型", httpMethod = "PUT")
+    public JsonResult restore(@PathVariable(value = "id") Serializable id) {
+        return iReSkillService.restore(id);
+    }
+
+
+    @GetMapping("/{id:\\d+}")
+    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+        return iReSkillService.getEntityById(id);
+    }
+
+    @GetMapping("/listSkillPage")
+    @ApiOperation(value = "分页查询技能列表", httpMethod = "GET")
+    public JsonResult listSkillPage(@Validated PageDTO pageDTO) {
+        return iReSkillService.listSkillPage(pageDTO.getPage(), pageDTO.getCount());
+    }
+
+    @PostMapping("/search")
+    @ApiOperation(value = "根据链接name和owner模糊查询", notes = "根据链接name和owner模糊查询", httpMethod = "POST")
+    public JsonResult search(@Validated ReSkillSearchDTO reSkillSearchDTO, @Validated PageDTO pageDTO) {
+        return iReSkillService.search(reSkillSearchDTO, pageDTO);
     }
 }

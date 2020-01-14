@@ -82,6 +82,12 @@ public enum ReEntityRedisKeyEnum {
     /** ReSkill实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_SKILL_KEY("re_skill:id:name:owner"),
 
+    /** ReSkill实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_SKILL_PAGE_KEY("re_skill_page:page:count"),
+
+    /** ReSkill实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_SKILL_PAGE_TOTAL_KEY("re_skill_page_total:page:count"),
+
     /** ReTimeLine实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_TIMELINE_KEY("re_timeline:id"),
 

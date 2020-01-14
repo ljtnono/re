@@ -9,13 +9,13 @@ package cn.ljtnono.re.enumeration;
 public enum ReRoleEnum {
 
     /** 超级管理员 */
-    ROLE_ROOT(1, "超级管理员", "root"),
+    ROLE_ROOT(1001, "超级管理员", "root"),
 
     /** 管理员 */
-    ROLE_ADMIN(2, "管理员", "admin"),
+    ROLE_ADMIN(1002, "管理员", "admin"),
 
     /** 普通用户 */
-    ROLE_USER(3, "普通用户", "user");
+    ROLE_USER(1003, "普通用户", "user");
 
     /** 角色id */
     private Integer id;
