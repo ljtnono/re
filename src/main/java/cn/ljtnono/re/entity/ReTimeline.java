@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 时间轴实体
@@ -29,5 +30,8 @@ public class ReTimeline extends BaseEntity implements Serializable {
 
     /** 时间轴内容 */
     private String content;
+
+    /** 时间轴显示的时间 */
+    private Date pushDate;
 
 }
