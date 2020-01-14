@@ -24,8 +24,14 @@
         <lombok.version>1.18.10</lombok.version>
         <swagger.version>2.9.2</swagger.version>
         <lucene.version>5.3.1</lucene.version>
+        <leancloud.version>6.1.6</leancloud.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>cn.leancloud</groupId>
+            <artifactId>storage-core</artifactId>
+            <version>${leancloud.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

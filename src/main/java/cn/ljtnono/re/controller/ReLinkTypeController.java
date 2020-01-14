@@ -2,11 +2,14 @@ package cn.ljtnono.re.controller;
 
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReLinkTypeSaveDTO;
+import cn.ljtnono.re.dto.ReLinkTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReLinkType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReLinkTypeService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 链接类型controller
@@ -39,12 +43,23 @@ public class ReLinkTypeController {
         return iReLinkTypeService.listEntityAll();
     }
 
-    public JsonResult saveEntity(ReLinkType entity) {
-        return null;
+    @PostMapping
+    @ApiOperation(value = "新增一个链接类型", httpMethod = "POST")
+    public JsonResult saveEntity(@Validated ReLinkTypeSaveDTO reLinkTypeSaveDTO) {
+        ReLinkType reLinkType = new ReLinkType();
+        reLinkType.setStatus((byte) 1);
+        reLinkType.setName(reLinkTypeSaveDTO.getName());
+        reLinkType.setCreateTime(new Date());
+        reLinkType.setModifyTime(new Date());
+        return iReLinkTypeService.saveEntity(reLinkType);
     }
 
-    public JsonResult updateEntityById(Serializable id, ReLinkType entity) {
-        return null;
+    @PutMapping("/{id:\\d+}")
+    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReLinkTypeUpdateDTO reLinkTypeUpdateDTO) {
+        ReLinkType reLinkType = new ReLinkType();
+        reLinkType.setName(reLinkTypeUpdateDTO.getName());
+        reLinkType.setStatus((byte) 1);
+        return iReLinkTypeService.updateEntityById(id, reLinkType);
     }
 
     @DeleteMapping("/{id:\\d+}")
@@ -53,8 +68,10 @@ public class ReLinkTypeController {
         return iReLinkTypeService.deleteEntityById(id);
     }
 
-    public JsonResult getEntityById(Serializable id) {
-        return null;
+    @GetMapping("/{id:\\d+}")
+    @ApiOperation(value = "根据id查询链接类型实体", notes = "id只能为数字类型", httpMethod = "GET")
+    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+        return iReLinkTypeService.getEntityById(id);
     }
 
     @GetMapping("/listLinkTypePage")

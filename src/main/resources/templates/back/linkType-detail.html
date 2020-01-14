@@ -61,9 +61,6 @@
                     <div class="layui-card-body">
                         <div class="layui-form-item">
                             <div class="layui-input-block" style="margin-left: 0;">
-                                <button type="reset" class="layui-btn layui-btn-fluid">重置</button>
-                            </div>
-                            <div class="layui-input-block" style="margin-left: 0;">
                                 <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="form-linkType-submit">提交
                                 </button>
                             </div>
@@ -77,24 +74,23 @@
 </body>
 <script th:src="@{/static/fore/js/common.js}"></script>
 <script th:inline="javascript">
-    let linkTypeId = [[${#request.getParameter("blogTypeId")}]];
+    let linkTypeId = [[${#request.getParameter("linkTypeId")}]];
     console.log("正在编辑博客类型，blogTypeId = " + linkTypeId);
-    let blogType;
+    let linkType;
     layui.use(['form', 'layer'], function () {
         let form = layui.form;
         let layer = layui.layer;
         if (linkTypeId) {
             // 获取blogType相关信息
             $.ajax({
-                url: [[${#servletContext.contextPath}]] + "/blog_type/" + linkTypeId,
+                url: [[${#servletContext.contextPath}]] + "/link_type/" + linkTypeId,
                 method: "GET",
                 success: function (res) {
                     if (res.request === "success" && res.status === 200 && res.data) {
-                        blogType = res.data[0];
-                        form.val("form-blogType", {
-                            "id": blogType.id,
-                            "name": blogType.name,
-                            "description": blogType.description
+                        linkType = res.data[0];
+                        form.val("form-linkType", {
+                            "id": linkType.id,
+                            "name": linkType.name
                         });
                         form.render();
                     } else {
@@ -110,17 +106,15 @@
                 }
             });
             // 监听提交事件
-            form.on('submit(form-blogType-submit)', function (data) {
-                let blogType = data.field;
+            form.on('submit(form-linkType-submit)', function (data) {
+                let linkType = data.field;
                 layer.confirm('确认提交？', {
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/blog_type/" + linkTypeId,
+                        url: [[${#servletContext.contextPath}]] + "/link_type/" + linkTypeId,
                         data: {
-                            id: blogType.id,
-                            name: blogType.name,
-                            description: blogType.description
+                            name: linkType.name
                         },
                         method: "PUT",
                         dateType: "json",
@@ -148,14 +142,7 @@
                 name: function (value, item) {
                     let titleRex = /^[\w\W\s\u4e00-\u9fcc]{2,20}$/;
                     if (!titleRex.test(value)) {
-                        return "博客类型名只能为2-20个字符";
-                    }
-                },
-                description: function (value, item) {
-                    // 验证只能4-30个字符 包括中文、字母、数字下划线
-                    let titleRex = /^[\w\W\s\u4e00-\u9fcc]{0,255}$/;
-                    if (!titleRex.test(value)) {
-                        return "博客类型简介只能为0-255个字符";
+                        return "链接类型名只能为2-20个字符";
                     }
                 }
             });

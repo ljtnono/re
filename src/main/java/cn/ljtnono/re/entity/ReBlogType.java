@@ -10,9 +10,9 @@ import java.io.Serializable;
 
 /**
  *  博客类型实体
- *  @author 凌家童
+ *  @author ljt
  *  @date 2019/12/11
- *  @version 1.1
+ *  @version 1.0.2
  *  添加了lombok 相关，简化操作
  *
 */

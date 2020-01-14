@@ -1,8 +1,6 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.dto.PageDTO;
-import cn.ljtnono.re.entity.ReBlog;
-import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.entity.ReLinkType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
@@ -59,6 +57,17 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
+            // 删除缓存中的相关数据
+            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
+                    .getKey().replace(":page", ":*")
+                    .replace(":count", ":*"));
+            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
+                    .getKey().replace(":page", ":*")
+                    .replace(":count", ":*"));
+            // 删除所有的link缓存相关
+            redisUtil.deleteByPattern("re_link:*");
+            redisUtil.deleteByPattern("re_link_page:*");
+            redisUtil.deleteByPattern("re_link_page_total:*");
             return JsonResult.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
@@ -111,16 +120,22 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
         optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
         if (linkTypeId >= 1001) {
-            boolean updateResult = update(new UpdateWrapper<ReLinkType>().setEntity(entity).eq("id", linkTypeId));
+            boolean updateResult = update(entity, new UpdateWrapper<ReLinkType>().eq("id", linkTypeId));
             if (updateResult) {
-                // 更新操作
-                String key = ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
-                        .replace(":id", ":" + entity.getId())
-                        .replace(":name", ":" + entity.getName());
-                boolean b = redisUtil.hasKey(key);
-                if (b) {
-                    redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-                }
+                // 删除相关缓存
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY
+                        .getKey().replace(":id", ":*")
+                        .replace(":name", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
+                        .getKey().replace(":page", ":*")
+                        .replace(":count", ":*"));
+                // 删除所有的link缓存相关
+                redisUtil.deleteByPattern("re_link:*");
+                redisUtil.deleteByPattern("re_link_page:*");
+                redisUtil.deleteByPattern("re_link_page_total:*");
                 return JsonResult.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);

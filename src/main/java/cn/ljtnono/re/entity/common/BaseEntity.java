@@ -9,7 +9,7 @@ import java.util.Date;
  * 所有实体类的公共字段
  * @author ljt
  * @date 2019/12/11
- * @version 1.0
+ * @version 1.0.2
  */
 @Data
 @NoArgsConstructor
