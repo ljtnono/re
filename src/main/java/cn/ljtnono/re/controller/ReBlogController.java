@@ -51,18 +51,12 @@ public class ReBlogController {
     @ApiOperation(value = "新增一个博客记录", httpMethod = "POST")
     public JsonResult saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
         ReBlog build = ReBlog.newBuilder()
-                .title(reBlogSaveDTO.getTitle())
-                .author(reBlogSaveDTO.getAuthor())
-                .type(reBlogSaveDTO.getType())
-                .contentHtml(reBlogSaveDTO.getContentHtml())
-                .contentMarkdown(reBlogSaveDTO.getContentMarkdown())
-                .coverImage(reBlogSaveDTO.getCoverImage())
-                .status((byte) 1)
-                .createTime(new Date())
-                .modifyTime(new Date())
-                .view(0)
-                .comment(0)
-                .build();
+                .title(reBlogSaveDTO.getTitle()).author(reBlogSaveDTO.getAuthor())
+                .type(reBlogSaveDTO.getType()).contentHtml(reBlogSaveDTO.getContentHtml())
+                .contentMarkdown(reBlogSaveDTO.getContentMarkdown()).coverImage(reBlogSaveDTO.getCoverImage())
+                .status((byte) 1).createTime(new Date())
+                .modifyTime(new Date()).view(0)
+                .comment(0).build();
         // 设置封面图片，如果没有那么就设置为默认封面图片url
         if (StringUtil.isEmpty(build.getCoverImage())) {
             build.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
