@@ -89,7 +89,13 @@ public enum ReEntityRedisKeyEnum {
     RE_SKILL_PAGE_TOTAL_KEY("re_skill_page_total:page:count"),
 
     /** ReTimeLine实体类在redis中存储的键的格式，通过替换相应的值来存储 */
-    RE_TIMELINE_KEY("re_timeline:id"),
+    RE_TIMELINE_KEY("re_timeline:id:pushDate"),
+
+    /** ReTimeline实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_TIMELINE_PAGE_KEY("re_timeline_page:page:count"),
+
+    /** ReTimeline实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_TIMELINE_PAGE_TOTAL_KEY("re_timeline_page_total:page:count"),
 
     /** ReUser实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_USER_KEY("re_user:id:username:qq:tel"),
