@@ -1,7 +1,6 @@
 package cn.ljtnono.re.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/12/19
  */
 @Component
+@Slf4j
 public class RedisUtil {
 
     private RedisTemplate<String, Object> redisTemplate;
@@ -33,8 +33,6 @@ public class RedisUtil {
     public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
-
-    private static Logger logger = LoggerFactory.getLogger(RedisUtil.class);
 
     /**
      * 默认缓存时间30d
@@ -60,7 +58,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("指定" + key + "失效时间失败, 原因：" + e.getMessage());
+            log.error("指定" + key + "失效时间失败, 原因：" + e.getMessage());
             return false;
         }
     }
@@ -74,7 +72,7 @@ public class RedisUtil {
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null && !keys.isEmpty()) {
             Long delete = redisTemplate.delete(keys);
-            logger.info("已删除满足正则表达式[" + pattern + "]的key，删除数量：" + delete);
+            log.info("已删除满足正则表达式[" + pattern + "]的key，删除数量：" + delete);
         }
     }
 
@@ -126,9 +124,9 @@ public class RedisUtil {
         if (keys != null && keys.length > 0) {
             if (keys.length == 1) {
                 redisTemplate.delete(keys[0]);
-                logger.info("删除键[" + keys[0] + "]");
+                log.info("删除键[" + keys[0] + "]");
             } else {
-                logger.info("删除键" + Arrays.toString(keys));
+                log.info("删除键" + Arrays.toString(keys));
                 redisTemplate.delete(Arrays.asList(keys));
             }
         }
@@ -187,7 +185,7 @@ public class RedisUtil {
             redisTemplate.opsForValue().set(key, value);
             return true;
         } catch (Exception e) {
-            logger.error("设置缓存[" + key + "]失败, 原因：" + e.getMessage());
+            log.error("设置缓存[" + key + "]失败, 原因：" + e.getMessage());
             return false;
         }
     }
@@ -215,7 +213,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("设置缓存[" + key + "]失败, 原因：" + e.getMessage());
+            log.error("设置缓存[" + key + "]失败, 原因：" + e.getMessage());
             return false;
         }
     }
@@ -306,7 +304,7 @@ public class RedisUtil {
             redisTemplate.opsForHash().putAll(key, map);
             return true;
         } catch (Exception e) {
-            logger.error("设置多个hash值失败，原因：" + e.getMessage());
+            log.error("设置多个hash值失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -333,7 +331,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("设置多个hash值失败，原因：" + e.getMessage());
+            log.error("设置多个hash值失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -357,7 +355,7 @@ public class RedisUtil {
             redisTemplate.opsForHash().put(key, item, value);
             return true;
         } catch (Exception e) {
-            logger.error("设置多个hash值失败，原因：" + e.getMessage());
+            log.error("设置多个hash值失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -385,7 +383,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("设置多个hash值失败，原因：" + e.getMessage());
+            log.error("设置多个hash值失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -479,7 +477,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForSet().members(key);
         } catch (Exception e) {
-            logger.error("获取set中的所有值失败，原因：" + e.getMessage());
+            log.error("获取set中的所有值失败，原因：" + e.getMessage());
             return null;
         }
     }
@@ -501,7 +499,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForSet().isMember(key, value);
         } catch (Exception e) {
-            logger.error("查询value失败，原因" + e.getMessage());
+            log.error("查询value失败，原因" + e.getMessage());
             return false;
         }
     }
@@ -523,7 +521,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForSet().add(key, values);
         } catch (Exception e) {
-            logger.error("设置多个set类型值失败，原因" + e.getMessage());
+            log.error("设置多个set类型值失败，原因" + e.getMessage());
             return 0;
         }
     }
@@ -550,7 +548,7 @@ public class RedisUtil {
             }
             return count;
         } catch (Exception e) {
-            logger.error("设置多个set类型值失败，原因" + e.getMessage());
+            log.error("设置多个set类型值失败，原因" + e.getMessage());
             return 0;
         }
     }
@@ -568,7 +566,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForSet().size(key);
         } catch (Exception e) {
-            logger.error("获取set类型长度失败，原因：" + e.getMessage());
+            log.error("获取set类型长度失败，原因：" + e.getMessage());
             return 0;
         }
     }
@@ -591,7 +589,7 @@ public class RedisUtil {
             Long count = redisTemplate.opsForSet().remove(key, values);
             return count;
         } catch (Exception e) {
-            logger.error("移除多个set值失败，原因：" + e.getMessage());
+            log.error("移除多个set值失败，原因：" + e.getMessage());
             return 0;
         }
     }
@@ -614,7 +612,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForList().range(key, start, end);
         } catch (Exception e) {
-            logger.error("获取list缓存内容失败，原因：" + e.getMessage());
+            log.error("获取list缓存内容失败，原因：" + e.getMessage());
             return null;
         }
     }
@@ -632,7 +630,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForList().size(key);
         } catch (Exception e) {
-            logger.error("获取list缓存长度失败，原因：" + e.getMessage());
+            log.error("获取list缓存长度失败，原因：" + e.getMessage());
             return 0;
         }
     }
@@ -651,7 +649,7 @@ public class RedisUtil {
             }
             return redisTemplate.opsForList().index(key, index);
         } catch (Exception e) {
-            logger.error("获取list缓存长度失败，原因：" + e.getMessage());
+            log.error("获取list缓存长度失败，原因：" + e.getMessage());
             return null;
         }
     }
@@ -671,7 +669,7 @@ public class RedisUtil {
             redisTemplate.opsForList().rightPush(key, value);
             return true;
         } catch (Exception e) {
-            logger.error("获取list缓存失败，原因：" + e.getMessage());
+            log.error("获取list缓存失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -695,7 +693,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("设置list缓存失败，原因：" + e.getMessage());
+            log.error("设置list缓存失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -718,7 +716,7 @@ public class RedisUtil {
             redisTemplate.opsForList().rightPushAll(key, value);
             return true;
         } catch (Exception e) {
-            logger.error("设置list缓存失败，原因：" + e.getMessage());
+            log.error("设置list缓存失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -745,7 +743,7 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            logger.error("设置list缓存失败，原因：" + e.getMessage());
+            log.error("设置list缓存失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -769,7 +767,7 @@ public class RedisUtil {
             redisTemplate.opsForList().set(key, index, value);
             return true;
         } catch (Exception e) {
-            logger.error("设置list缓存失败，原因：" + e.getMessage());
+            log.error("设置list缓存失败，原因：" + e.getMessage());
             return false;
         }
     }
@@ -793,7 +791,7 @@ public class RedisUtil {
             Long remove = redisTemplate.opsForList().remove(key, count, value);
             return remove;
         } catch (Exception e) {
-            logger.error("移除list缓存失败，原因：" + e.getMessage());
+            log.error("移除list缓存失败，原因：" + e.getMessage());
             return 0;
         }
     }
