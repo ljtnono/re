@@ -82,4 +82,10 @@ public class ReTimelineController {
     public JsonResult listTimelinePage(@Validated PageDTO pageDTO) {
         return iReTimelineService.listTimelinePage(pageDTO.getPage(), pageDTO.getCount());
     }
+
+    @GetMapping("/listUpdateLogTimeline")
+    @ApiOperation(value = "获取博客更新日志时间轴", notes = "根据日期排序，获取前20条数据", httpMethod = "GET")
+    public JsonResult listUpdateLogTimeline() {
+        return iReTimelineService.listUpdateLogTimeline();
+    }
 }
