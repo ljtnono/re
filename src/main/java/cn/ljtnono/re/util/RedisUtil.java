@@ -24,11 +24,6 @@ public class RedisUtil {
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    /**
-     * 这里使用构造器注入
-     *
-     * @param redisTemplate redis操作工具
-     */
     @Autowired
     public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
