@@ -1,17 +1,21 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReUserSearchDTO;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.entity.ReUser;
+import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 用户服务类接口
  * @author ljt
- * @date 2019/11/15
- * @version 1.0
+ * @date 2020/1/18
+ * @version 1.0。2
  */
 public interface IReUserService extends IService<ReUser>, IReEntityService<ReUser> {
 
@@ -21,4 +25,27 @@ public interface IReUserService extends IService<ReUser>, IReEntityService<ReUse
      * @return 用户角色列表
      */
     List<ReRole> listRoleByUserId(Integer userId);
+
+    /**
+     * 分页获取用户列表
+     * @param page 页数
+     * @param count 每页条数
+     * @return JsonResult对象
+     */
+    JsonResult listUserPage(Integer page, Integer count);
+
+    /**
+     * 恢复删除的用户
+     * @param id 用户id
+     * @return JsonResult对象
+     */
+    JsonResult restore(Serializable id);
+
+    /**
+     * 根据username、tel和email模糊查询
+     * @param reUserSearchDTO 查询条件DTO
+     * @param pageDTO 分页DTO
+     * @return JsonResult对象
+     */
+    JsonResult search(ReUserSearchDTO reUserSearchDTO, PageDTO pageDTO);
 }

@@ -1,5 +1,7 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReTimelineSearchDTO;
 import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
@@ -30,4 +32,18 @@ public interface IReTimelineService extends IService<ReTimeline>, IReEntityServi
      * @return JsonResult 对象
      */
     JsonResult restore(Serializable id);
+
+    /**
+     * 获取博客更新日志时间轴
+     * @return JsonResult对象
+     */
+    JsonResult listUpdateLogTimeline();
+
+    /**
+     * 根据content和pushDate模糊查询列表
+     * @param reTimelineSearchDTO 查询条件DTO
+     * @param pageDTO 分页DTO
+     * @return JsonResult对象
+     */
+    JsonResult search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO);
 }

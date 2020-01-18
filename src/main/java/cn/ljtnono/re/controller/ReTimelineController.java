@@ -1,8 +1,6 @@
 package cn.ljtnono.re.controller;
 
-import cn.ljtnono.re.dto.PageDTO;
-import cn.ljtnono.re.dto.ReTimelineSaveDTO;
-import cn.ljtnono.re.dto.ReTimelineUpdateDTO;
+import cn.ljtnono.re.dto.*;
 import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReTimelineService;
@@ -87,5 +85,11 @@ public class ReTimelineController {
     @ApiOperation(value = "获取博客更新日志时间轴", notes = "根据日期排序，获取前20条数据", httpMethod = "GET")
     public JsonResult listUpdateLogTimeline() {
         return iReTimelineService.listUpdateLogTimeline();
+    }
+
+    @PostMapping("/search")
+    @ApiOperation(value = "根据链接content和pushDate模糊查询", notes = "根据链接content和pushDate模糊查询", httpMethod = "POST")
+    public JsonResult search(ReTimelineSearchDTO reTimelineSearchDTO, @Validated PageDTO pageDTO) {
+        return iReTimelineService.search(reTimelineSearchDTO, pageDTO);
     }
 }

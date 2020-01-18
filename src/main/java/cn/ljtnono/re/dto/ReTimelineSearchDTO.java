@@ -19,18 +19,14 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @ToString
-public class ReTimelineSaveDTO implements Serializable {
+public class ReTimelineSearchDTO implements Serializable {
 
-    private static final long serialVersionUID = -7925086379560074305L;
+    private static final long serialVersionUID = -1170350593960043035L;
 
     /** 时间轴内容 */
-    @NotNull
-    @Length(min = 2, max = 255, message = "内容为2-255个字符")
     private String content;
 
     /** 时间轴显示日期 */
-    @NotNull(message = "发布时间不能为null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date pushDate;
 }
-

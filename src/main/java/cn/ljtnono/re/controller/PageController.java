@@ -92,7 +92,7 @@ public class PageController {
      * @return 跳转到article页面
      */
     @GetMapping("/article/{id:\\d+}")
-    public String article(@PathVariable final String id, ModelMap modelMap) {
+    public String article(@PathVariable(value = "id") final String id, ModelMap modelMap) {
         // 如果参数为空
         if (StringUtil.isEmpty(id)) {
             log.info("博客id不能为空");

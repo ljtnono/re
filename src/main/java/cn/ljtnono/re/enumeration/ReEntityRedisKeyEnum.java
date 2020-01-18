@@ -100,6 +100,12 @@ public enum ReEntityRedisKeyEnum {
     /** ReUser实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_USER_KEY("re_user:id:username:qq:tel"),
 
+    /** ReUser实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_USER_PAGE_KEY("re_user_page:page:count"),
+
+    /** ReUser实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_USER_PAGE_TOTAL_KEY("re_user_page_total:page:count"),
+
     /** ReUserRole实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_USER_ROLE_KEY("re_user_role:id");
 

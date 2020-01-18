@@ -1,14 +1,18 @@
 package cn.ljtnono.re.service.impl;
 
-import cn.ljtnono.re.entity.ReSkill;
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReTimelineSearchDTO;
 import cn.ljtnono.re.entity.ReTimeline;
+import cn.ljtnono.re.enumeration.DateStyleEnum;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReTimelineMapper;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReTimelineService;
+import cn.ljtnono.re.util.DateUtil;
 import cn.ljtnono.re.util.RedisUtil;
+import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -213,6 +217,47 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             }
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+        }
+    }
+
+    /**
+     * 获取博客更新日志时间轴
+     *
+     * @return JsonResult对象
+     */
+    @Override
+    public JsonResult listUpdateLogTimeline() {
+        List<ReTimeline> reTimelineList = list(new QueryWrapper<ReTimeline>().orderByDesc("push_date").last("limit 20"));
+        Optional<List<ReTimeline>> optionalList = Optional.ofNullable(reTimelineList);
+        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
+        optionalList.ifPresent((l) -> l.forEach(reTimeline -> {
+            redisUtil.set(ReEntityRedisKeyEnum.RE_TIMELINE_KEY.getKey()
+                    .replace(":id", ":" + reTimeline.getId())
+                    .replace(":pushDate", ":" + reTimeline.getPushDate()), reTimeline, RedisUtil.EXPIRE_TIME_DEFAULT);
+        }));
+        optionalList.ifPresent(l -> log.info("从数据库中获取日志更新时间轴列表，总条数：" + l.size()));
+        JsonResult success = JsonResult.success(reTimelineList, reTimelineList.size());
+        success.setMessage("操作成功");
+        return success;
+    }
+
+
+    @Override
+    public JsonResult search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO) {
+        Optional<ReTimelineSearchDTO> optionalReTimelineSearchDTO = Optional.ofNullable(reTimelineSearchDTO);
+        optionalReTimelineSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
+        QueryWrapper<ReTimeline> reTimelineQueryWrapper = new QueryWrapper<>();
+        if (!StringUtil.isEmpty(reTimelineSearchDTO.getContent())) {
+            reTimelineQueryWrapper.like("content", reTimelineSearchDTO.getContent());
+        }
+        if (reTimelineSearchDTO.getPushDate() != null) {
+            reTimelineQueryWrapper.eq("push_date", DateUtil.formatDate(reTimelineSearchDTO.getPushDate(), DateStyleEnum.yyyy_MM_dd));
+        }
+        IPage<ReTimeline> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reTimelineQueryWrapper);
+        if (pageResult != null) {
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 }
