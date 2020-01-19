@@ -21,7 +21,6 @@ import java.io.Serializable;
 @ToString
 public class ReSkillSaveDTO implements Serializable {
 
-
     private static final long serialVersionUID = 3280833246100874859L;
     /** 技能名 */
     @NotNull

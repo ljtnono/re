@@ -5,14 +5,15 @@ import cn.ljtnono.re.entity.ReRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
 /**
  * 角色mapper
  * @author ljt
- * @date 2019/11/15
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.2
  *
  */
 public interface ReRoleMapper extends BaseMapper<ReRole> {
@@ -29,5 +30,21 @@ public interface ReRoleMapper extends BaseMapper<ReRole> {
             "LEFT JOIN re_permission ON re_role_permission.permission_id = re_permission.id " +
             "WHERE re_role.id = #{roleId}")
     List<RePermission> listPermissionByRoleId(@Param("roleId") Integer id);
+
+    /**
+     * 在删除角色的时候删除关联表的数据
+     * @param roleId 角色id
+     * @return 删除成功返回true，删除失败返回false
+     */
+    @Update("UPDATE re_user_role SET status = 0 WHERE role_id = #{roleId}")
+    boolean deleteUserRole(@Param("roleId") Integer roleId);
+
+    /**
+     * 恢复删除的用户角色关联表数据
+     * @param roleId 角色id
+     * @return 恢复成功返回true，恢复失败返回false
+     */
+    @Update("UPDATE re_user_role SET status = 1 WHERE role_id = #{roleId}")
+    boolean restoreUserRole(@Param("roleId") Integer roleId);
 
 }

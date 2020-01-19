@@ -8,8 +8,8 @@ import java.io.Serializable;
 /**
  * service父类
  * @author ljt
- * @date 2019/11/22
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.2
  */
 public interface IReEntityService <T> {
 

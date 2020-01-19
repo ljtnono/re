@@ -1,9 +1,7 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.dto.PageDTO;
-import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.dto.ReSkillSearchDTO;
-import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.entity.ReSkill;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
@@ -31,8 +29,8 @@ import java.util.Optional;
 /**
  * 技能类服务实现类
  * @author ljt
- * @date 2019/11/23
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.2
  */
 @Service
 @Slf4j
@@ -44,7 +42,6 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
     public ReSkillServiceImpl(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
     }
-
 
     @Override
     public JsonResult saveEntity(ReSkill entity) {
@@ -226,13 +223,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
         }
     }
 
-    /**
-     * 技能分页条件查询
-     *
-     * @param reSkillSearchDTO 条件查询条件DTO
-     * @param pageDTO          分页对象
-     * @return JsonResult 对象
-     */
+
     @Override
     public JsonResult search(ReSkillSearchDTO reSkillSearchDTO, PageDTO pageDTO) {
         Optional<ReSkillSearchDTO> optionalReLinkSearchDTO = Optional.ofNullable(reSkillSearchDTO);

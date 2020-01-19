@@ -1,8 +1,6 @@
 package cn.ljtnono.re.controller;
 
-
 import cn.ljtnono.re.entity.ReBook;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.pojo.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +12,8 @@ import java.io.Serializable;
 /**
  * 书籍controller
  * @author ljt
- * @date 2019/11/23
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.1
  */
 @RestController
 @RequestMapping("/book")

@@ -7,6 +7,7 @@ import cn.ljtnono.re.service.IReUserService;
 import cn.ljtnono.re.util.EncryptUtil;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,12 +47,10 @@ public class ReUserController {
 
     @PostMapping
     @ApiOperation(value = "新增一个用户", httpMethod = "POST")
-    public JsonResult saveEntity(ReUserSaveDTO reUserSaveDTO) {
+    public JsonResult saveEntity(@Validated ReUserSaveDTO reUserSaveDTO) {
         ReUser entity = new ReUser();
-        entity.setEmail(reUserSaveDTO.getEmail());
+        BeanUtils.copyProperties(reUserSaveDTO, entity);
         entity.setPassword(EncryptUtil.getInstance().getMd5LowerCase(reUserSaveDTO.getPassword()));
-        entity.setQq(reUserSaveDTO.getQq());
-        entity.setTel(reUserSaveDTO.getTel());
         entity.setStatus((byte) 1);
         entity.setCreateTime(new Date());
         entity.setModifyTime(new Date());
@@ -62,10 +61,8 @@ public class ReUserController {
     @ApiOperation(value = "根据id更新用户", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReUserUpdateDTO reUserUpdateDTO) {
         ReUser entity = new ReUser();
-        entity.setEmail(reUserUpdateDTO.getEmail());
+        BeanUtils.copyProperties(reUserUpdateDTO, entity);
         entity.setPassword(EncryptUtil.getInstance().getMd5LowerCase(reUserUpdateDTO.getPassword()));
-        entity.setQq(reUserUpdateDTO.getQq());
-        entity.setTel(reUserUpdateDTO.getTel());
         entity.setStatus((byte) 1);
         return iReUserService.updateEntityById(id, entity);
     }

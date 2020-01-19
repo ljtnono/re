@@ -74,7 +74,13 @@ public enum ReEntityRedisKeyEnum {
     RE_PERMISSION_KEY("re_permission:id:res"),
 
     /** ReRole实体类在redis中存储的键的格式，通过替换相应的值来存储 */
-    RE_ROLE_KEY("re_role:id:name"),
+    RE_ROLE_KEY("re_role:id:name:description"),
+
+    /** ReRole实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_ROLE_PAGE_KEY("re_role_page:page:count"),
+
+    /** ReRole实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_ROLE_PAGE_TOTAL_KEY("re_role_page_total:page:count"),
 
     /** ReRolePermission实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_ROLE_PERMISSION_KEY("re_role_permission:id"),

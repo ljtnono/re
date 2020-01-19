@@ -6,6 +6,7 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReSkillService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,12 +42,10 @@ public class ReSkillController {
     @ApiOperation(value = "新增技能", httpMethod = "POST")
     public JsonResult saveEntity(@Validated ReSkillSaveDTO reSkillSaveDTO) {
         ReSkill reSkill = new ReSkill();
+        BeanUtils.copyProperties(reSkillSaveDTO, reSkill);
         reSkill.setStatus((byte) 1);
         reSkill.setCreateTime(new Date());
         reSkill.setModifyTime(new Date());
-        reSkill.setPercent(reSkillSaveDTO.getPercent());
-        reSkill.setOwner(reSkillSaveDTO.getOwner());
-        reSkill.setName(reSkillSaveDTO.getName());
         return iReSkillService.saveEntity(reSkill);
     }
 
@@ -54,9 +53,7 @@ public class ReSkillController {
     @ApiOperation(value = "根据id更新一个技能实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReSkillUpdateDTO reSkillUpdateDTO) {
         ReSkill reSkill = new ReSkill();
-        reSkill.setName(reSkillUpdateDTO.getName());
-        reSkill.setOwner(reSkillUpdateDTO.getOwner());
-        reSkill.setPercent(reSkillUpdateDTO.getPercent());
+        BeanUtils.copyProperties(reSkillUpdateDTO, reSkill);
         reSkill.setStatus((byte) 1);
         return iReSkillService.updateEntityById(id, reSkill);
     }

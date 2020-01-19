@@ -13,8 +13,8 @@ import java.io.Serializable;
 /**
  * 角色实体
  * @author ljt
- * @date 2019/10/28
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.1
  */
 @Data
 @ToString(callSuper = true)
