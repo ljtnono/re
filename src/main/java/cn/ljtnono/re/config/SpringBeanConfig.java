@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -28,6 +29,7 @@ public class SpringBeanConfig {
      * @return ftp连接池
      */
     @Bean
+    @Lazy
     public ReFtpClientPool reFtpClientObjectPool() {
         return new ReFtpClientPool(new ReFtpClientPooledObjectFactory());
     }

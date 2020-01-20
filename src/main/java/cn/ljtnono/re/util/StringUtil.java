@@ -63,4 +63,11 @@ public class StringUtil {
         }
         return builder.toString();
     }
+
+    public static char[] toCharArray() {
+
+        return null;
+    }
+
+
 }

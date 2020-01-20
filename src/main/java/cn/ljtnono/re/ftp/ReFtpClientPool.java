@@ -1,47 +1,27 @@
 package cn.ljtnono.re.ftp;
 
+import org.apache.commons.pool2.PooledObjectFactory;
+import org.apache.commons.pool2.impl.AbandonedConfig;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 /**
  * 包装连接池对象
  * @author ljt
- * @date 2019/11/27
- * @version 1.0.2
+ * @date 2020/1/19
+ * @version 1.0.3
  */
-public class ReFtpClientPool {
+public class ReFtpClientPool extends GenericObjectPool<ReFtpClient> {
 
-    private GenericObjectPool<ReFtpClient> genericObjectPool;
-
-    private ReFtpClientPooledObjectFactory reFtpClientPooledObjectFactory;
-
-    public ReFtpClientPool(ReFtpClientPooledObjectFactory reFtpClientPooledObjectFactory) {
-        this.reFtpClientPooledObjectFactory = reFtpClientPooledObjectFactory;
-        genericObjectPool = new GenericObjectPool<>(reFtpClientPooledObjectFactory, new ReFtpClientConfig());
+    public ReFtpClientPool(PooledObjectFactory<ReFtpClient> factory) {
+        super(factory);
     }
 
-    public GenericObjectPool<ReFtpClient> getGenericObjectPool() {
-        return genericObjectPool;
+    public ReFtpClientPool(PooledObjectFactory<ReFtpClient> factory, GenericObjectPoolConfig<ReFtpClient> config) {
+        super(factory, config);
     }
 
-    public void setGenericObjectPool(GenericObjectPool<ReFtpClient> genericObjectPool) {
-        this.genericObjectPool = genericObjectPool;
-    }
-
-    public ReFtpClientPooledObjectFactory getReFtpClientPooledObjectFactory() {
-        return reFtpClientPooledObjectFactory;
-    }
-
-    public void setReFtpClientPooledObjectFactory(ReFtpClientPooledObjectFactory reFtpClientPooledObjectFactory) {
-        this.reFtpClientPooledObjectFactory = reFtpClientPooledObjectFactory;
-    }
-
-    public ReFtpClient borrowObject() throws Exception {
-        return genericObjectPool.borrowObject();
-    }
-
-    public void returnObject(ReFtpClient reFtpClient) {
-        if (reFtpClient != null) {
-            genericObjectPool.returnObject(reFtpClient);
-        }
+    public ReFtpClientPool(PooledObjectFactory<ReFtpClient> factory, GenericObjectPoolConfig<ReFtpClient> config, AbandonedConfig abandonedConfig) {
+        super(factory, config, abandonedConfig);
     }
 }

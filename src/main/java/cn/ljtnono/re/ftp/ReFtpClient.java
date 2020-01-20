@@ -2,6 +2,8 @@ package cn.ljtnono.re.ftp;
 
 import cn.ljtnono.re.enumeration.CommonFileTypeEnum;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
+import lombok.Data;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -13,10 +15,12 @@ import java.util.Optional;
 /**
  * 封装ftpClient的对象
  * @author ljt
- * @version 1.0.2
- * @date 2020/1/6
+ * @version 1.0.3
+ * @date 2020/1/19
  */
 @Slf4j
+@Data
+@ToString
 public class ReFtpClient {
 
     /** ftpClient 相关配置*/
@@ -26,31 +30,13 @@ public class ReFtpClient {
     private FTPClient ftpClient;
 
     public ReFtpClient(ReFtpClientConfig reFtpClientConfig) throws IOException {
-        if (reFtpClientConfig == null) {
-            this.reFtpClientConfig = new ReFtpClientConfig();
-        }
+        this.reFtpClientConfig = reFtpClientConfig == null ? new ReFtpClientConfig() : reFtpClientConfig;
         // 构造完成之后进行初始化
         init();
     }
 
     public ReFtpClient() throws IOException {
         this(null);
-    }
-
-    public ReFtpClientConfig getReFtpClientConfig() {
-        return reFtpClientConfig;
-    }
-
-    public void setReFtpClientConfig(ReFtpClientConfig reFtpClientConfig) {
-        this.reFtpClientConfig = reFtpClientConfig;
-    }
-
-    public FTPClient getFtpClient() {
-        return ftpClient;
-    }
-
-    public void setFtpClient(FTPClient ftpClient) {
-        this.ftpClient = ftpClient;
     }
 
     /**
@@ -165,15 +151,13 @@ public class ReFtpClient {
         }
     }
 
-
-
     /**
      * @param filePath 上传的文件路径 例如 /images/abc/  /re/images/abc
      * @param fileName 上传的完整文件名（包括文件的后缀）
      * @return 资源的完整url访问路径
      */
     private String contractPath(final String filePath, final String fileName) {
-        return GlobalVariableEnum.RE_FTP_SAVE_PREFIX.getValue().toString() + filePath + fileName;
+        return GlobalVariableEnum.RE_FTP_SAVE_PREFIX.getValue().toString() + "/images/" + filePath + fileName;
     }
 
     /**
@@ -205,7 +189,7 @@ public class ReFtpClient {
      * 基础文件上传方法
      *
      * @param filePath 上传的文件路径 例如 /images/  /abc
-     * @param fileName 存储在文件服务器中的文件名 例如 abc.png
+     * @param fileName 存储在文件服务器中的文件名 例如 abc.png, 注意千万不能加 /
      * @param input    上传的文件输入流
      * @throws IOException 当出现IO异常时抛出
      * @return 上传成功返回图片的url地址，上传失败返回null
@@ -221,7 +205,7 @@ public class ReFtpClient {
         changeWorkingDirectory(filePath);
         ftpClient.setFileType(reFtpClientConfig.getFileType());
         ftpClient.setBufferSize(reFtpClientConfig.getBufferSize());
-        if (reFtpClientConfig.getPassiveMode()) {
+        if (reFtpClientConfig.isPassiveMode()) {
             ftpClient.enterLocalPassiveMode();
         }
         // 设置编码格式为UTF8
@@ -229,10 +213,13 @@ public class ReFtpClient {
         try {
             //上传文件
             ftpClient.storeFile(fileName, input);
+            if (!FTPReply.isPositiveCompletion(ftpClient.getReplyCode())) {
+                log.info("上传文件: {} 失败, 原因: {}", fileName, ftpClient.getReplyString());
+                return null;
+            }
             disConnect();
         } catch (IOException e) {
-            log.error("上传文件 " + fileName + " 失败");
-            e.printStackTrace();
+            log.error("上传文件 {} 失败, 原因: {}", fileName, e.getMessage());
             return null;
         } finally {
             try {
@@ -246,11 +233,15 @@ public class ReFtpClient {
         return contractPath(filePath, fileName);
     }
 
-
-    // 测试
-    public static void main(String[] args) throws IOException {
-        ReFtpClient reFtpClient = new ReFtpClient();
-        reFtpClient.uploadFile("/", "失败.txt", new FileInputStream("C:\\Users\\GEEK\\Desktop\\失败.txt"));
-//        reFtpClient.validateUploadFileParameters("", "aa.txt", new FileInputStream("C:\\Users\\ljt\\Desktop\\参数校验.png"));
+    /**
+     * 销毁这个对象
+     */
+    public void destroy() {
+        if (ftpClient != null && reFtpClientConfig != null) {
+            log.info("销毁ftpClient对象: {}", ftpClient.hashCode());
+            ftpClient = null;
+            reFtpClientConfig = null;
+        }
     }
+
 }

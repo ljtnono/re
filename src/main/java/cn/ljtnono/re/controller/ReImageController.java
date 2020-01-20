@@ -1,9 +1,11 @@
 package cn.ljtnono.re.controller;
 
-
 import cn.ljtnono.re.entity.ReImage;
 import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.service.IReImageService;
+import cn.ljtnono.re.util.FtpClientUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -11,13 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.Serializable;
 
 /**
  * 图片controller
  * @author ljt
- * @date 2019/11/23
- * @version 1.0
+ * @date 2020/1/19
+ * @version 1.0.2
  */
 @RestController
 @RequestMapping("/image")
@@ -25,13 +28,24 @@ import java.io.Serializable;
 public class ReImageController {
 
 
-    /**
-     * 普通的上传图片接口
-     * @param multipartFile 封装的文件信息
-     * @return {@link JsonResult}
-     */
+    private IReImageService iReImageService;
+
+    private final FtpClientUtil ftpClientUtil;
+
+    @Autowired
+    public ReImageController(IReImageService iReImageService, FtpClientUtil ftpClientUtil) {
+        this.iReImageService = iReImageService;
+        this.ftpClientUtil = ftpClientUtil;
+    }
+
     @PostMapping("/upload")
-    public JsonResult uploadImage(@RequestParam("file") MultipartFile multipartFile) {
+    public JsonResult uploadImage(MultipartFile multipartFile)  {
+
+        try {
+            System.out.println(ftpClientUtil.uploadFile("", "参数验证.png", new FileInputStream("C:\\Users\\ljt\\Desktop\\参数验证.png")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return null;
     }

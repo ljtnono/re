@@ -9,6 +9,15 @@ package cn.ljtnono.re.enumeration;
  */
 public enum CommonFileTypeEnum {
 
+    /** bin文件 */
+    BIN("bin"),
+
+    /** md文件 */
+    MD("md"),
+
+    /** sql文件 */
+    SQL("sql"),
+
     /** word文档 */
     DOC("doc"),
 

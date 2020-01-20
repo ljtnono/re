@@ -9,8 +9,8 @@ import java.util.Date;
 /**
  *  日期工具类
  *  @author ljt
- *  @date 2018/11/29
- *  @version 1.0
+ *  @date 2020/1/19
+ *  @version 1.0.1
 */
 public class DateUtil {
 

@@ -14,6 +14,12 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 public class ReFtpClientPooledObjectFactory extends BasePooledObjectFactory<ReFtpClient> {
 
     @Override
+    public void destroyObject(PooledObject<ReFtpClient> p) {
+        p.getObject().destroy();
+    }
+
+
+    @Override
     public ReFtpClient create() throws Exception {
         // 创建ReFtpClient对象
         ReFtpClient reFtpClient = new ReFtpClient();
@@ -25,7 +31,7 @@ public class ReFtpClientPooledObjectFactory extends BasePooledObjectFactory<ReFt
     @Override
     public PooledObject<ReFtpClient> wrap(ReFtpClient obj) {
         // 包装ReFtpClient对象
-        return new DefaultPooledObject<ReFtpClient>(obj);
+        return new DefaultPooledObject<>(obj);
     }
 
     @Override
