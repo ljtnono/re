@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
 import java.io.Serializable;
 
 /**
@@ -40,12 +39,8 @@ public class ReImageController {
 
     @PostMapping("/upload")
     public JsonResult uploadImage(MultipartFile multipartFile)  {
+        multipartFile.getContentType();
 
-        try {
-            System.out.println(ftpClientUtil.uploadFile("", "参数验证.png", new FileInputStream("C:\\Users\\ljt\\Desktop\\参数验证.png")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return null;
     }

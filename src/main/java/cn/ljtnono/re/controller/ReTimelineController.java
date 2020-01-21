@@ -6,6 +6,7 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReTimelineService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +43,7 @@ public class ReTimelineController {
     public JsonResult saveEntity(ReTimelineSaveDTO reTimelineSaveDTO) {
         ReTimeline reTimeline = new ReTimeline();
         reTimeline.setStatus((byte) 1);
-        reTimeline.setContent(reTimelineSaveDTO.getContent());
-        reTimeline.setPushDate(reTimelineSaveDTO.getPushDate());
+        BeanUtils.copyProperties(reTimelineSaveDTO, reTimeline);
         reTimeline.setCreateTime(new Date());
         reTimeline.setModifyTime(new Date());
         return iReTimelineService.saveEntity(reTimeline);
@@ -53,8 +53,7 @@ public class ReTimelineController {
     @ApiOperation(value = "根据id更新一个时间轴实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReTimelineUpdateDTO reTimelineUpdateDTO) {
         ReTimeline reTimeline = new ReTimeline();
-        reTimeline.setContent(reTimelineUpdateDTO.getContent());
-        reTimeline.setPushDate(reTimelineUpdateDTO.getPushDate());
+        BeanUtils.copyProperties(reTimelineUpdateDTO, reTimeline);
         reTimeline.setStatus((byte) 1);
         return iReTimelineService.updateEntityById(id, reTimeline);
     }

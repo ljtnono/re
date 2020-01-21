@@ -113,6 +113,7 @@ public enum CommonFileTypeEnum {
     CommonFileTypeEnum(String value) {
         this.value = value;
     }
+
     public String getValue() {
         return value;
     }

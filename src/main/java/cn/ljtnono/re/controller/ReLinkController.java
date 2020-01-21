@@ -10,6 +10,7 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReLinkService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,8 @@ import java.util.Date;
 /**
  * 链接controller
  * @author ljt
- * @date 2019/11/23
- * @version 1.0
+ * @date 2020/1/20
+ * @version 1.0.1
  */
 @RestController
 @RequestMapping("/link")
@@ -39,10 +40,8 @@ public class ReLinkController {
     @ApiOperation(value = "新增一个链接类型", httpMethod = "POST")
     public JsonResult saveEntity(@Validated ReLinkSaveDTO reLinkSaveDTO) {
         ReLink reLink = new ReLink();
+        BeanUtils.copyProperties(reLinkSaveDTO, reLink);
         reLink.setStatus((byte) 1);
-        reLink.setUrl(reLinkSaveDTO.getUrl());
-        reLink.setType(reLinkSaveDTO.getType());
-        reLink.setName(reLinkSaveDTO.getName());
         reLink.setCreateTime(new Date());
         reLink.setModifyTime(new Date());
         return iReLinkService.saveEntity(reLink);
@@ -52,9 +51,7 @@ public class ReLinkController {
     @ApiOperation(value = "根据id更新链接", httpMethod = "PUT")
     public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReLinkUpdateDTO reLinkUpdateDTO) {
         ReLink reLink = new ReLink();
-        reLink.setName(reLinkUpdateDTO.getName());
-        reLink.setType(reLinkUpdateDTO.getType());
-        reLink.setUrl(reLinkUpdateDTO.getUrl());
+        BeanUtils.copyProperties(reLinkUpdateDTO, reLink);
         reLink.setStatus((byte) 1);
         return iReLinkService.updateEntityById(id, reLink);
     }
