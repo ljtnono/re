@@ -50,7 +50,13 @@ public enum ReEntityRedisKeyEnum {
     RE_CONFIG_KEY("re_config:id:key"),
 
     /** ReImage实体类在redis中存储的键的格式，通过替换相应的值来存储 */
-    RE_IMAGE_KEY("re_image:id:origin_name:type:owner"),
+    RE_IMAGE_KEY("re_image:id:originName:type:owner"),
+
+    /** ReImage实体类分页查询在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_IMAGE_PAGE_KEY("re_image_page:page:count"),
+
+    /** ReImage实体类分页查询附加信息在redis中的存储的键的格式，通过替换相应的值来存储 */
+    RE_IMAGE_PAGE_TOTAL_KEY("re_image_page_total:page:count"),
 
     /** ReLink实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_LINK_KEY("re_link:id:name:type"),
