@@ -1,6 +1,9 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReImageSearchDTO;
 import cn.ljtnono.re.entity.ReImage;
+import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -35,4 +38,20 @@ public interface IReImageService extends IService<ReImage>, IReEntityService<ReI
      * @return 支付宝扫码支付的二维码
      */
     ReImage getQrCodeZfb();
+
+    /**
+     * 分页查询图片列表
+     * @param page 分页页码
+     * @param count 每页显示条数
+     * @return JsonResult 对象
+     */
+    JsonResult listImagePage(Integer page, Integer count);
+
+    /**
+     * 条件分页查询
+     * @param reImageSearchDTO 条件对象
+     * @param pageDTO 分页对象
+     * @return JsonResult 对象
+     */
+    JsonResult search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO);
 }

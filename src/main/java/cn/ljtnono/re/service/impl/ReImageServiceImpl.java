@@ -1,6 +1,10 @@
 package cn.ljtnono.re.service.impl;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReImageSearchDTO;
+import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.entity.ReImage;
+import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
@@ -8,23 +12,28 @@ import cn.ljtnono.re.mapper.ReImageMapper;
 import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReImageService;
 import cn.ljtnono.re.util.RedisUtil;
+import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * 图像类服务实现类
+ *
  * @author ljt
- * @date 2019/11/23
  * @version 1.0
+ * @date 2019/11/23
  */
 @Service
 @Slf4j
@@ -37,11 +46,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         this.redisUtil = redisUtil;
     }
 
-    /**
-     * 获取博主头像
-     *
-     * @return 博主头像封装的ReImage类
-     */
     @Override
     public ReImage getAvatar() {
         // 尝试从缓存获取
@@ -60,11 +64,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         return avatar;
     }
 
-    /**
-     * 获取加我微信的二维码图片
-     *
-     * @return 加我微信的二维码头像图片
-     */
     @Override
     public ReImage getQrCodeWeChat() {
         ReImage qrCodeWeChat = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-wechat:*");
@@ -82,11 +81,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         return qrCodeWeChat;
     }
 
-    /**
-     * 获取微信扫码支付的二维码图片
-     *
-     * @return 扫码支付二维码
-     */
     @Override
     public ReImage getQrCodeWeChatSk() {
         ReImage qrCodeWeChatSk = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-wechat-sk:*");
@@ -104,11 +98,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         return qrCodeWeChatSk;
     }
 
-    /**
-     * 获取支付宝扫码支付图片
-     *
-     * @return 支付宝扫码支付的二维码
-     */
     @Override
     public ReImage getQrCodeZfb() {
         ReImage qrCodeZfb = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-zfb:*");
@@ -126,24 +115,66 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         return qrCodeZfb;
     }
 
-    /**
-     * 新增单个实体类
-     *
-     * @param entity 具体的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
+
+    @Override
+    public JsonResult listImagePage(Integer page, Integer count) {
+        Optional<Integer> optionalPage = Optional.ofNullable(page);
+        Optional<Integer> optionalCount = Optional.ofNullable(count);
+        optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        // 首先从缓存中获取
+        String redisKey = ReEntityRedisKeyEnum.RE_IMAGE_PAGE_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        String totalRedisKey = ReEntityRedisKeyEnum.RE_IMAGE_PAGE_TOTAL_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
+        List<?> objects = redisUtil.lGet(redisKey, 0, -1);
+        if (!objects.isEmpty()) {
+            log.info("从缓存中获取" + page + "页图片数据，每页获取" + count + "条");
+            String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
+            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+        } else {
+            // 按照时间降序排列
+            IPage<ReImage> pageResult = page(new Page<>(page, count), new QueryWrapper<ReImage>().orderByDesc("modify_time"));
+            log.info("获取" + page + "页图片数据，每页获取" + count + "条");
+            redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        }
+    }
+
+    @Override
+    public JsonResult search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO) {
+        Optional<ReImageSearchDTO> optionalReImageSearchDTO = Optional.ofNullable(reImageSearchDTO);
+        optionalReImageSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
+        QueryWrapper<ReImage> reImageQueryWrapper = new QueryWrapper<>();
+        if (!StringUtil.isEmpty(reImageSearchDTO.getOriginName())) {
+            reImageQueryWrapper.like("origin_name", reImageSearchDTO.getOriginName());
+        }
+        if (!StringUtil.isEmpty(reImageSearchDTO.getType())) {
+            reImageQueryWrapper.like("type", reImageSearchDTO.getType());
+        }
+        if (!StringUtil.isEmpty(reImageSearchDTO.getOwner())) {
+            reImageQueryWrapper.eq("owner", reImageSearchDTO.getOwner());
+        }
+        IPage<ReImage> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reImageQueryWrapper);
+        if (pageResult != null) {
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        } else {
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+        }
+    }
+
     @Override
     public JsonResult saveEntity(ReImage entity) {
-        Optional<ReImage> optionalReBook = Optional.ofNullable(entity);
-        optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        Optional<ReImage> optionalReImage = Optional.ofNullable(entity);
+        optionalReImage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
         String key = ReEntityRedisKeyEnum.RE_IMAGE_KEY.getKey()
                 .replace(":id", ":" + entity.getId())
-                .replace(":origin_name", ":" + entity.getOriginName())
+                .replace(":originName", ":" + entity.getOriginName())
                 .replace(":type", ":" + entity.getType())
                 .replace(":owner", ":" + entity.getOwner());
         if (save) {
@@ -155,16 +186,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         }
     }
 
-    /**
-     * 根据id删除一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {删除的实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
     public JsonResult deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
@@ -194,17 +215,6 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         }
     }
 
-    /**
-     * 根据id更新一个实体类
-     *
-     * @param id     实体类的id
-     * @param entity 要更新的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
     public JsonResult updateEntityById(Serializable id, ReImage entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
@@ -234,65 +244,42 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         }
     }
 
-    /**
-     * 根据id获取一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
     public JsonResult getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer imageId = Integer.parseInt(id.toString());
-        if (imageId >= 1) {
-            JsonResult jsonResult;
-            // 如果缓存中存在，那么首先从缓存中获取
-            String key = ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
-                    .replace(":id", ":" + imageId)
-                    .replace(":origin_name", ":*")
-                    .replace(":type", ":*")
-                    .replace(":owner", ":*");
-            boolean b = redisUtil.hasKeyByPattern(key);
-            // 如果存在，那么直接获取
-            ReImage reImage;
-            if (b) {
-                reImage = (ReImage) redisUtil.getByPattern(key);
-                if (reImage == null || reImage.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-                jsonResult = JsonResult.success(Collections.singletonList(reImage), 1);
-            } else {
-                reImage = getById(imageId);
-                // 如果不存在，那么返回 找不到资源错误
-                if (reImage == null || reImage.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-                redisUtil.set(ReEntityRedisKeyEnum.RE_IMAGE_KEY.getKey()
-                        .replace(":id", ":" + reImage.getId())
-                        .replace(":origin_name", ":" + reImage.getOriginName())
-                        .replace(":type", ":" + reImage.getType())
-                        .replace(":owner", ":" + reImage.getOwner()), reImage, RedisUtil.EXPIRE_TIME_DEFAULT);
-                jsonResult = JsonResult.success(Collections.singletonList(reImage), 1);
+        JsonResult jsonResult;
+        // 如果缓存中存在，那么首先从缓存中获取
+        String key = ReEntityRedisKeyEnum.RE_IMAGE_KEY.getKey()
+                .replace(":id", ":" + id)
+                .replace(":originName", ":*")
+                .replace(":type", ":*")
+                .replace(":owner", ":*");
+        boolean b = redisUtil.hasKeyByPattern(key);
+        // 如果存在，那么直接获取
+        ReImage reImage;
+        if (b) {
+            reImage = (ReImage) redisUtil.getByPattern(key);
+            if (reImage == null || reImage.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
             }
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            reImage = getById(id);
+            // 如果不存在，那么返回 找不到资源错误
+            if (reImage == null || reImage.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+            }
+            redisUtil.set(ReEntityRedisKeyEnum.RE_IMAGE_KEY.getKey()
+                    .replace(":id", ":" + reImage.getId())
+                    .replace(":originName", ":" + reImage.getOriginName())
+                    .replace(":type", ":" + reImage.getType())
+                    .replace(":owner", ":" + reImage.getOwner()), reImage, RedisUtil.EXPIRE_TIME_DEFAULT);
         }
+        jsonResult = JsonResult.success(Collections.singletonList(reImage), 1);
+        jsonResult.setMessage("操作成功");
+        return jsonResult;
     }
 
-    /**
-     * 获取实体类的所有列表
-     *
-     * @return 实体类所有列表
-     * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
-     * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
     public JsonResult listEntityAll() {
         List<ReImage> reImageList = list();
