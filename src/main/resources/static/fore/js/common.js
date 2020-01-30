@@ -3,7 +3,7 @@
 let $scroll_fixed = $("[scroll-fixed]");
 let scroll_fixed_offsetTop = [];
 let scroll_fixed_top = [];
-let IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
+const IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
 $scroll_fixed.each(function (index, obj) {
     scroll_fixed_offsetTop.push($(obj).offset().top);
     if (index === 0 || index === "0") {
@@ -15,9 +15,9 @@ $scroll_fixed.each(function (index, obj) {
 
 // 简单的节流函数
 function throttle(func, wait, mustRun) {
-    var timeout, startTime = new Date();
+    let timeout, startTime = new Date();
     return function () {
-        var context = this, args = arguments, curTime = new Date();
+        let context = this, args = arguments, curTime = new Date();
         clearTimeout(timeout);
         // 如果达到了规定的触发时间间隔，触发 handler
         if (curTime - startTime >= mustRun) {
@@ -104,8 +104,8 @@ const editorConfig = {
     sequenceDiagram: true,
     imageUpload: true,
     imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-    imageUploadURL: "examples/php/upload.php",
-    onload: function () {
+    imageUploadURL: "/re/image/upload/md",
+    onload: function (data) {
 
     }
 };
