@@ -17,7 +17,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ReFtpClientConfig implements Serializable {
 
-
     private static final long serialVersionUID = 7050205319517825883L;
 
     /** ftp服务器ip地址 */
