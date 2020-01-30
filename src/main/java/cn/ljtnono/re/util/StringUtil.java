@@ -1,10 +1,12 @@
 package cn.ljtnono.re.util;
 
+import java.util.UUID;
+
 /**
  *  字符串处理工具
  *  @author ljt
- *  @date 2019/10/13
- *  @version 1.1
+ *  @date 2020/1/21
+ *  @version 1.0.2
 */
 public class StringUtil {
 
@@ -64,10 +66,24 @@ public class StringUtil {
         return builder.toString();
     }
 
-    public static char[] toCharArray() {
-
-        return null;
+    /**
+     * 获取UUID
+     * @return UUID字符串
+     */
+    public static String getUUID() {
+        return UUID.randomUUID().toString();
     }
 
+    /**
+     * 获取没有连接符的UUID
+     * @return 没有连接符的UUID
+     */
+    public static String getUUIDWithoutJoiner() {
+        return getUUID().replace("-", "");
+    }
+
+    public static void main(String[] args) {
+        System.out.println(StringUtil.getUUIDWithoutJoiner());
+    }
 
 }
