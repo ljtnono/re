@@ -1,6 +1,6 @@
 # Root Element 根元素
-这是一个使用java作为后端的博客系统，使用的是editor.md插件作为markdown文本编辑器<br>
-本博客部分内容参考温志怀博客和思欲主题，详情请移步  [温志怀博客](http://www.wenzhihuai.com) | [欲思主题](https://yusi123.com/)<br>
+这是一个使用SpringBoot作为后端的博客系统，使用的是editor.md插件作为markdown文本编辑器<br>
+本博客部分内容参考温志怀博客和思欲主题，详情请移步  [温志怀博客](http://www.wenzhihuai.com) | [欲思主题](https://yusi123.com/) | [GitCafe](https://gitcafe.net/) | [崔庆才博客](https://cuiqingcai.com/)<br>
 网站的站点：[Root Element 根元素](https://www.ljtnono.cn/re)<br>
 
 # 博客的技术选型
