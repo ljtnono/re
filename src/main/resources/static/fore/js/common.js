@@ -1,9 +1,67 @@
 "use strict";
+
+const IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
+// markdown编辑器配置
+const editorConfig = {
+    width: "100%",
+    height: 730,
+    path: '/re/static/fore/lib/editor.md-1.5.0/lib/',
+    codeFold: true,
+    saveHTMLToTextarea: true,
+    searchReplace: true,
+    htmlDecode: "style,script,iframe|on*",
+    emoji: true,
+    taskList: true,
+    theme: "dark",
+    editorTheme: "rubyblue",
+    previewTheme: "dark",
+    tocm: true,
+    tex: true,
+    flowChart: true,
+    sequenceDiagram: true,
+    imageUpload: true,
+    imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+    imageUploadURL: "/re/image/upload/md",
+    onload: function (data) {
+
+    }
+};
+const swiperConfig = {
+    speed: 800,
+    loop: true,
+    grabCursor: true,
+    init: true,
+    zoom: false,
+    autoplay: {
+        autoplay: true,
+        delay: 3000,
+        stopOnLastSlide: false,
+        disableOnInteraction: true
+    },
+    effect: "slide",
+    pagination: {
+        el: '.swiper-pagination',
+        type: "custom",
+        dynamicBullets: true,
+        dynamicMainBullets: 3,
+        hideOnClick: true,
+        clickable: true
+    },
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+    },
+    scrollbar: {
+        el: '.swiper-scrollbar',
+        hide: true,
+        draggable: true
+    }
+};
+
 // 计算初始页面元素的offsetTop
 let $scroll_fixed = $("[scroll-fixed]");
 let scroll_fixed_offsetTop = [];
 let scroll_fixed_top = [];
-const IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
 $scroll_fixed.each(function (index, obj) {
     scroll_fixed_offsetTop.push($(obj).offset().top);
     if (index === 0 || index === "0") {
@@ -84,32 +142,6 @@ function ajax(requestObj, withLoading) {
     });
 }
 
-// markdown编辑器配置
-const editorConfig = {
-    width: "100%",
-    height: 730,
-    path: '/re/static/fore/lib/editor.md-1.5.0/lib/',
-    codeFold: true,
-    saveHTMLToTextarea: true,
-    searchReplace: true,
-    htmlDecode: "style,script,iframe|on*",
-    emoji: true,
-    taskList: true,
-    theme: "dark",
-    editorTheme: "rubyblue",
-    previewTheme: "dark",
-    tocm: true,
-    tex: true,
-    flowChart: true,
-    sequenceDiagram: true,
-    imageUpload: true,
-    imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-    imageUploadURL: "/re/image/upload/md",
-    onload: function (data) {
-
-    }
-};
-
 /**
  * 从markdown内容中提取图片链接，只返回第一个作为图片的封面
  * @param markDown 要提取的markdown内容
@@ -125,4 +157,3 @@ function getImgUrlFromMarkDown(markDown) {
         return matches[1];
     }
 }
-

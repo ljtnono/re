@@ -6,24 +6,17 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="description" content="根元素博客，追根溯源">
-    <meta name="keywords" content="更元素,Java,css,html,爬虫,网络,IT,技术,博客">
+    <meta name="keywords" content="根元素,Java,css,html,爬虫,网络,IT,技术,博客">
     <title>Root Element 根元素</title>
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/Swiper/4.5.1/css/swiper.min.css" rel="stylesheet">
-    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/bootstrap/css/bootstrap.min.css}">-->
-    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/font-awesome-4.7.0/css/font-awesome.min.css}">-->
-    <!--    <link rel="stylesheet" th:href="@{/static/fore/lib/swiper4.5.1/css/swiper.min.css}">-->
     <link rel="stylesheet" th:href="@{/static/fore/lib/layui-v2.5.5/layui/css/layui.css}">
     <link rel="stylesheet" th:href="@{/static/fore/css/style.min.css}">
     <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/Swiper/4.5.1/js/swiper.min.js"></script>
     <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!--    <script th:src="@{/static/fore/lib/jquery-1.11.0.min.js}"></script>-->
-    <!--    <script th:src="@{/static/fore/lib/swiper4.5.1/js/swiper.min.js}"></script>-->
-    <!--    <script th:src="@{/static/fore/lib/bootstrap/js/bootstrap.min.js}"></script>-->
     <script th:src="@{/static/fore/lib/layui-v2.5.5/layui/layui.js}"></script>
-    <script th:src="@{/static/fore/js/utils.js}"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <script src="https://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
@@ -38,16 +31,16 @@
         <div class="swiper-container" id="swiper">
             <div class="swiper-wrapper">
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/bird.jpg}" alt="">
+                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/bird.jpg}" alt="bird.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/coffee.jpg}" alt="">
+                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/coffee.jpg}" alt="coffee.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/leaves.jpg}" alt="">
+                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/leaves.jpg}" alt="leaves.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/sunset.jpg}" alt="">
+                    <img src="../../static/fore/images/bird.jpg" th:src="@{/static/fore/images/sunset.jpg}" alt="sunset.jpg">
                 </div>
             </div>
             <!-- 分页器 -->
@@ -116,37 +109,7 @@
 <script th:src="@{/static/fore/js/common.js}"></script>
 <script th:inline="javascript">
     // 配置swiper
-    let swiper = new Swiper(".swiper-container", {
-        speed: 800,
-        loop: true,
-        grabCursor: true,
-        init: true,
-        zoom: false,
-        autoplay: {
-            autoplay: true,
-            delay: 3000,
-            stopOnLastSlide: false,
-            disableOnInteraction: true
-        },
-        effect: "slide",
-        pagination: {
-            el: '.swiper-pagination',
-            type: "custom",
-            dynamicBullets: true,
-            dynamicMainBullets: 3,
-            hideOnClick: true,
-            clickable: true
-        },
-        navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev'
-        },
-        scrollbar: {
-            el: '.swiper-scrollbar',
-            hide: true,
-            draggable: true
-        }
-    });
+    let swiper = new Swiper(".swiper-container", swiperConfig);
     // 流加载
     layui.use(["flow", "util"], function () {
         let flow = layui.flow;
