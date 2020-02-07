@@ -31,6 +31,9 @@ public enum ReEntityRedisKeyEnum {
     /** ReBlog实体类根据type分页查询在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_BLOG_PAGE_TYPE_KEY("re_blog_page_type:page:count:type"),
 
+    /** ReBlog实体类根据type分页查询附加信息在redis中存储的键的格式，通过替换相应的值来存储 */
+    RE_BLOG_PAGE_TYPE_TOTAL_KEY("re_blog_page_type_total:page:count:type"),
+
     /** ReBlogType实体类在redis中存储的键的格式，通过替换相应的值来存储 */
     RE_BLOG_TYPE_KEY("re_blog_type:id:name"),
 
