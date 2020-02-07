@@ -1,6 +1,8 @@
 package cn.ljtnono.re.controller;
 
+import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlog;
+import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.util.BlogIndexUtil;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.StringUtil;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,6 +79,15 @@ public class PageController {
                 break;
             case "support":
                 map.addAttribute("currentPage", "support");
+                break;
+            case "topic":
+                map.addAttribute("currentPage", "topic");
+                break;
+            case "books":
+                map.addAttribute("currentPage", "books");
+                break;
+            case "apps":
+                map.addAttribute("currentPage", "apps");
                 break;
             case "about":
                 map.addAttribute("currentPage", "about");
@@ -156,5 +168,24 @@ public class PageController {
         modelMap.addAttribute("page",page);
         //ModelAndView model = new ModelAndView("fore/article");
         return "fore/result";
+    }
+
+    @GetMapping("/articles")
+    public String articles(String type, @Validated PageDTO pageDTO, ModelMap modelMap) {
+        JsonResult jsonResult;
+        if (StringUtil.isEmpty(type) || "ALL".equals(type)) {
+            jsonResult = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), null);
+            modelMap.addAttribute("type", "ALL");
+        } else {
+            jsonResult = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
+            modelMap.addAttribute("type", type);
+        }
+        modelMap.addAttribute("data", jsonResult.getData());
+        modelMap.addAttribute("request", jsonResult.getRequest());
+        modelMap.addAttribute("status", jsonResult.getStatus());
+        modelMap.addAttribute("totalCount", jsonResult.getTotalCount());
+        modelMap.addAttribute("fields", jsonResult.getFields());
+        setActivePage("articles", modelMap);
+        return "fore/articles";
     }
 }

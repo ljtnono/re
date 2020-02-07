@@ -102,4 +102,14 @@ public class ReBlogController {
     public JsonResult listBlogPage(PageDTO reBlogListPageDTO) {
         return iReBlogService.listBlogPage(reBlogListPageDTO.getPage(), reBlogListPageDTO.getCount());
     }
+
+    @GetMapping("/listBlogPageByType")
+    @ApiOperation(value = "根据类型分页查询博客列表", httpMethod = "GET")
+    public JsonResult listBlogPageByType(String type, @Validated PageDTO pageDTO) {
+        if (StringUtil.isEmpty(type) || "ALL".equals(type)) {
+            return iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), null);
+        } else {
+            return iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
+        }
+    }
 }
