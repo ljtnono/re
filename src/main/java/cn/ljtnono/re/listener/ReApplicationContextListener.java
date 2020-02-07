@@ -27,15 +27,15 @@ import java.util.List;
 @Slf4j
 public class ReApplicationContextListener implements ApplicationListener<ContextRefreshedEvent>, ApplicationContextAware {
 
-    private final IReBlogService iReBlogService;
+    private IReBlogService iReBlogService;
 
-    private final IReLinkService iReLinkService;
+    private IReLinkService iReLinkService;
 
-    private final IReBlogTypeService iReBlogTypeService;
+    private IReBlogTypeService iReBlogTypeService;
 
-    private final IReConfigService iReConfigService;
+    private IReConfigService iReConfigService;
 
-    private final IReImageService iReImageService;
+    private IReImageService iReImageService;
 
     private ApplicationContext applicationContext;
 
