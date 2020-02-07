@@ -44,9 +44,9 @@
         </div>
     </div>
     <!-- 热门标签 -->
-    <div class="tags mb15" scroll-fixed >
+    <div class="tags mb15" scroll-fixed>
         <div class="title mb15">热门标签</div>
-        <a th:href="${#servletContext.contextPath + '/articles/' + blogType.name}" class="tag" th:each="blogType : ${application.blogTypeList}" th:text="${blogType.name}">js(146)</a>
+        <a th:href="${#servletContext.contextPath} + '/articles?type=' + ${blogType.name} + '&page=1&count=10'" class="tag" th:each="blogType : ${application.blogTypeList}" th:text="${blogType.name}">js(146)</a>
     </div>
     <!-- 友情链接 -->
     <div class="links mb15" scroll-fixed>
