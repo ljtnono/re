@@ -484,7 +484,6 @@ public class ReFtpClient {
         if (!isActive()) {
             throw new IllegalArgumentException("ftp服务器没有连接, 请先连接再进行操作");
         }
-
         ftpClient.enterLocalPassiveMode();
         FTPFile[] ftpFiles = ftpClient.listFiles();
         if (ftpFiles != null) {
