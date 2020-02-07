@@ -9,6 +9,7 @@ import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.service.common.IReEntityService;
 import cn.ljtnono.re.util.RedisUtil;
+import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -58,7 +59,43 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
      */
     @Override
     public JsonResult listBlogPageByType(Integer page, Integer count, final String type) {
-        return null;
+        Optional<Integer> optionalPage = Optional.ofNullable(page);
+        Optional<Integer> optionalCount = Optional.ofNullable(count);
+        optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        String redisKey = ReEntityRedisKeyEnum.RE_BLOG_PAGE_TYPE_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        String totalRedisKey = ReEntityRedisKeyEnum.RE_BLOG_PAGE_TYPE_TOTAL_KEY.getKey()
+                .replace(":page", ":" + page)
+                .replace(":count", ":" + count);
+        if (!StringUtil.isEmpty(type)) {
+            redisKey = redisKey.replace(":type", ":" + type);
+            totalRedisKey = totalRedisKey.replace(":type", ":" + type);
+        } else {
+            redisKey = redisKey.replace(":type", ":ALL");
+            totalRedisKey = totalRedisKey.replace(":type", ":ALL");
+        }
+        // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
+        List<?> objects = redisUtil.lGet(redisKey, 0, -1);
+        if (!objects.isEmpty()) {
+            log.info("从缓存中获取" + page + "页博客数据，每页获取" + count + "条");
+            String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
+            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+        } else {
+            // 按照时间降序排列
+            QueryWrapper<ReBlog> reBlogQueryWrapper;
+            if (!StringUtil.isEmpty(type)) {
+                reBlogQueryWrapper = new QueryWrapper<ReBlog>().eq("type", type).orderByDesc("modify_time");
+            } else {
+                reBlogQueryWrapper = new QueryWrapper<ReBlog>().orderByDesc("modify_time");
+            }
+            IPage<ReBlog> pageResult = page(new Page<>(page, count), reBlogQueryWrapper);
+            log.info("获取" + page + "页博客数据，每页获取" + count + "条");
+            redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
+            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+        }
     }
 
     /**
