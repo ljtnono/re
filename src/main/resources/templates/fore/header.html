@@ -8,7 +8,6 @@
             </h1>
         </a>
     </div>
-
     <!-- 导航按钮和搜索按钮 -->
     <div class="side-nav-header">
         <div class="side-nav-bar cursor-pointer fl">
@@ -18,6 +17,30 @@
             <i class="fa fa-search" aria-hidden="true"></i>
         </div>
     </div>
+    <!-- 小分辨率下的导航栏 -->
+    <ul class="nav-mini flex flex-direction-column mb10">
+        <li>
+            <a th:href="${#servletContext.contextPath}"><i class="fa fa-home" aria-hidden="true"></i>首页</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/articles?type=ALL&page=1&count=10'"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/topic'"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/books'"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/apps'"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/support'"><i class="fa fa-thumbs-up" aria-hidden="true"></i>支持我</a>
+        </li>
+        <li>
+            <a th:href="${#servletContext.contextPath} + '/about'"><i class="fa fa-info-circle" aria-hidden="true"></i>关于作者</a>
+        </li>
+    </ul>
     <!-- 导航栏 -->
     <nav class="nav pr">
         <ul class="nav-menu">
@@ -26,8 +49,8 @@
                 <a th:href="${#servletContext.contextPath}" th:if="${currentPage != 'index'}"><i class="fa fa-home" aria-hidden="true"></i>首页</a>
             </li>
             <li class="nav-item fl">
-                <a th:href="${#servletContext.contextPath} + '/articles'" th:if="${currentPage == 'articles'}" class="nav-active"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
-                <a th:href="${#servletContext.contextPath} + '/articles'" th:if="${currentPage != 'articles'}"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
+                <a th:href="${#servletContext.contextPath} + '/articles?type=ALL&page=1&count=10'" th:if="${currentPage == 'articles'}" class="nav-active"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
+                <a th:href="${#servletContext.contextPath} + '/articles?type=ALL&page=1&count=10'" th:if="${currentPage != 'articles'}"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
             </li>
             <li class="nav-item fl">
                 <a th:href="${#servletContext.contextPath} + '/topic'" th:if="${currentPage == 'topic'}" class="nav-active"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>
@@ -36,6 +59,10 @@
             <li class="nav-item fl">
                 <a th:href="${#servletContext.contextPath} + '/books'" th:if="${currentPage == 'books'}" class="nav-active"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
                 <a th:href="${#servletContext.contextPath} + '/books'" th:if="${currentPage != 'books'}"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
+            </li>
+            <li class="nav-item fl">
+                <a th:href="${#servletContext.contextPath} + '/apps'" th:if="${currentPage == 'apps'}" class="nav-active"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
+                <a th:href="${#servletContext.contextPath} + '/apps'" th:if="${currentPage != 'apps'}"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
             </li>
             <li class="nav-item fl">
                 <a th:href="${#servletContext.contextPath} + '/support'" th:if="${currentPage == 'support'}" class="nav-active"><i class="fa fa-thumbs-up" aria-hidden="true"></i>支持我</a>
@@ -53,18 +80,42 @@
         </ul>
     </nav>
     <div class="line h10" style="opacity: 0.9"></div>
-    <!-- 侧边导航栏 -->
-    <div class="side-nav flex flex-direction-column flex-align-items-center">
-        <a th:href="${#servletContext.contextPath}" style="margin-top: 40px;">首页</a>
-        <a th:href="${#servletContext.contextPath} + '/articles'">技术文章</a>
-        <a th:href="${#servletContext.contextPath} + '/support'">支持我</a>
-        <a th:href="${#servletContext.contextPath} + '/about'">关于作者</a>
-    </div>
 </header>
 <!-- 消息通知栏 -->
 <div class="w message" th:fragment="message">
-    <div class="message-content">
+    <div class="message-content flex flex-direction-row flex-align-items-start">
         <i class="fa fa-volume-up"></i>
-        <span class="f16">看到网上新闻美国的贴吧将成为中国公司</span>
+        <ul class="message-list">
+            <li class="f16">
+                看到网上新闻美国的贴吧将成为中国公司
+            </li>
+            <li class="f16">
+                主题更新一下，修复了头像挂掉的问题
+            </li>
+            <li class="f16">
+                后期更新网站文章可能不会那么闲了
+            </li>
+            <li class="f16">
+                不得不说，美国贴吧的界面真是难看到死
+            </li>
+            <li class="f16">
+                推送试试
+            </li>
+            <li class="f16">
+                发现了一个非常不错的插件
+            </li>
+            <li class="f16">
+                国庆快乐，放假三天
+            </li>
+            <li class="f16">
+                准备增加一个免登录支付功能
+            </li>
+            <li class="f16">
+                微信扫码登录功能已经 ok 了
+            </li>
+            <li class="f16">
+                睡觉之前测试一下
+            </li>
+        </ul>
     </div>
 </div>
