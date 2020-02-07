@@ -41,20 +41,15 @@ const swiperConfig = {
     effect: "slide",
     pagination: {
         el: '.swiper-pagination',
-        type: "custom",
-        dynamicBullets: true,
-        dynamicMainBullets: 3,
+        type: "bullets",
         hideOnClick: true,
-        clickable: true
+        clickable: true,
+        bulletClass: "swiper-pagination-bullet",
+        bulletActiveClass: "swiper-pagination-bullet-active"
     },
     navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev'
-    },
-    scrollbar: {
-        el: '.swiper-scrollbar',
-        hide: true,
-        draggable: true
     }
 };
 
@@ -91,16 +86,10 @@ function throttle(func, wait, mustRun) {
 // 实际想绑定在 scroll 事件上的 handler
 function realFunc() {
     let scrollTop = $("html, body").scrollTop();
-    let navHeight = $("#header .side-nav-header").eq(0).outerHeight();
     if (scrollTop > 0) {
         $(".roll-top").fadeIn(800);
     } else {
         $(".roll-top").fadeOut(800);
-    }
-    if (scrollTop > navHeight) {
-        $(".side-nav-header").addClass('fixed');
-    } else {
-        $(".side-nav-header").removeClass("fixed")
     }
     $scroll_fixed.each(function (index, obj) {
         if (scrollTop >= scroll_fixed_offsetTop[index]) {
@@ -114,20 +103,32 @@ function realFunc() {
     });
 }
 
+$(window).on("resize", throttle(function () {
+    // 计算初始页面元素的offsetTop
+    scroll_fixed_offsetTop = [];
+    scroll_fixed_top = [];
+    $scroll_fixed.each(function (index, obj) {
+        scroll_fixed_offsetTop.push($(obj).offset().top);
+        if (index === 0 || index === "0") {
+            scroll_fixed_top.push(0);
+        } else {
+            scroll_fixed_top.push($scroll_fixed.eq(index - 1).outerHeight() + 20);
+        }
+    });
+},20, 1000));
 // 采用了节流函数
-$(window).scroll(throttle(realFunc, 20, 1000));
+$(window).on("scroll", throttle(realFunc, 20, 1000));
 
 /**鼠标点击回到顶部事件*/
-$(".roll-top").on("click", function (e) {
+function rollTop() {
     $("html, body").clearQueue().animate({
         scrollTop: 0
     }, "ease");
-});
-
+}
 /** 侧边栏导航点击事件 */
 $("#header .side-nav-header .side-nav-bar").on("click", function () {
    // 直接toggle
-    $("#header .side-nav").toggle();
+    $("#header .nav-mini").slideToggle(400);
 });
 
 // 封装Jquery ajax请求
