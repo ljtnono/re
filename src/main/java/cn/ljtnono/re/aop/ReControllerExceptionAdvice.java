@@ -1,4 +1,4 @@
-package cn.ljtnono.re.advice;
+package cn.ljtnono.re.aop;
 
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
@@ -6,6 +6,8 @@ import cn.ljtnono.re.exception.GlobalToViewException;
 import cn.ljtnono.re.pojo.JsonResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.net.BindException;
 
 
 /**
@@ -61,5 +63,12 @@ public class ReControllerExceptionAdvice {
         return new ModelAndView("error/fail")
                 .addObject("errorCode", e.getGlobalErrorEnum().getErrorCode())
                 .addObject("errorMsg", e.getGlobalErrorEnum().getErrorMsg());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BindException.class)
+    public JsonResult bindExceptionHandler(BindException e) {
+        System.out.println(e.getMessage());
+        return null;
     }
 }
