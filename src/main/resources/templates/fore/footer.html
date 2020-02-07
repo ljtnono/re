@@ -1,5 +1,5 @@
 <!-- 回到顶部 -->
-<div class="roll-top pf p10 cursor-pointer none" th:fragment="roll-top">
+<div class="roll-top pf p10 cursor-pointer none" th:fragment="roll-top" onclick="rollTop()">
     <a href="javascript:" title="回顶部"><i class="fa fa-arrow-up f14" aria-hidden="true"></i></a>
 </div>
 <!-- footer部分 -->
@@ -75,7 +75,8 @@
         <p class="mr10">本项目github地址：<a href="javascript:">https://github.com/ljtnono/re</a></p>
     </div>
 </footer>
-<script>
+<script th:src="@{/static/fore/js/common.js}"></script>
+<script th:inline="javascript">
     // 百度统计
     var _hmt = _hmt || [];
     (function () {
@@ -84,4 +85,23 @@
         var s = document.getElementsByTagName("script")[0];
         s.parentNode.insertBefore(hm, s);
     })();
+
+    // 设置header消息轮播
+    setInterval(function () {
+        $(".message-list").animate({
+            top: "-=42"
+        },{
+            duration: 1000,
+            easing: "swing",
+            complete: function () {
+                let top = parseInt($(this).css("top"));
+                let height = parseInt($(this).height());
+                let liHeight = $(this).children("li").height();
+                if (top <= -height + liHeight) {
+                    $(this).css("top", 0);
+                }
+            }
+        });
+    }, 4000);
+
 </script>
