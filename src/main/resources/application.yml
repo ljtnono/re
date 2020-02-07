@@ -26,7 +26,7 @@ spring:
       username: root_element
       password: ljtLJT715336
   thymeleaf:
-    mode: HTML5
+    mode: HTML
     prefix: classpath:/templates/
     suffix: .html
     encoding: UTF-8
@@ -60,5 +60,3 @@ mybatis-plus:
   configuration:
     log-prefix: mybatis.sql
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-    cache-enabled: true
-    local-cache-scope: session
