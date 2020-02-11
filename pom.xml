@@ -25,6 +25,7 @@
         <lucene.version>5.3.1</lucene.version>
         <leancloud.version>6.1.6</leancloud.version>
         <jetbrains-annotations.version>13.0</jetbrains-annotations.version>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <dependency>
