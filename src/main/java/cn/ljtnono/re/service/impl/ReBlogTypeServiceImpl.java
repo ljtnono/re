@@ -58,7 +58,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         Optional<List<ReBlogType>> optionalGetByPattern = Optional.ofNullable(getByPattern);
         optionalGetByPattern.ifPresent(l -> log.info("从缓存中获取所有博客类型列表，总条数：" + l.size()));
         List<ReBlogType> reBlogTypeList = optionalGetByPattern.orElseGet(() -> {
-            List<ReBlogType> list = list();
+            List<ReBlogType> list = list(new QueryWrapper<ReBlogType>().eq("status", 1).orderByAsc("name"));
             list.forEach(reBlogType -> {
                 redisUtil.set(ReEntityRedisKeyEnum.RE_BLOG_TYPE_KEY.getKey()
                         .replace(":id", ":" + reBlogType.getId())
