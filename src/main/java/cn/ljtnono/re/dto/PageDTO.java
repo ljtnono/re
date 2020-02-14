@@ -31,4 +31,8 @@ public class PageDTO implements Serializable {
     @Min(value = 10, message = "每页条数不能小于10")
     private Integer count;
 
+    public PageDTO(Integer page, Integer count) {
+        this.page = page;
+        this.count = count;
+    }
 }
