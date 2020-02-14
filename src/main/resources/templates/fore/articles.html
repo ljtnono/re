@@ -6,6 +6,8 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>根元素|技术文章</title>
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}"/>
+    <link rel="bookmark" th:href="@{/static/favicon.ico}"/>
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/Swiper/4.5.1/css/swiper.min.css" rel="stylesheet">
@@ -87,7 +89,7 @@
 </body>
 <script th:inline="javascript">
     layui.use(['laypage', 'util'], function () {
-        let laypage = layui.laypage;
+        let layPage = layui.laypage;
         let util = layui.util;
         let type = [[${type}]] || "";
         function getData(curr, limit) {
@@ -108,7 +110,6 @@
             });
         }
         function renderData(data) {
-            console.log(data);
             let list = "";
             for (let i = 0; i < data.length; i++) {
                 let item = "<div class=\"articles\">" +
@@ -121,7 +122,7 @@
                     "                </header>" +
                     "                <section class=\"article-detail flex\">" +
                     "                    <div class=\"mr10 article-thumb cursor-pointer\">" +
-                    "                        <img src='" + data[i].coverImage +"'" +
+                    "                        <img src='" + data[i].coverImage + "'" +
                     "                             alt='" + data[i].title + "'" +
                     "                             title='" + data[i].title + "'/>" +
                     "                    </div>" +
@@ -152,11 +153,11 @@
                     "            </article>" +
                     "        </div>";
                 list += item;
-                $(".articles").html(list);
 
+                $(".articles").html(list);
             }
         }
-        laypage.render({
+        layPage.render({
             elem: 'pagination-content',
             count: [[${fields.totalCount}]],
             limit: 10,
@@ -168,6 +169,5 @@
             }
         });
     });
-
 </script>
 </html>
