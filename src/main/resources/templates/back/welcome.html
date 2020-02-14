@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html class="x-admin-sm" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="x-admin-sm" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Root Element</title>
@@ -24,8 +26,8 @@
             <div class="layui-card">
                 <div class="layui-card-body ">
                     <blockquote class="layui-elem-quote">
-                        欢迎管理员：
-                        <span class="x-red" th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}">admin</span>
+                        欢迎
+                        <span class="x-red" sec:authentication="name"></span>
                         ！当前时间:
                         <span th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm')}" id="now"></span>
                     </blockquote>

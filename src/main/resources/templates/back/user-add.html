@@ -113,7 +113,7 @@
             password: function (value, item) {
                 let passwordRex = /^[\w\W\s\u4e00-\u9fcc]{6,32}$/;
                 if (!passwordRex.test(value)) {
-                    return "内容只能为6-32个字符";
+                    return "密码只能为6-32个字符";
                 }
             }
         });
