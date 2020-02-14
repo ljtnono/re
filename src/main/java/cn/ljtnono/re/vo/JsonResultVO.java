@@ -1,4 +1,4 @@
-package cn.ljtnono.re.pojo;
+package cn.ljtnono.re.vo;
 
 import cn.ljtnono.re.util.StringUtil;
 
@@ -12,7 +12,7 @@ import java.util.Map;
  *  @date 2019/12/19
  *  @version 1.0.2
 */
-public class JsonResult implements Serializable {
+public class JsonResultVO implements Serializable {
 
     /** 持久化UID */
     private static final long serialVersionUID = 8098847541612269530L;
@@ -36,9 +36,9 @@ public class JsonResult implements Serializable {
     private Map<String, Object> fields;
 
     /** 无参构造函数方便new对象 */
-    public JsonResult() {}
+    public JsonResultVO() {}
 
-    private JsonResult(Builder builder) {
+    private JsonResultVO(Builder builder) {
         setTotalCount(builder.totalCount);
         setRequest(builder.request);
         setStatus(builder.status);
@@ -53,7 +53,7 @@ public class JsonResult implements Serializable {
      * @param value 字段的值
      * @return 返回当前JsonResult对象
      */
-    public JsonResult addField(String key, Object value) {
+    public JsonResultVO addField(String key, Object value) {
         if (!StringUtil.isEmpty(key)) {
             if (this.fields == null) {
                 this.fields = new HashMap<>(5);
@@ -69,8 +69,8 @@ public class JsonResult implements Serializable {
      * @param totalCount 数据的条数
      * @return 返回通用的成功JsonResult模板
      */
-    public static JsonResult success(Collection<?> data,Integer totalCount) {
-        JsonResult success = new JsonResult();
+    public static JsonResultVO success(Collection<?> data, Integer totalCount) {
+        JsonResultVO success = new JsonResultVO();
         success.setRequest("success");
         success.setStatus(200);
         success.setData(data);
@@ -89,8 +89,8 @@ public class JsonResult implements Serializable {
      * @param status 请求返回的状态响应码
      * @return 返回通用的失败JsonResult模板
      */
-    public static JsonResult fail(Integer status) {
-        JsonResult fail = new JsonResult();
+    public static JsonResultVO fail(Integer status) {
+        JsonResultVO fail = new JsonResultVO();
         fail.setRequest("fail");
         fail.setStatus(status);
         fail.setMessage("请求失败！");
@@ -106,8 +106,8 @@ public class JsonResult implements Serializable {
      * @param status 响应状态码
      * @return 返回通用的成功消息JsonResult模板
      */
-    public static JsonResult successForMessage(String message,Integer status) {
-        JsonResult success = new JsonResult();
+    public static JsonResultVO successForMessage(String message, Integer status) {
+        JsonResultVO success = new JsonResultVO();
         success.setRequest("success");
         success.setStatus(status);
         success.setMessage(message);
@@ -121,7 +121,7 @@ public class JsonResult implements Serializable {
         return new Builder();
     }
 
-    public static Builder newBuilder(JsonResult copy) {
+    public static Builder newBuilder(JsonResultVO copy) {
         Builder builder = new Builder();
         builder.totalCount = copy.getTotalCount();
         builder.request = copy.getRequest();
@@ -222,8 +222,8 @@ public class JsonResult implements Serializable {
             return this;
         }
 
-        public JsonResult build() {
-            return new JsonResult(this);
+        public JsonResultVO build() {
+            return new JsonResultVO(this);
         }
     }
 
