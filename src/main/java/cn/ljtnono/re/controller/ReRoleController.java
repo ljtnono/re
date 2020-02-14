@@ -5,10 +5,9 @@ import cn.ljtnono.re.dto.ReRoleSaveDTO;
 import cn.ljtnono.re.dto.ReRoleSearchDTO;
 import cn.ljtnono.re.dto.ReRoleUpdateDTO;
 import cn.ljtnono.re.entity.ReRole;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReRoleService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +24,6 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/role")
-@Slf4j
 public class ReRoleController {
 
     private IReRoleService iReRoleService;
@@ -37,13 +35,13 @@ public class ReRoleController {
 
     @GetMapping
     @ApiOperation(value = "获取所有角色列表", httpMethod = "GET")
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return iReRoleService.listEntityAll();
     }
 
     @PostMapping
     @ApiOperation(value = "新增一个角色", httpMethod = "POST")
-    public JsonResult saveEntity(ReRoleSaveDTO reRoleSaveDTO) {
+    public JsonResultVO saveEntity(ReRoleSaveDTO reRoleSaveDTO) {
         ReRole entity = new ReRole();
         BeanUtils.copyProperties(reRoleSaveDTO, entity);
         entity.setStatus((byte) 1);
@@ -54,7 +52,7 @@ public class ReRoleController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新角色", httpMethod = "PUT")
-    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReRoleUpdateDTO reRoleUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReRoleUpdateDTO reRoleUpdateDTO) {
         ReRole entity = new ReRole();
         BeanUtils.copyProperties(reRoleUpdateDTO, entity);
         entity.setStatus((byte) 1);
@@ -63,32 +61,32 @@ public class ReRoleController {
 
     @DeleteMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id删除一个角色", httpMethod = "DELETE")
-    public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReRoleService.deleteEntityById(id);
     }
 
     @PutMapping("/restore/{id:\\d+}")
     @ApiOperation(value = "恢复删除的角色", notes = "id只能为数字类型", httpMethod = "PUT")
-    public JsonResult restore(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReRoleService.restore(id);
     }
 
     @GetMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id获取角色", httpMethod = "GET")
-    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReRoleService.getEntityById(id);
     }
 
 
     @GetMapping("/listRolePage")
     @ApiOperation(value = "分页查询角色列表", httpMethod = "GET")
-    public JsonResult listRolePage(@Validated PageDTO pageDTO) {
+    public JsonResultVO listRolePage(@Validated PageDTO pageDTO) {
         return iReRoleService.listRolePage(pageDTO.getPage(), pageDTO.getCount());
     }
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接name和description模糊查询", notes = "根据链接name和description模糊查询", httpMethod = "POST")
-    public JsonResult search(@Validated ReRoleSearchDTO reRoleSearchDTO, @Validated PageDTO pageDTO) {
+    public JsonResultVO search(@Validated ReRoleSearchDTO reRoleSearchDTO, @Validated PageDTO pageDTO) {
         return iReRoleService.search(reRoleSearchDTO, pageDTO);
     }
 }

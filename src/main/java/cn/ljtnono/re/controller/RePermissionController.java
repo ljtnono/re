@@ -2,11 +2,8 @@ package cn.ljtnono.re.controller;
 
 
 import cn.ljtnono.re.entity.RePermission;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.pojo.JsonResult;
-import lombok.extern.slf4j.Slf4j;
+import cn.ljtnono.re.vo.JsonResultVO;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
@@ -19,26 +16,25 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/permission")
-@Slf4j
 public class RePermissionController {
 
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return null;
     }
 
-    public JsonResult saveEntity(RePermission entity) {
+    public JsonResultVO saveEntity(RePermission entity) {
         return null;
     }
 
-    public JsonResult updateEntityById(Serializable id, RePermission entity) {
+    public JsonResultVO updateEntityById(Serializable id, RePermission entity) {
         return null;
     }
 
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         return null;
     }
 
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         return null;
     }
 }

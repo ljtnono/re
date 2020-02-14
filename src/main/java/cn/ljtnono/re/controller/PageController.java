@@ -2,10 +2,9 @@ package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlog;
-import cn.ljtnono.re.pojo.JsonResult;
-import cn.ljtnono.re.util.BlogIndexUtil;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.StringUtil;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 处理页面路由的Controller
@@ -131,60 +128,21 @@ public class PageController {
         return "fore/article";
     }
 
-    /**
-     *@Description: 全文检索博客
-     *@Param: page 页数
-     *@return: keyWord 搜索关键字
-     *@date: 2019/12/30
-     */
-    @RequestMapping("/search/{page}/{keyWord}")
-    public String search(ModelMap modelMap,
-                               @PathVariable(value = "keyWord", required = false) String keyWord,
-                               @PathVariable(value = "page", required = false) String page,
-                               HttpServletRequest request) throws Exception {
-        //String rootPath=request.getServletContext().getRealPath("/");
-        if (StringUtil.isEmpty(page)){
-            page = "1";
-        }
-        int pageSize = 10;
-        modelMap.addAttribute("pageTitle", "搜索关键字'" + keyWord + "'结果页面");
-//        modelMap.addAttribute()
-        // modelMap.addObject("pageTitle", "搜索关键字'" + q + "'结果页面_java开源博客系统");
-        //modelMap.addObject("mainPage", "foreground/blog/result.jsp");
-        BlogIndexUtil blogIndexUtil = BlogIndexUtil.getInstance();
-
-        List<ReBlog> blogList = blogIndexUtil.searchBlog(keyWord);
-
-        long totalPage = blogList.size() % pageSize == 0 ? 1: blogList.size()  / pageSize + 1;
-        if(blogList.size() % pageSize == 0){
-            page = String.valueOf (Integer.parseInt(page) - 1);
-        }
-
-        //这个toindex就是 截取的start end 的end位置。
-        Integer toIndex = blogList.size() >= Integer.parseInt(page) * pageSize ? Integer.parseInt(page) * pageSize
-                : blogList.size();
-        modelMap.addAttribute("blogList", blogList);
-        modelMap.addAttribute("keyWord", keyWord);
-        modelMap.addAttribute("page",page);
-        //ModelAndView model = new ModelAndView("fore/article");
-        return "fore/result";
-    }
-
     @GetMapping("/articles")
     public String articles(String type, @Validated PageDTO pageDTO, ModelMap modelMap) {
-        JsonResult jsonResult;
+        JsonResultVO jsonResultVO;
         if (StringUtil.isEmpty(type) || "ALL".equals(type)) {
-            jsonResult = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), null);
+            jsonResultVO = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), null);
             modelMap.addAttribute("type", "ALL");
         } else {
-            jsonResult = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
+            jsonResultVO = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
             modelMap.addAttribute("type", type);
         }
-        modelMap.addAttribute("data", jsonResult.getData());
-        modelMap.addAttribute("request", jsonResult.getRequest());
-        modelMap.addAttribute("status", jsonResult.getStatus());
-        modelMap.addAttribute("totalCount", jsonResult.getTotalCount());
-        modelMap.addAttribute("fields", jsonResult.getFields());
+        modelMap.addAttribute("data", jsonResultVO.getData());
+        modelMap.addAttribute("request", jsonResultVO.getRequest());
+        modelMap.addAttribute("status", jsonResultVO.getStatus());
+        modelMap.addAttribute("totalCount", jsonResultVO.getTotalCount());
+        modelMap.addAttribute("fields", jsonResultVO.getFields());
         setActivePage("articles", modelMap);
         return "fore/articles";
     }

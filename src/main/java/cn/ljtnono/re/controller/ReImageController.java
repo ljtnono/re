@@ -4,21 +4,19 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReImageSearchDTO;
 import cn.ljtnono.re.entity.ReImage;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReImageService;
 import cn.ljtnono.re.util.FtpClientUtil;
 import cn.ljtnono.re.util.StringUtil;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
@@ -53,7 +51,7 @@ public class ReImageController {
      * @throws NullPointerException 当multiPartFile为null时抛出
      * @return ReImage对象
      */
-    private ReImage getReImageFromMultipartFile(@NotNull MultipartFile multipartFile) {
+    private ReImage getReImageFromMultipartFile(MultipartFile multipartFile) {
         Objects.requireNonNull(multipartFile, "multipartFile不能为null");
         String originalFilename = multipartFile.getOriginalFilename();
         Objects.requireNonNull(originalFilename);
@@ -74,7 +72,7 @@ public class ReImageController {
     }
 
     @PostMapping("/upload")
-    public JsonResult uploadImage(MultipartFile multipartFile)  {
+    public JsonResultVO uploadImage(MultipartFile multipartFile)  {
         ReImage reImage = getReImageFromMultipartFile(multipartFile);
 
         return null;
@@ -89,8 +87,8 @@ public class ReImageController {
             if (b) {
                 // 创建一个image对象
                 ReImage reImage = getReImageFromMultipartFile(multipartFile);
-                JsonResult jsonResult = iReImageService.saveEntity(reImage);
-                if (jsonResult.getStatus() == HttpStatus.OK.value()) {
+                JsonResultVO jsonResultVO = iReImageService.saveEntity(reImage);
+                if (jsonResultVO.getStatus() == HttpStatus.OK.value()) {
                     result.put("url", reImage.getUrl());
                     result.put("success", 1);
                     result.put("message", "上传成功");
@@ -114,41 +112,41 @@ public class ReImageController {
 
     @GetMapping
     @ApiOperation(value = "获取所有图片列表", httpMethod = "GET")
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return null;
     }
 
 
-    public JsonResult saveEntity(ReImage entity) {
+    public JsonResultVO saveEntity(ReImage entity) {
         return null;
     }
 
 
-    public JsonResult updateEntityById(Serializable id, ReImage entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReImage entity) {
         return null;
     }
 
 
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         return null;
     }
 
 
     @GetMapping("/{id:\\w+}")
     @ApiOperation(value = "根据id获取一个图片", httpMethod = "GET")
-    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReImageService.getEntityById(id);
     }
 
     @GetMapping("/listImagePage")
     @ApiOperation(value = "分页获取图片列表", httpMethod = "GET")
-    public JsonResult listImagePage(@Validated PageDTO pageDTO) {
+    public JsonResultVO listImagePage(@Validated PageDTO pageDTO) {
         return iReImageService.listImagePage(pageDTO.getPage(), pageDTO.getCount());
     }
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接originName和url还有type模糊查询", notes = "根据链接originName和url还有type模糊查询", httpMethod = "POST")
-    public JsonResult search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO) {
+    public JsonResultVO search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO) {
         return iReImageService.search(reImageSearchDTO, pageDTO);
     }
 }

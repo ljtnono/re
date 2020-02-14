@@ -2,21 +2,19 @@ package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReBlogSaveDTO;
+import cn.ljtnono.re.dto.ReBlogSearchDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
-import cn.ljtnono.re.util.BlogIndexUtil;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.HtmlUtil;
 import cn.ljtnono.re.util.StringUtil;
+import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,10 +28,9 @@ import java.util.Date;
 @RestController
 @RequestMapping("/blog")
 @Api(value = "博客相关Controller", tags = {"博客操作接口"})
-@Slf4j
 public class ReBlogController {
 
-    private final IReBlogService iReBlogService;
+    private IReBlogService iReBlogService;
 
     @Autowired
     public ReBlogController(IReBlogService iReBlogService) {
@@ -42,13 +39,13 @@ public class ReBlogController {
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return iReBlogService.listEntityAll();
     }
 
     @PostMapping
     @ApiOperation(value = "新增一个博客记录", httpMethod = "POST")
-    public JsonResult saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
+    public JsonResultVO saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
         ReBlog build = ReBlog.newBuilder()
                 .title(reBlogSaveDTO.getTitle()).author(reBlogSaveDTO.getAuthor())
                 .type(reBlogSaveDTO.getType()).contentHtml(reBlogSaveDTO.getContentHtml())
@@ -69,47 +66,50 @@ public class ReBlogController {
                 build.setSummary(build.getSummary());
             }
         }
-        // 创建博文之后 在本地进行分词
-        BlogIndexUtil blogIndexUtil = BlogIndexUtil.getInstance();
-        try {
-            blogIndexUtil.addIndex(build);
-        } catch (IOException e) {
-            log.info("分词添加失败");
-        }
         return iReBlogService.saveEntity(build);
     }
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新一个博客实体", notes = "id只能是数字类型", httpMethod = "PUT")
-    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, ReBlog entity) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReBlog entity) {
         return iReBlogService.updateEntityById(id, entity);
     }
 
     @DeleteMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id删除一个博客实体", notes = "id只能是数字类型", httpMethod = "DELETE")
-    public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.deleteEntityById(id);
     }
 
     @GetMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id获取一个博客实体", notes = "id只能是数字类型", httpMethod = "GET")
-    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.getEntityById(id);
     }
 
     @GetMapping("/listBlogPage")
     @ApiOperation(value = "分页获取博客列表", httpMethod = "GET")
-    public JsonResult listBlogPage(PageDTO reBlogListPageDTO) {
+    public JsonResultVO listBlogPage(PageDTO reBlogListPageDTO) {
         return iReBlogService.listBlogPage(reBlogListPageDTO.getPage(), reBlogListPageDTO.getCount());
     }
 
     @GetMapping("/listBlogPageByType")
     @ApiOperation(value = "根据类型分页查询博客列表", httpMethod = "GET")
-    public JsonResult listBlogPageByType(String type, @Validated PageDTO pageDTO) {
+    public JsonResultVO listBlogPageByType(String type, @Validated PageDTO pageDTO) {
         if (StringUtil.isEmpty(type) || "ALL".equals(type)) {
             return iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), null);
         } else {
             return iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
         }
+    }
+
+
+    @PostMapping("/search")
+    @ApiOperation(value = "根据博客标题，博客分类，博客作者模糊查询", notes = "根据博客标题，博客分类，博客作者模糊查询", httpMethod = "POST")
+    public JsonResultVO search(ReBlogSearchDTO reBlogSearchDTO, @Validated PageDTO pageDTO) {
+        if (reBlogSearchDTO == null) {
+            reBlogSearchDTO = new ReBlogSearchDTO();
+        }
+        return iReBlogService.search(reBlogSearchDTO, pageDTO);
     }
 }

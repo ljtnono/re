@@ -1,10 +1,9 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.entity.ReBook;
-import cn.ljtnono.re.pojo.JsonResult;
-import lombok.extern.slf4j.Slf4j;
+import cn.ljtnono.re.vo.JsonResultVO;
+import org.slf4j.Logger;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Serializable;
@@ -17,30 +16,29 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/book")
-@Slf4j
 public class ReBookController {
 
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return null;
     }
 
 
-    public JsonResult saveEntity(ReBook entity) {
+    public JsonResultVO saveEntity(ReBook entity) {
         return null;
     }
 
 
-    public JsonResult updateEntityById(Serializable id, ReBook entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReBook entity) {
         return null;
     }
 
 
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         return null;
     }
 
 
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         return null;
     }
 }

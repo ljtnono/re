@@ -6,16 +6,14 @@ import cn.ljtnono.re.dto.ReBlogTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReBlogType;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.IReBlogTypeService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 
 import java.io.Serializable;
 import java.util.Date;
@@ -29,7 +27,6 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/blog_type")
-@Slf4j
 @Api(value = "博客分类类型Controller", tags = {"博客类型Controller"})
 public class ReBlogTypeController {
 
@@ -42,13 +39,13 @@ public class ReBlogTypeController {
 
     @GetMapping
     @ApiOperation(value = "获取所有博客类型列表", httpMethod = "GET")
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         return iReBlogTypeService.listEntityAll();
     }
 
     @PostMapping
     @ApiOperation(value = "新增一个博客类型", httpMethod = "POST")
-    public JsonResult saveEntity(@Validated ReBlogTypeSaveDTO reBlogTypeSaveDTO) {
+    public JsonResultVO saveEntity(@Validated ReBlogTypeSaveDTO reBlogTypeSaveDTO) {
         ReBlogType entity = new ReBlogType();
         entity.setStatus((byte) 1);
         BeanUtils.copyProperties(reBlogTypeSaveDTO, entity);
@@ -59,7 +56,7 @@ public class ReBlogTypeController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新博客类型", httpMethod = "PUT")
-    public JsonResult updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogTypeUpdateDTO reBlogTypeUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogTypeUpdateDTO reBlogTypeUpdateDTO) {
         ReBlogType reBlogType = new ReBlogType();
         BeanUtils.copyProperties(reBlogTypeUpdateDTO, reBlogType);
         // 这里如果不设置为1，会默认设置status为0
@@ -69,31 +66,31 @@ public class ReBlogTypeController {
 
     @DeleteMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id删除一个博客类型", notes = "id只能为数字类型", httpMethod = "DELETE")
-    public JsonResult deleteEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.deleteEntityById(id);
     }
 
     @GetMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id获取博客类型", httpMethod = "GET")
-    public JsonResult getEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.getEntityById(id);
     }
 
     @GetMapping("/listBlogTypePage")
     @ApiOperation(value = "分页获取博客类型列表", httpMethod = "GET")
-    public JsonResult listBlogTypePage(PageDTO pageDTO) {
+    public JsonResultVO listBlogTypePage(PageDTO pageDTO) {
         return iReBlogTypeService.listBlogTypePage(pageDTO.getPage(), pageDTO.getCount());
     }
 
     @PutMapping("/restore/{id:\\d+}")
     @ApiOperation(value = "恢复删除的博客类型", notes = "id只能为数字类型", httpMethod = "PUT")
-    public JsonResult restore(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.restore(id);
     }
 
     @PostMapping("/search")
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
-    public JsonResult search(final String name, @Validated PageDTO pageDTO) {
+    public JsonResultVO search(final String name, @Validated PageDTO pageDTO) {
         if (null == name) {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
         }
