@@ -1,7 +1,7 @@
 package cn.ljtnono.re.listener;
 
 import cn.ljtnono.re.entity.*;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.*;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +75,7 @@ public class ReApplicationContextListener implements ApplicationListener<Context
         // 获取首页猜你喜欢
         List<ReBlog> listGuessYouLike = iReBlogService.listGuessYouLike();
         // 获取首页分页博客列表的第一页
-        JsonResult jsonResult = iReBlogService.listBlogPage(1, 10);
+        JsonResultVO jsonResultVO = iReBlogService.listBlogPage(1, 10);
         ReImage qrCodeWeChat = iReImageService.getQrCodeWeChat();
         ReImage avatar = iReImageService.getAvatar();
         ReImage qrCodeWeChatSk = iReImageService.getQrCodeWeChatSk();
@@ -91,7 +91,7 @@ public class ReApplicationContextListener implements ApplicationListener<Context
         log.info("文章类型总数：" + blogTypeTotalCount);
         int blogCommentTotalCount = iReBlogService.countComment();
         log.info("文章评论总数：" + blogCommentTotalCount);
-        servletContext.setAttribute("indexBlogListFirstPage", jsonResult.getData());
+        servletContext.setAttribute("indexBlogListFirstPage", jsonResultVO.getData());
         servletContext.setAttribute("guessYouLikeList", listGuessYouLike);
         servletContext.setAttribute("blogTypeList", listBlogTypeResult);
         servletContext.setAttribute("linkList", listLinkResult);
