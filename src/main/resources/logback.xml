@@ -29,7 +29,7 @@
         </encoder>
     </appender>
 
-<!--  配置mybatis的日志输出级别为INFO  -->
+    <!--  配置mybatis的日志输出级别为INFO  -->
     <logger name="mybatis.sql" level="INFO"/>
     <!-- 日志输出级别 -->
     <root level="INFO">

@@ -49,11 +49,14 @@ spring:
   session:
     store-type: redis
 
-# 配置tomcat服务器相关
 server:
   servlet:
     context-path: /re
   port: 8080
+  tomcat:
+    max-threads: 1000
+    max-connections: 20000
+    uri-encoding: UTF-8
 
 # 配置mybatis相关
 mybatis-plus:
