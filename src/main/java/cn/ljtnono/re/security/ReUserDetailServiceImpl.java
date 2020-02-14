@@ -20,8 +20,8 @@ import java.util.Optional;
 /**
  * 用户登录认证授权
  * @author ljt
- * @date 2019/11/18
- * @version 1.0
+ * @date 2020/2/13
+ * @version 1.0.1
  */
 @Component("reUserDetailService")
 public class ReUserDetailServiceImpl implements UserDetailsService {
@@ -46,18 +46,6 @@ public class ReUserDetailServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new RuntimeException("权限异常"));
         List<GrantedAuthority> authorities = new ArrayList<>(10);
         reRoleList.forEach(reRole -> authorities.add(new SimpleGrantedAuthority("ROLE_" + reRole.getName())));
-        // 根据角色查询出所有的权限
-//        List<RePermission> permissionList = new ArrayList<>(8);
-//        reRoleList.forEach(reRole -> {
-//            List<RePermission> rePermissions = iReRoleService.listPermissionByRoleId(reRole.getId());
-//            permissionList.addAll(rePermissions);
-//        });
-//        List<SimpleGrantedAuthority> authorityList = new ArrayList<>(8);
-//        permissionList.forEach(rePermission -> {
-//            // 将权限表达式添加进去
-//            authorityList.add(new SimpleGrantedAuthority(permissionList.get(0).getRes()));
-//        });
-//        String password = passwordEncoder.encode(reUser.getPassword());
         return new User(username, reUser.getPassword(), authorities);
     }
 }
