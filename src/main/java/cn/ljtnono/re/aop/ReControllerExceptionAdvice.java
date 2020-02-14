@@ -3,12 +3,11 @@ package cn.ljtnono.re.aop;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.exception.GlobalToViewException;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.net.BindException;
-
 
 /**
  * 配置springRest风格错误
@@ -27,8 +26,8 @@ public class ReControllerExceptionAdvice {
      */
     @ExceptionHandler({GlobalToJsonException.class})
     @ResponseBody
-    public JsonResult globalToJsonExceptionHandler(GlobalToJsonException e) {
-        return JsonResult.newBuilder()
+    public JsonResultVO globalToJsonExceptionHandler(GlobalToJsonException e) {
+        return JsonResultVO.newBuilder()
                 .message(e.getGlobalErrorEnum().getErrorMsg())
                 .data(null)
                 .request("fail")
@@ -43,8 +42,8 @@ public class ReControllerExceptionAdvice {
      */
     @ExceptionHandler({IllegalArgumentException.class})
     @ResponseBody
-    public JsonResult illegalArgumentExceptionHandler() {
-        return JsonResult.newBuilder()
+    public JsonResultVO illegalArgumentExceptionHandler() {
+        return JsonResultVO.newBuilder()
                 .message(GlobalErrorEnum.PARAM_ERROR.getErrorMsg())
                 .data(null)
                 .request("fail")
@@ -67,7 +66,7 @@ public class ReControllerExceptionAdvice {
 
     @ResponseBody
     @ExceptionHandler(BindException.class)
-    public JsonResult bindExceptionHandler(BindException e) {
+    public JsonResultVO bindExceptionHandler(BindException e) {
         System.out.println(e.getMessage());
         return null;
     }
