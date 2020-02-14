@@ -50,7 +50,7 @@
                                    class="layui-input">
                         </div>
                         <div class="layui-inline layui-show-xs-block">
-                            <button class="layui-btn" lay-submit lay-filter = "search">
+                            <button class="layui-btn" lay-submit lay-filter="search">
                                 <i class="layui-icon">&#xe615;</i></button>
                         </div>
                     </form>
@@ -78,6 +78,7 @@
         let util = layui.util;
         table.render({
             elem: '.layui-table',
+            id: "blogTable",
             height: 450,
             url: [[${#servletContext.contextPath}]] + "/blog/listBlogPage",
             page: true,
@@ -147,24 +148,48 @@
                 // 请求成功，将option拼接到下拉框中去
                 if (res.request === "success" && res.status === 200) {
                     $.each(res.data, function (index, item) {
-                        $('#type').append(new Option(item.name, item.id));
+                        $('#type').append(new Option(item.name, item.name));
                     });
                     form.render();
+                } else {
+                    layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
                 }
             },
             error: function (res) {
-                console.log(res);
+                if (res) {
+                    layer.msg(res);
+                } else {
+                    layer.msg("请求错误，请检查网络", {icon: 2});
+                }
             }
         });
         // 监听表单提交事件
-        form.on('submit(search)', function(data){
-            //被执行事件的元素DOM对象，一般为button对象
-            console.log(data.elem);
-            //被执行提交的form对象，一般在存在form标签时才会返回
-            console.log(data.form);
-            //当前容器的全部表单字段，名值对形式：{name: value}
-            console.log(data.field);
-            //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        form.on('submit(search)', function (data) {
+            let searchDTO = data.field;
+            table.reload("blogTable", {
+                url: [[${#servletContext.contextPath}]] + "/blog/search",
+                where: {
+                    title: searchDTO.title,
+                    type: searchDTO.type,
+                    author: searchDTO.author
+                },
+                method: "POST",
+                parseData: function (res) {
+                    return {
+                        "status": res.status,
+                        "count": res.fields.totalCount,
+                        "message": res.message,
+                        "data": res.data
+                    };
+                },
+                response: {
+                    statusName: "status",
+                    statusCode: 200,
+                    msgName: "message",
+                    countName: "count",
+                    dataName: "data"
+                }
+            });
             return false;
         });
         // 监听操作栏点击事件
@@ -187,9 +212,9 @@
                         method: "DELETE",
                         success: function (res) {
                             if (res.request === "success" && res.status === 200) {
-                                layer.msg(res.message , {icon: 1});
+                                layer.msg(res.message, {icon: 1});
                             } else {
-                                layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
+                                layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
                             }
                         },
                         error: function (res) {
@@ -206,6 +231,4 @@
         });
     });
 </script>
-
-
 </html>
