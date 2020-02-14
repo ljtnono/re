@@ -3,8 +3,8 @@ package cn.ljtnono.re.service;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReTimelineSearchDTO;
 import cn.ljtnono.re.entity.ReTimeline;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -24,20 +24,20 @@ public interface IReTimelineService extends IService<ReTimeline>, IReEntityServi
      * @param count 每页条数
      * @return JsonResult 对象
      */
-    JsonResult listTimelinePage(Integer page, Integer count);
+    JsonResultVO listTimelinePage(Integer page, Integer count);
 
     /**
      * 恢复删除的时间轴
      * @param id 需要恢复的时间轴id
      * @return JsonResult 对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 获取博客更新日志时间轴
      * @return JsonResult对象
      */
-    JsonResult listUpdateLogTimeline();
+    JsonResultVO listUpdateLogTimeline();
 
     /**
      * 根据content和pushDate模糊查询列表
@@ -45,5 +45,5 @@ public interface IReTimelineService extends IService<ReTimeline>, IReEntityServi
      * @param pageDTO 分页DTO
      * @return JsonResult对象
      */
-    JsonResult search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO);
 }

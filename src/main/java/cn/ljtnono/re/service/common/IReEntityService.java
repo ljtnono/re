@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.common;
 
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 
 import java.io.Serializable;
 
@@ -22,7 +22,7 @@ public interface IReEntityService <T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    JsonResult saveEntity(T entity);
+    JsonResultVO saveEntity(T entity);
 
     /**
      * 根据id删除一个实体类
@@ -33,7 +33,7 @@ public interface IReEntityService <T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    JsonResult deleteEntityById(Serializable id);
+    JsonResultVO deleteEntityById(Serializable id);
 
     /**
      * 根据id更新一个实体类
@@ -45,7 +45,7 @@ public interface IReEntityService <T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    JsonResult updateEntityById(Serializable id, T entity);
+    JsonResultVO updateEntityById(Serializable id, T entity);
 
     /**
      * 根据id获取一个实体类
@@ -56,7 +56,7 @@ public interface IReEntityService <T> {
      * 操作失败返回
      * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    JsonResult getEntityById(Serializable id);
+    JsonResultVO getEntityById(Serializable id);
 
     /**
      * 获取实体类的所有列表
@@ -64,5 +64,5 @@ public interface IReEntityService <T> {
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
      */
-    JsonResult listEntityAll();
+    JsonResultVO listEntityAll();
 }

@@ -5,7 +5,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBookTypeMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReBookTypeService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookType> implements IReBookTypeService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
     public ReBookTypeServiceImpl(RedisUtil redisUtil) {
@@ -37,7 +37,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     }
 
     @Override
-    public JsonResult saveEntity(ReBookType entity) {
+    public JsonResultVO saveEntity(ReBookType entity) {
         Optional<ReBookType> optionalReBook = Optional.ofNullable(entity);
         optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -47,14 +47,14 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         Integer bookTypeId = Integer.parseInt(id.toString());
@@ -71,7 +71,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 if (b) {
                     redisUtil.del(key);
                 }
-                return JsonResult.success(Collections.singletonList(reBookType), 1);
+                return JsonResultVO.success(Collections.singletonList(reBookType), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -81,7 +81,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     }
 
     @Override
-    public JsonResult updateEntityById(Serializable id, ReBookType entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReBookType entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReBookType> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -98,7 +98,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 if (b) {
                     redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
                 }
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -108,12 +108,12 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     }
 
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         Integer bookTypeId = Integer.parseInt(id.toString());
         if (bookTypeId >= 1) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_BOOK_KEY.getKey()
                     .replace(":id", ":" + bookTypeId)
@@ -126,7 +126,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 if (reBookType == null || reBookType.getStatus() == 0) {
                     throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
                 }
-                jsonResult = JsonResult.success(Collections.singletonList(reBookType), 1);
+                jsonResultVO = JsonResultVO.success(Collections.singletonList(reBookType), 1);
             } else {
                 reBookType = getById(bookTypeId);
                 // 如果不存在，那么返回 找不到资源错误
@@ -136,17 +136,17 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 redisUtil.set(ReEntityRedisKeyEnum.RE_BOOK_TYPE_KEY.getKey()
                         .replace(":id", ":" + reBookType.getId())
                         .replace(":name", ":" + reBookType.getName()), reBookType, RedisUtil.EXPIRE_TIME_DEFAULT);
-                jsonResult = JsonResult.success(Collections.singletonList(reBookType), 1);
+                jsonResultVO = JsonResultVO.success(Collections.singletonList(reBookType), 1);
             }
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
     }
 
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReBookType> reBookTypeList = list();
         Optional<List<ReBookType>> optionalList = Optional.ofNullable(reBookTypeList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -156,7 +156,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                     .replace(":name", ":" + reBookType.getName()), reBookType, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有书籍类型列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reBookTypeList, reBookTypeList.size());
+        JsonResultVO success = JsonResultVO.success(reBookTypeList, reBookTypeList.size());
         success.setMessage("操作成功");
         return success;
     }

@@ -8,7 +8,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReTimelineMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReTimelineService;
 import cn.ljtnono.re.util.DateUtil;
 import cn.ljtnono.re.util.RedisUtil;
@@ -38,7 +38,7 @@ import java.util.Optional;
 @Slf4j
 public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimeline> implements IReTimelineService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
     public ReTimelineServiceImpl(RedisUtil redisUtil) {
@@ -46,7 +46,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
     }
 
     @Override
-    public JsonResult saveEntity(ReTimeline entity) {
+    public JsonResultVO saveEntity(ReTimeline entity) {
         Optional<ReTimeline> reTimeline = Optional.ofNullable(entity);
         reTimeline.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -58,14 +58,14 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             redisUtil.deleteByPattern("re_timeline_page:*");
             redisUtil.deleteByPattern("re_timeline_page_total:*");
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int timelineId = Integer.parseInt(id.toString());
@@ -78,7 +78,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                 redisUtil.deleteByPattern("re_timeline:*");
                 redisUtil.deleteByPattern("re_timeline_page:*");
                 redisUtil.deleteByPattern("re_timeline_page_total:*");
-                return JsonResult.success(Collections.singletonList(reTimeline), 1);
+                return JsonResultVO.success(Collections.singletonList(reTimeline), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -88,7 +88,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
     }
 
     @Override
-    public JsonResult updateEntityById(Serializable id, ReTimeline entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReTimeline entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReTimeline> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -101,7 +101,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                 redisUtil.deleteByPattern("re_timeline:*");
                 redisUtil.deleteByPattern("re_timeline_page:*");
                 redisUtil.deleteByPattern("re_timeline_page_total:*");
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -111,12 +111,12 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
     }
 
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int timelineId = Integer.parseInt(id.toString());
         if (timelineId >= 1001) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_TIMELINE_KEY.getKey()
                     .replace(":id", ":" + timelineId)
@@ -139,16 +139,16 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                         .replace(":id", ":" + reTimeline.getId())
                         .replace(":pushDate", ":" +reTimeline.getPushDate()), reTimeline, RedisUtil.EXPIRE_TIME_DEFAULT);
             }
-            jsonResult = JsonResult.success(Collections.singletonList(reTimeline), 1);
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO = JsonResultVO.success(Collections.singletonList(reTimeline), 1);
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
     }
 
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReTimeline> reTimelineList = list();
         Optional<List<ReTimeline>> optionalList = Optional.ofNullable(reTimelineList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -158,13 +158,13 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                     .replace(":pushDate", ":" + reTimeline.getPushDate()), reTimeline, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有时间轴列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reTimelineList, reTimelineList.size());
+        JsonResultVO success = JsonResultVO.success(reTimelineList, reTimelineList.size());
         success.setMessage("操作成功");
         return success;
     }
 
     @Override
-    public JsonResult listTimelinePage(Integer page, Integer count) {
+    public JsonResultVO listTimelinePage(Integer page, Integer count) {
         Optional<Integer> optionalPage = Optional.ofNullable(page);
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -180,14 +180,14 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
         if (!objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页时间轴数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
-            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+            return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReTimeline> pageResult = page(new Page<>(page, count), new QueryWrapper<ReTimeline>().orderByDesc("modify_time"));
             log.info("获取" + page + "页时间轴数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         }
     }
 
@@ -198,7 +198,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
      * @return JsonResult 对象
      */
     @Override
-    public JsonResult restore(Serializable id) {
+    public JsonResultVO restore(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int timelineId = Integer.parseInt(id.toString());
@@ -211,7 +211,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                 redisUtil.deleteByPattern("re_timeline:*");
                 redisUtil.deleteByPattern("re_timeline_page:*");
                 redisUtil.deleteByPattern("re_timeline_page_total:*");
-                return JsonResult.success(Collections.singletonList(timeline), 1);
+                return JsonResultVO.success(Collections.singletonList(timeline), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -226,7 +226,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
      * @return JsonResult对象
      */
     @Override
-    public JsonResult listUpdateLogTimeline() {
+    public JsonResultVO listUpdateLogTimeline() {
         List<ReTimeline> reTimelineList = list(new QueryWrapper<ReTimeline>().orderByDesc("push_date").last("limit 20"));
         Optional<List<ReTimeline>> optionalList = Optional.ofNullable(reTimelineList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -236,14 +236,14 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
                     .replace(":pushDate", ":" + reTimeline.getPushDate()), reTimeline, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取日志更新时间轴列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reTimelineList, reTimelineList.size());
+        JsonResultVO success = JsonResultVO.success(reTimelineList, reTimelineList.size());
         success.setMessage("操作成功");
         return success;
     }
 
 
     @Override
-    public JsonResult search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO) {
+    public JsonResultVO search(ReTimelineSearchDTO reTimelineSearchDTO, PageDTO pageDTO) {
         Optional<ReTimelineSearchDTO> optionalReTimelineSearchDTO = Optional.ofNullable(reTimelineSearchDTO);
         optionalReTimelineSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
         QueryWrapper<ReTimeline> reTimelineQueryWrapper = new QueryWrapper<>();
@@ -255,7 +255,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
         }
         IPage<ReTimeline> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reTimelineQueryWrapper);
         if (pageResult != null) {
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }

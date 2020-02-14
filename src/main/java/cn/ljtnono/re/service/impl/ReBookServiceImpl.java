@@ -5,7 +5,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBookMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReBookService;
 import cn.ljtnono.re.util.RedisUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -30,25 +30,15 @@ import java.util.Optional;
 @Slf4j
 public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> implements IReBookService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
     public ReBookServiceImpl(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;
     }
 
-    /**
-     * 新增单个实体类
-     *
-     * @param entity 具体的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
-    public JsonResult saveEntity(ReBook entity) {
+    public JsonResultVO saveEntity(ReBook entity) {
         Optional<ReBook> optionalReBook = Optional.ofNullable(entity);
         optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -60,24 +50,14 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
-    /**
-     * 根据id删除一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {删除的实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         Integer bookId = Integer.parseInt(id.toString());
@@ -96,7 +76,7 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                 if (b) {
                     redisUtil.del(key);
                 }
-                return JsonResult.success(Collections.singletonList(reBook), 1);
+                return JsonResultVO.success(Collections.singletonList(reBook), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -105,19 +85,8 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
         }
     }
 
-    /**
-     * 根据id更新一个实体类
-     *
-     * @param id     实体类的id
-     * @param entity 要更新的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
-    public JsonResult updateEntityById(Serializable id, ReBook entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReBook entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReBook> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -136,7 +105,7 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                 if (b) {
                     redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
                 }
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -145,23 +114,13 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
         }
     }
 
-    /**
-     * 根据id获取一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         Integer bookId = Integer.parseInt(id.toString());
         if (bookId >= 1) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_BOOK_KEY.getKey()
                     .replace(":id", ":" + bookId)
@@ -176,7 +135,7 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                 if (reBook == null || reBook.getStatus() == 0) {
                     throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
                 }
-                jsonResult = JsonResult.success(Collections.singletonList(reBook), 1);
+                jsonResultVO = JsonResultVO.success(Collections.singletonList(reBook), 1);
             } else {
                 reBook = getById(bookId);
                 // 如果不存在，那么返回 找不到资源错误
@@ -188,24 +147,17 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                         .replace(":name", ":" + reBook.getName())
                         .replace(":author", ":" + reBook.getAuthor())
                         .replace(":type", ":" + reBook.getType()), reBook, RedisUtil.EXPIRE_TIME_DEFAULT);
-                jsonResult = JsonResult.success(Collections.singletonList(reBook), 1);
+                jsonResultVO = JsonResultVO.success(Collections.singletonList(reBook), 1);
             }
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
     }
 
-    /**
-     * 获取实体类的所有列表
-     *
-     * @return 实体类所有列表
-     * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
-     * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReBook> reBookList = list();
         Optional<List<ReBook>> optionalList = Optional.ofNullable(reBookList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -217,7 +169,7 @@ public class ReBookServiceImpl extends ServiceImpl<ReBookMapper, ReBook> impleme
                     .replace(":type", ":" + reBook.getType()), reBook, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有书籍列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reBookList, reBookList.size());
+        JsonResultVO success = JsonResultVO.success(reBookList, reBookList.size());
         success.setMessage("操作成功");
         return success;
     }

@@ -2,16 +2,14 @@ package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReRoleSearchDTO;
-import cn.ljtnono.re.dto.ReSkillSearchDTO;
 import cn.ljtnono.re.entity.RePermission;
 import cn.ljtnono.re.entity.ReRole;
-import cn.ljtnono.re.entity.ReSkill;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReRoleMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReRoleService;
 import cn.ljtnono.re.util.RedisUtil;
 import cn.ljtnono.re.util.StringUtil;
@@ -37,7 +35,7 @@ import java.util.*;
 @Slf4j
 public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> implements IReRoleService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
     public ReRoleServiceImpl(RedisUtil redisUtil) {
@@ -56,7 +54,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
     }
 
     @Override
-    public JsonResult listRolePage(Integer page, Integer count) {
+    public JsonResultVO listRolePage(Integer page, Integer count) {
         Optional<Integer> optionalPage = Optional.ofNullable(page);
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -72,19 +70,19 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         if (!objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页角色数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
-            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+            return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReRole> pageResult = page(new Page<>(page, count), new QueryWrapper<ReRole>().orderByDesc("modify_time"));
             log.info("获取" + page + "页角色数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         }
     }
 
     @Override
-    public JsonResult restore(Serializable id) {
+    public JsonResultVO restore(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
@@ -98,7 +96,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
                 redisUtil.deleteByPattern("re_role:*");
                 redisUtil.deleteByPattern("re_role_page:*");
                 redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResult.success(Collections.singletonList(reRole), 1);
+                return JsonResultVO.success(Collections.singletonList(reRole), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -108,7 +106,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
     }
 
     @Override
-    public JsonResult search(ReRoleSearchDTO reRoleSearchDTO, PageDTO pageDTO) {
+    public JsonResultVO search(ReRoleSearchDTO reRoleSearchDTO, PageDTO pageDTO) {
         Optional<ReRoleSearchDTO> optionalReRoleSearchDTO = Optional.ofNullable(reRoleSearchDTO);
         optionalReRoleSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
         QueryWrapper<ReRole> reRoleQueryWrapper = new QueryWrapper<>();
@@ -120,14 +118,14 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         }
         IPage<ReRole> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reRoleQueryWrapper);
         if (pageResult != null) {
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult saveEntity(ReRole entity) {
+    public JsonResultVO saveEntity(ReRole entity) {
         Optional<ReRole> optionalReRole = Optional.ofNullable(entity);
         optionalReRole.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -138,14 +136,14 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
@@ -160,7 +158,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
                 redisUtil.deleteByPattern("re_role:*");
                 redisUtil.deleteByPattern("re_role_page:*");
                 redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResult.success(Collections.singletonList(reRole), 1);
+                return JsonResultVO.success(Collections.singletonList(reRole), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -170,7 +168,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
     }
 
     @Override
-    public JsonResult updateEntityById(Serializable id, ReRole entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReRole entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReRole> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -183,7 +181,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
                 redisUtil.deleteByPattern("re_role:*");
                 redisUtil.deleteByPattern("re_role_page:*");
                 redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -193,12 +191,12 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
     }
 
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
         if (roleId >= (Integer) GlobalVariableEnum.RE_ENTITY_MIN_ID.getValue()) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_ROLE_KEY.getKey()
                     .replace(":id", ":" + roleId)
@@ -223,16 +221,16 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
                         .replace(":name", ":" + reRole.getName())
                         .replace(":description", ":" + reRole.getDescription()), reRole, RedisUtil.EXPIRE_TIME_DEFAULT);
             }
-            jsonResult = JsonResult.success(Collections.singletonList(reRole), 1);
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO = JsonResultVO.success(Collections.singletonList(reRole), 1);
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
     }
 
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReRole> reRoleList = list();
         Optional<List<ReRole>> optionalList = Optional.ofNullable(reRoleList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -243,7 +241,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
                     .replace(":description", ":" + reRole.getDescription()), reRole, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有角色列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reRoleList, reRoleList.size());
+        JsonResultVO success = JsonResultVO.success(reRoleList, reRoleList.size());
         success.setMessage("操作成功");
         return success;
     }

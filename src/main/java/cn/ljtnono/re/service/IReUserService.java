@@ -4,8 +4,8 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReUserSearchDTO;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.entity.ReUser;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -32,14 +32,14 @@ public interface IReUserService extends IService<ReUser>, IReEntityService<ReUse
      * @param count 每页条数
      * @return JsonResult对象
      */
-    JsonResult listUserPage(Integer page, Integer count);
+    JsonResultVO listUserPage(Integer page, Integer count);
 
     /**
      * 恢复删除的用户
      * @param id 用户id
      * @return JsonResult对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 根据username、tel和email模糊查询
@@ -47,5 +47,5 @@ public interface IReUserService extends IService<ReUser>, IReEntityService<ReUse
      * @param pageDTO 分页DTO
      * @return JsonResult对象
      */
-    JsonResult search(ReUserSearchDTO reUserSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(ReUserSearchDTO reUserSearchDTO, PageDTO pageDTO);
 }

@@ -3,8 +3,8 @@ package cn.ljtnono.re.service;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReLinkSearchDTO;
 import cn.ljtnono.re.entity.ReLink;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -30,14 +30,14 @@ public interface IReLinkService extends IService<ReLink>, IReEntityService<ReLin
      * @param count 每页获取的条数
      * @return JsonResult对象
      */
-    JsonResult listLinkPage(Integer page, Integer count);
+    JsonResultVO listLinkPage(Integer page, Integer count);
 
     /**
      * 恢复删除的链接
      * @param id 需要恢复的链接id
      * @return JsonResult 对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 链接分页条件查询
@@ -45,5 +45,5 @@ public interface IReLinkService extends IService<ReLink>, IReEntityService<ReLin
      * @param pageDTO 分页对象
      * @return JsonResult 对象
      */
-    JsonResult search(final ReLinkSearchDTO reLinkSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(final ReLinkSearchDTO reLinkSearchDTO, PageDTO pageDTO);
 }

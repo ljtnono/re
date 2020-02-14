@@ -2,8 +2,8 @@ package cn.ljtnono.re.service;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlogType;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityServi
      * 获取所有的博客类型
      * @return 所有的博客类型
      */
-    JsonResult listBlogTypeAll();
+    JsonResultVO listBlogTypeAll();
 
     /**
      * 分页获取博客类型
@@ -28,14 +28,14 @@ public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityServi
      * @param count 每页显示的条数
      * @return JsonResult 对象
      */
-    JsonResult listBlogTypePage(Integer page, Integer count);
+    JsonResultVO listBlogTypePage(Integer page, Integer count);
 
     /**
      * 恢复删除的博客类型
      * @param id 需要恢复的博客类型id
      * @return JsonResult 对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 博客类型名称模糊查询
@@ -43,5 +43,5 @@ public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityServi
      * @param pageDTO 页码对象
      * @return JsonResult 对象
      */
-    JsonResult search(final String name, PageDTO pageDTO);
+    JsonResultVO search(final String name, PageDTO pageDTO);
 }

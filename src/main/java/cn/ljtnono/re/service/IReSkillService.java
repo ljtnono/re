@@ -3,8 +3,8 @@ package cn.ljtnono.re.service;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReSkillSearchDTO;
 import cn.ljtnono.re.entity.ReSkill;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -23,14 +23,14 @@ public interface IReSkillService extends IService<ReSkill>, IReEntityService<ReS
      * @param count 每页条数
      * @return JsonResult 对象
      */
-    JsonResult listSkillPage(Integer page, Integer count);
+    JsonResultVO listSkillPage(Integer page, Integer count);
 
     /**
      * 恢复删除的技能
      * @param id 需要恢复的链接id
      * @return JsonResult 对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 技能分页条件查询
@@ -38,5 +38,5 @@ public interface IReSkillService extends IService<ReSkill>, IReEntityService<ReS
      * @param pageDTO 分页对象
      * @return JsonResult 对象
      */
-    JsonResult search(ReSkillSearchDTO reSkillSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(ReSkillSearchDTO reSkillSearchDTO, PageDTO pageDTO);
 }

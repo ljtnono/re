@@ -2,8 +2,8 @@ package cn.ljtnono.re.service;
 
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReLinkType;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.io.Serializable;
@@ -22,14 +22,14 @@ public interface IReLinkTypeService extends IService<ReLinkType>, IReEntityServi
      * @param count 每页查询的条数
      * @return JsonResult 对象
      */
-    JsonResult listLinkTypePage(Integer page, Integer count);
+    JsonResultVO listLinkTypePage(Integer page, Integer count);
 
     /**
      * 恢复删除的链接类型
      * @param id 需要恢复的链接类型id
      * @return JsonResult 对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 链接类型名称模糊查询
@@ -37,5 +37,5 @@ public interface IReLinkTypeService extends IService<ReLinkType>, IReEntityServi
      * @param pageDTO 页码对象
      * @return JsonResult 对象
      */
-    JsonResult search(final String name, PageDTO pageDTO);
+    JsonResultVO search(final String name, PageDTO pageDTO);
 }

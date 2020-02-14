@@ -1,19 +1,15 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.dto.PageDTO;
-import cn.ljtnono.re.dto.ReTimelineSearchDTO;
 import cn.ljtnono.re.dto.ReUserSearchDTO;
 import cn.ljtnono.re.entity.ReRole;
-import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.entity.ReUser;
-import cn.ljtnono.re.enumeration.DateStyleEnum;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReUserMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReUserService;
-import cn.ljtnono.re.util.DateUtil;
 import cn.ljtnono.re.util.RedisUtil;
 import cn.ljtnono.re.util.StringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -42,7 +38,7 @@ import java.util.Optional;
 @Slf4j
 public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> implements IReUserService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     @Autowired
     public ReUserServiceImpl(RedisUtil redisUtil) {
@@ -57,7 +53,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
 
 
     @Override
-    public JsonResult listUserPage(Integer page, Integer count) {
+    public JsonResultVO listUserPage(Integer page, Integer count) {
         Optional<Integer> optionalPage = Optional.ofNullable(page);
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -73,14 +69,14 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         if (!objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页用户数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
-            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+            return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReUser> pageResult = page(new Page<>(page, count), new QueryWrapper<ReUser>().orderByDesc("modify_time"));
             log.info("获取" + page + "页用户数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         }
     }
 
@@ -91,7 +87,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
      * @return JsonResult对象
      */
     @Override
-    public JsonResult restore(Serializable id) {
+    public JsonResultVO restore(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int userId = Integer.parseInt(id.toString());
@@ -106,7 +102,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                 redisUtil.deleteByPattern("re_user:*");
                 redisUtil.deleteByPattern("re_user_page:*");
                 redisUtil.deleteByPattern("re_user_page_total:*");
-                return JsonResult.success(Collections.singletonList(user), 1);
+                return JsonResultVO.success(Collections.singletonList(user), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -116,7 +112,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
     }
 
     @Override
-    public JsonResult search(ReUserSearchDTO reUserSearchDTO, PageDTO pageDTO) {
+    public JsonResultVO search(ReUserSearchDTO reUserSearchDTO, PageDTO pageDTO) {
         Optional<ReUserSearchDTO> optionalReUserSearchDTO = Optional.ofNullable(reUserSearchDTO);
         optionalReUserSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
         QueryWrapper<ReUser> reUserQueryWrapper = new QueryWrapper<>();
@@ -131,7 +127,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         }
         IPage<ReUser> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reUserQueryWrapper);
         if (pageResult != null) {
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
@@ -139,7 +135,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
 
 
     @Override
-    public JsonResult saveEntity(ReUser entity) {
+    public JsonResultVO saveEntity(ReUser entity) {
         Optional<ReUser> reUser = Optional.ofNullable(entity);
         reUser.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -151,14 +147,14 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         Integer userId = Integer.parseInt(id.toString());
@@ -173,7 +169,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                 redisUtil.deleteByPattern("re_user:*");
                 redisUtil.deleteByPattern("re_user_page:*");
                 redisUtil.deleteByPattern("re_user_page_total:*");
-                return JsonResult.success(Collections.singletonList(reUser), 1);
+                return JsonResultVO.success(Collections.singletonList(reUser), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -184,7 +180,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
 
 
     @Override
-    public JsonResult updateEntityById(Serializable id, ReUser entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReUser entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReUser> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -197,7 +193,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                 redisUtil.deleteByPattern("re_user:*");
                 redisUtil.deleteByPattern("re_user_page:*");
                 redisUtil.deleteByPattern("re_user_page_total:*");
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -208,12 +204,12 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
 
 
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int userId = Integer.parseInt(id.toString());
         if (userId >= 10001) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_USER_KEY.getKey()
                     .replace(":id", ":" + userId)
@@ -241,9 +237,9 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                         .replace(":qq", ":" + reUser.getQq())
                         .replace(":tel", ":" + reUser.getTel()), reUser, RedisUtil.EXPIRE_TIME_DEFAULT);
             }
-            jsonResult = JsonResult.success(Collections.singletonList(reUser), 1);
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO = JsonResultVO.success(Collections.singletonList(reUser), 1);
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
@@ -251,7 +247,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
 
 
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReUser> reUserList = list();
         Optional<List<ReUser>> optionalList = Optional.ofNullable(reUserList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -264,7 +260,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
                     , reUser, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有用户列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reUserList, reUserList.size());
+        JsonResultVO success = JsonResultVO.success(reUserList, reUserList.size());
         success.setMessage("操作成功");
         return success;
     }

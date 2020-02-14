@@ -4,8 +4,8 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReRoleSearchDTO;
 import cn.ljtnono.re.entity.RePermission;
 import cn.ljtnono.re.entity.ReRole;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,14 +33,14 @@ public interface IReRoleService extends IService<ReRole>, IReEntityService<ReRol
      * @param count 每页查询的条数
      * @return JsonResult对象
      */
-    JsonResult listRolePage(Integer page, Integer count);
+    JsonResultVO listRolePage(Integer page, Integer count);
 
     /**
      * 恢复角色
      * @param id 角色的id
      * @return JsonResult对象
      */
-    JsonResult restore(Serializable id);
+    JsonResultVO restore(Serializable id);
 
     /**
      * 根据角色name和角色description字段模糊查询
@@ -48,5 +48,5 @@ public interface IReRoleService extends IService<ReRole>, IReEntityService<ReRol
      * @param pageDTO 分页DTO
      * @return JsonResult对象
      */
-    JsonResult search(ReRoleSearchDTO reRoleSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(ReRoleSearchDTO reRoleSearchDTO, PageDTO pageDTO);
 }

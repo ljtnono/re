@@ -7,7 +7,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReLinkTypeMapper;
-import cn.ljtnono.re.pojo.JsonResult;
+import cn.ljtnono.re.vo.JsonResultVO;
 import cn.ljtnono.re.service.IReLinkService;
 import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.util.RedisUtil;
@@ -36,9 +36,9 @@ import java.util.Optional;
 @Slf4j
 public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkType> implements IReLinkTypeService {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
-    private final IReLinkService iReLinkService;
+    private IReLinkService iReLinkService;
 
     @Autowired
     public ReLinkTypeServiceImpl(RedisUtil redisUtil, IReLinkService iReLinkService) {
@@ -47,7 +47,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
     }
 
     @Override
-    public JsonResult saveEntity(ReLinkType entity) {
+    public JsonResultVO saveEntity(ReLinkType entity) {
         Optional<ReLinkType> optionalReBook = Optional.ofNullable(entity);
         optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
@@ -68,14 +68,14 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             redisUtil.deleteByPattern("re_link:*");
             redisUtil.deleteByPattern("re_link_page:*");
             redisUtil.deleteByPattern("re_link_page_total:*");
-            return JsonResult.successForMessage("操作成功！", 200);
+            return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
-    public JsonResult deleteEntityById(Serializable id) {
+    public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
@@ -103,7 +103,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                 redisUtil.deleteByPattern("re_link:*");
                 redisUtil.deleteByPattern("re_link_page:*");
                 redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResult.success(Collections.singletonList(reLinkType), 1);
+                return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -113,7 +113,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
     }
 
     @Override
-    public JsonResult updateEntityById(Serializable id, ReLinkType entity) {
+    public JsonResultVO updateEntityById(Serializable id, ReLinkType entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReLinkType> optionalEntity = Optional.ofNullable(entity);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -136,7 +136,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                 redisUtil.deleteByPattern("re_link:*");
                 redisUtil.deleteByPattern("re_link_page:*");
                 redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResult.successForMessage("操作成功", 200);
+                return JsonResultVO.successForMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -147,12 +147,12 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
 
 
     @Override
-    public JsonResult getEntityById(Serializable id) {
+    public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
         if (linkTypeId >= 1001) {
-            JsonResult jsonResult;
+            JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
             String key = ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
                     .replace(":id", ":" + linkTypeId)
@@ -175,16 +175,16 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                         .replace(":id", ":" + reLinkType.getId())
                         .replace(":name", ":" + reLinkType.getName()), reLinkType, RedisUtil.EXPIRE_TIME_DEFAULT);
             }
-            jsonResult = JsonResult.success(Collections.singletonList(reLinkType), 1);
-            jsonResult.setMessage("操作成功");
-            return jsonResult;
+            jsonResultVO = JsonResultVO.success(Collections.singletonList(reLinkType), 1);
+            jsonResultVO.setMessage("操作成功");
+            return jsonResultVO;
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
         }
     }
 
     @Override
-    public JsonResult listEntityAll() {
+    public JsonResultVO listEntityAll() {
         List<ReLinkType> reLinkTypeList = list();
         Optional<List<ReLinkType>> optionalList = Optional.ofNullable(reLinkTypeList);
         optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
@@ -194,14 +194,14 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                     .replace(":name", ":" + reLinkType.getName()), reLinkType, RedisUtil.EXPIRE_TIME_DEFAULT);
         }));
         optionalList.ifPresent(l -> log.info("从数据库中获取所有链接类型列表，总条数：" + l.size()));
-        JsonResult success = JsonResult.success(reLinkTypeList, reLinkTypeList.size());
+        JsonResultVO success = JsonResultVO.success(reLinkTypeList, reLinkTypeList.size());
         success.setMessage("操作成功");
         return success;
     }
 
 
     @Override
-    public JsonResult listLinkTypePage(Integer page, Integer count) {
+    public JsonResultVO listLinkTypePage(Integer page, Integer count) {
         Optional<Integer> optionalPage = Optional.ofNullable(page);
         Optional<Integer> optionalCount = Optional.ofNullable(count);
         optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
@@ -217,20 +217,20 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
         if (!objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页链接类型数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
-            return JsonResult.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
+            return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
             IPage<ReLinkType> pageResult = page(new Page<>(page, count), new QueryWrapper<ReLinkType>().orderByDesc("modify_time"));
             log.info("获取" + page + "页链接类型数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         }
     }
 
 
     @Override
-    public JsonResult restore(Serializable id) {
+    public JsonResultVO restore(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
@@ -257,7 +257,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
                 redisUtil.deleteByPattern("re_link:*");
                 redisUtil.deleteByPattern("re_link_page:*");
                 redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResult.success(Collections.singletonList(reLinkType), 1);
+                return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
             } else {
                 throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
             }
@@ -274,12 +274,12 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
      * @return JsonResult 对象
      */
     @Override
-    public JsonResult search(final String name, PageDTO pageDTO) {
+    public JsonResultVO search(final String name, PageDTO pageDTO) {
         Optional<String> optionalName = Optional.ofNullable(name);
         optionalName.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
         IPage<ReLinkType> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), new QueryWrapper<ReLinkType>().like("name", name));
         if (pageResult != null) {
-            return JsonResult.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
+            return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }

@@ -1,8 +1,10 @@
 package cn.ljtnono.re.service;
 
+import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReBlogSearchDTO;
 import cn.ljtnono.re.entity.ReBlog;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -21,9 +23,7 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @param count 每页条数
      * @return 返回分页数据
      */
-    JsonResult listBlogPage(Integer page, Integer count);
-
-
+    JsonResultVO listBlogPage(Integer page, Integer count);
 
     /**
      * 获取首页猜你喜欢
@@ -38,7 +38,7 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @param count 每页显示的条数
      * @return JsonResult
      */
-    JsonResult listBlogPageByType(Integer page, Integer count, final String type);
+    JsonResultVO listBlogPageByType(Integer page, Integer count, final String type);
 
     /**
      * 获取所有博客的浏览量总数
@@ -51,4 +51,12 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @return 获取所有博客的评论总数
      */
     Integer countComment();
+
+    /**
+     * 根据博客标题，博客类型，博客作者模糊查询博客信息
+     * @param reBlogSearchDTO 查询条件封装DTO
+     * @param pageDTO 分页DTO
+     * @return 返回结果对象
+     */
+    JsonResultVO search(ReBlogSearchDTO reBlogSearchDTO, PageDTO pageDTO);
 }

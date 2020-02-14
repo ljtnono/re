@@ -3,8 +3,8 @@ package cn.ljtnono.re.service;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReImageSearchDTO;
 import cn.ljtnono.re.entity.ReImage;
-import cn.ljtnono.re.pojo.JsonResult;
 import cn.ljtnono.re.service.common.IReEntityService;
+import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -45,7 +45,7 @@ public interface IReImageService extends IService<ReImage>, IReEntityService<ReI
      * @param count 每页显示条数
      * @return JsonResult 对象
      */
-    JsonResult listImagePage(Integer page, Integer count);
+    JsonResultVO listImagePage(Integer page, Integer count);
 
     /**
      * 条件分页查询
@@ -53,5 +53,5 @@ public interface IReImageService extends IService<ReImage>, IReEntityService<ReI
      * @param pageDTO 分页对象
      * @return JsonResult 对象
      */
-    JsonResult search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO);
+    JsonResultVO search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO);
 }
