@@ -1,7 +1,8 @@
 package cn.ljtnono.re.config;
 
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 配置SpringMvc处理静态文件

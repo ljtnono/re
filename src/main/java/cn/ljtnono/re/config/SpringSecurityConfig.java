@@ -1,5 +1,6 @@
 package cn.ljtnono.re.config;
 
+import cn.ljtnono.re.security.ReAuthenticationPostHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -10,13 +11,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-
 
 /**
  * spring security 配置
  *
- * @author 凌家童
+ * @author ljt
  * @version 1.0.2
  * @date 2020/1/11
  */
@@ -25,17 +24,17 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
+    private ReAuthenticationPostHandler reAuthenticationPostHandler;
 
     @Autowired
-    public SpringSecurityConfig(@Qualifier("reUserDetailService") UserDetailsService userDetailsService, @Qualifier("rePasswordEncoder") PasswordEncoder passwordEncoder, AuthenticationSuccessHandler authenticationSuccessHandler) {
+    public SpringSecurityConfig(@Qualifier("reUserDetailService") UserDetailsService userDetailsService, @Qualifier("rePasswordEncoder") PasswordEncoder passwordEncoder, ReAuthenticationPostHandler reAuthenticationPostHandler) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.reAuthenticationPostHandler = reAuthenticationPostHandler;
     }
 
     @Override
@@ -51,7 +50,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/admin/login")
-                .successHandler(authenticationSuccessHandler)
+                .successHandler(reAuthenticationPostHandler)
+                .failureHandler(reAuthenticationPostHandler)
+                .and()
+                .logout()
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .logoutUrl("/admin/logout")
+                .logoutSuccessUrl("/admin/login")
                 .and()
                 .authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
