@@ -1,5 +1,7 @@
 <!doctype html>
-<html class="x-admin-sm" lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="x-admin-sm" lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Root Element</title>
@@ -8,6 +10,8 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}"/>
+    <link rel="bookmark" th:href="@{/static/favicon.ico}"/>
     <link rel="stylesheet" th:href="@{/static/back/css/font.css}">
     <link rel="stylesheet" th:href="@{/static/back/css/xadmin.css}">
     <script th:src="@{/static/back/lib/layui/layui.js}" charset="utf-8"></script>
@@ -18,7 +22,7 @@
     <![endif]-->
     <script>
         // 是否开启刷新记忆tab功能
-        var is_remember = true;
+        let is_remember = true;
     </script>
 </head>
 <body class="index">
@@ -54,11 +58,11 @@
     </ul>
     <ul class="layui-nav right">
         <li class="layui-nav-item">
-            <a href="javascript:" th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}"></a>
+            <a href="javascript:" sec:authentication="name"></a>
             <dl class="layui-nav-child">
                 <!-- 二级菜单 -->
                 <dd><a href="javascript:" onclick="xadmin.add_tab('编写博客','/re/admin/blog-edit')">编写博客</a></dd>
-                <dd><a href="javascript:">退出</a></dd>
+                <dd><a th:href="${#servletContext.contextPath} + '/admin/logout'">注销</a></dd>
             </dl>
         </li>
         <li class="layui-nav-item to-index"><a th:href="${#servletContext.contextPath}">前台首页</a></li>
@@ -80,11 +84,6 @@
                         <a href="javascript:" onclick="xadmin.add_tab('博客列表', '/re/admin/blog-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>博客列表</cite></a>
-                    </li>
-                    <li>
-                        <a href="javascript:" onclick="xadmin.add_tab('博客统计','/re/admin/welcome1')">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>博客统计</cite></a>
                     </li>
                     <li>
                         <a href="javascript:" onclick="xadmin.add_tab('编写博客','/re/admin/blog-edit')">
