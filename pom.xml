@@ -19,15 +19,20 @@
         <commons-logging.version>1.0.4</commons-logging.version>
         <commons-net.version>3.6</commons-net.version>
         <commons-pool2.version>2.7.0</commons-pool2.version>
-        <alibaba-fastjson.version>1.2.52.sec06</alibaba-fastjson.version>
         <lombok.version>1.18.10</lombok.version>
         <swagger.version>2.9.2</swagger.version>
         <lucene.version>5.3.1</lucene.version>
         <leancloud.version>6.1.6</leancloud.version>
-        <jetbrains-annotations.version>13.0</jetbrains-annotations.version>
+        <json-lib.version>2.2.3</json-lib.version>
         <skipTests>true</skipTests>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${json-lib.version}</version>
+            <classifier>jdk15</classifier>
+        </dependency>
         <dependency>
             <groupId>cn.leancloud</groupId>
             <artifactId>storage-core</artifactId>
@@ -89,11 +94,6 @@
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>${druid.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>${alibaba-fastjson.version}</version>
-        </dependency>
         <!-- apache commons-net  -->
         <dependency>
             <groupId>commons-net</groupId>
@@ -115,6 +115,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
         </dependency>
         <dependency>
             <!--热部署依赖-->
@@ -175,13 +179,6 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-highlighter</artifactId>
             <version>${lucene.version}</version>
-        </dependency>
-        <!-- jetbrains 注解 -->
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>${jetbrains-annotations.version}</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
     <build>
