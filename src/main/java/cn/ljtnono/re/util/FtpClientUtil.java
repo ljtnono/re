@@ -25,7 +25,7 @@ import java.util.Map;
 @Slf4j
 public class FtpClientUtil {
 
-    private final ReFtpClientPool reFtpClientPool;
+    private ReFtpClientPool reFtpClientPool;
 
     @Autowired
     public FtpClientUtil(ReFtpClientPool reFtpClientPool) {

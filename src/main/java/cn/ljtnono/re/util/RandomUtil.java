@@ -32,7 +32,7 @@ public class RandomUtil {
      * 获取指定长度数字字符串
      */
     public static String getRandomNumStr(int len) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < len; i++) {
             String temp = DIGITS[random.nextInt(DIGITS.length)];
@@ -47,7 +47,7 @@ public class RandomUtil {
      * 获取指定长度随机字符串
      */
     public static String getRandomStr(int len) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < len; i++) {
             String temp = ALLSTR_DIGITS[random.nextInt(ALLSTR_DIGITS.length)];
@@ -62,7 +62,7 @@ public class RandomUtil {
      * 返回指定长度的字母加数字随机数
      */
     public static String getRandomNumWordStr(int length) {
-        String val = "";
+        StringBuilder val = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < length; i++) {
             // 输出字母还是数字
@@ -70,13 +70,13 @@ public class RandomUtil {
             if ("char".equalsIgnoreCase(charOrNum)) {
                 // 取得大写字母还是小写字母
                 int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
-                val += (char) (choice + random.nextInt(26));
+                val.append((char) (choice + random.nextInt(26)));
                 // 数字
             } else if ("num".equalsIgnoreCase(charOrNum)) {
-                val += String.valueOf(random.nextInt(10));
+                val.append(String.valueOf(random.nextInt(10)));
             }
         }
-        return val;
+        return val.toString();
     }
 
 
@@ -84,7 +84,7 @@ public class RandomUtil {
      * 获取指定长度16进制字符串
      */
     public static String getRandomHexStr(int len) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < len; i++) {
             String temp = HEXSTR_DIGITS[random.nextInt(HEXSTR_DIGITS.length)];
@@ -99,7 +99,7 @@ public class RandomUtil {
      * 根据UUID作为引子的随机数字符串
      */
     public static String getRandomUuidStr(int len) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Random random = new Random(UUID.randomUUID().hashCode());
         for (int i = 0; i < len; i++) {
             sb.append(random.nextInt(9));
@@ -112,8 +112,7 @@ public class RandomUtil {
      * 生产UUID
      */
     public static String getUuid() {
-        String uuid = UUID.randomUUID().toString();
-        return uuid;
+        return UUID.randomUUID().toString();
     }
 
 
@@ -124,7 +123,7 @@ public class RandomUtil {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
-    public static String creatid(int endIndex) {
+    public static String creatId(int endIndex) {
         String id = "";
         SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
         String tc = sf.format(new Date());
@@ -144,6 +143,6 @@ public class RandomUtil {
 //		System.out.println(getRandomUuidStr(6));
 //		System.out.println(getUuid());
 //		System.out.println(getUuidNoLine());
-        System.out.println(creatid(30));
+        System.out.println(creatId(30));
     }
 }
