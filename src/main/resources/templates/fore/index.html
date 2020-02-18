@@ -33,16 +33,20 @@
         <div class="swiper-container" id="swiper">
             <div class="swiper-wrapper">
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;" th:src="@{/static/fore/images/bird.jpg}" alt="bird.jpg">
+                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;"
+                         th:src="@{/static/fore/images/bird.jpg}" alt="bird.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;" th:src="@{/static/fore/images/coffee.jpg}" alt="coffee.jpg">
+                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;"
+                         th:src="@{/static/fore/images/coffee.jpg}" alt="coffee.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;" th:src="@{/static/fore/images/leaves.jpg}" alt="leaves.jpg">
+                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;"
+                         th:src="@{/static/fore/images/leaves.jpg}" alt="leaves.jpg">
                 </div>
                 <div class="swiper-slide swiper-zoom-container">
-                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;" th:src="@{/static/fore/images/sunset.jpg}" alt="sunset.jpg">
+                    <img src="../../static/fore/images/bird.jpg" style="width: 100%; height: 100%;"
+                         th:src="@{/static/fore/images/sunset.jpg}" alt="sunset.jpg">
                 </div>
             </div>
             <!-- 分页器 -->
@@ -69,118 +73,11 @@
             </div>
         </div>
         <!-- 文章列表项 -->
-        <div class="articles">
-            <!-- 第一页内容 -->
-            <article class="article mb10 p10" th:each="blog : ${application.indexBlogListFirstPage}">
-                <header class="article-header mb10">
-                                <span class="article-label f12 mr5" th:text="${blog.type}">
-                            SpringBoot
-                            <i class="label-arrow"></i>
-                        </span>
-                    <span class="article-title f14" th:text="${blog.title}">对象及变量的并发访问</span>
-                </header>
-                <section class="article-detail flex">
-                    <div class="mr10 article-thumb cursor-pointer">
-                        <img th:src="${blog.coverImage}"
-                             th:alt="${blog.title}"
-                             th:title="${blog.title}">
-                    </div>
-                    <div class="article-summary flex flex-direction-column flex-justify-content-space-between">
-                        <a th:href="${#servletContext.contextPath} + '/article/' + ${blog.id}" th:text="${blog.summary}">弹性布局学习弹性盒子布局之前，我们要弄清楚现有的布局方式的缺点，比如行内快、浮动、以及表格的缺点。
-                            行内快空白问题来看下面一段代码</a>
-                        <div class="article-info">
-                            <a href="#" class=""><i class="fa fa-user pr5" aria-hidden="true"></i><span style="color: #00A67C;" th:text="${blog.author}">ljtnono</span></a>
-                            <a href="#" class=""><i class="fa fa-clock-o" aria-hidden="true"></i><span
-                                    class="" th:text="${#dates.format(blog.modifyTime, 'yyyy-MM-dd HH:mm')}">2019-10-10 17:57</span></a>
-                            <a href="#" class=""><i class="fa fa-eye" aria-hidden="true"></i><span
-                                    class="" th:text="${blog.view} + '浏览'">1034浏览</span></a>
-                            <a href="#" class=""><i class="fa fa-comment" aria-hidden="true"></i><span
-                                    class="" th:text="${blog.comment} + '评论'">10评论</span></a>
-                        </div>
-                    </div>
-                </section>
-            </article>
-        </div>
+        <div class="articles"></div>
     </div>
     <div th:replace="fore/content_side.html"></div>
 </div>
 <div th:replace="fore/footer.html"></div>
 </body>
-<script th:inline="javascript">
-    // 配置swiper
-    let swiper = new Swiper(".swiper-container", swiperConfig);
-    // 流加载
-    layui.use(["flow", "util"], function () {
-        let flow = layui.flow;
-        let util = layui.util;
-        flow.load({
-            elem: ".articles",
-            isAuto: true,
-            end: "没有更多了",
-            done: function (page, next) {
-                let lis = [];
-                $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/blog/listBlogPage",
-                    method: "GET",
-                    data: {
-                        page: page + 1,
-                        count: 10
-                    },
-                    dataType: "json",
-                    success: function (res) {
-                        if (res.request === "success" && res.status === 200) {
-                            layui.each(res.data, function (index, item) {
-                                if (item.status === 1) {
-                                    let text = "";
-                                    text += "<article class=\"article mb10 p10\">";
-                                    text += "                <header class=\"article-header mb10\">";
-                                    text += "<a href=\"" + [[${#servletContext.contextPath}]] + "/articles/" + item.type + "\">";
-                                    text += "                    <span class=\"article-label f12 mr5\">";
-                                    text += item.type;
-                                    text += "                <i class=\"label-arrow\"></i>";
-                                    text += "</a>";
-                                    text += "            </span>";
-                                    text += "<a href=\"" + [[${#servletContext.contextPath}]] + "/article/" + item.id + "\">";
-                                    text += "                    <span class=\"article-title f14\">" + item.title + "</span>";
-                                    text += "</a>";
-                                    text += "                </header>";
-                                    text += "                <section class=\"article-detail flex\">";
-                                    text += "                    <div class=\"mr10 article-thumb cursor-pointer\">";
-                                    text += "                        <img src=\"" + item.coverImage + "\"";
-                                    text += "                             alt=\"" + item.title + "\"";
-                                    text += "                             title=\"" + item.title + "\">";
-                                    text += "                    </div>";
-                                    text += "                    <div class=\"article-summary flex flex-direction-column flex-justify-content-space-between\">";
-                                    text += "                        <a href=\"" + [[${#servletContext.contextPath}]] + "/article/" + item.id + "\">" + item.summary + "</a>";
-                                    text += "                        <div class=\"article-info\">";
-                                    text += "                            <a href=\"#\"><i class=\"fa fa-user pr5\" aria-hidden=\"true\"></i><span class=\"\"";
-                                    text += "                                                                                                        style=\"color: #00A67C;\">" + item.author + "</span></a>";
-                                    text += "                            <a href=\"#\"><i class=\"fa fa-clock-o\" aria-hidden=\"true\"></i><span";
-                                    text += "                                    >" + util.toDateString(item.modifyTime, "yyyy-MM-dd") + "</span></a>";
-                                    text += "                            <a href=\"#\"><i class=\"fa fa-eye\" aria-hidden=\"true\"></i><span";
-                                    text += "                                    >" + item.view + "浏览</span></a>";
-                                    text += "                            <a href=\"#\" class=\"\"><i class=\"fa fa-comment\" aria-hidden=\"true\"></i><span";
-                                    text += "                                    >" + item.comment + "评论</span></a>";
-                                    text += "                        </div>";
-                                    text += "                    </div>";
-                                    text += "                </section>";
-                                    text += "            </article>";
-                                    lis.push(text);
-                                }
-                            });
-                            next(lis.join(''), page < res.fields.totalPages);
-                        }
-                    }
-                });
-            }
-        });
-    });
-    // 配置bootstrap提示
-    $('[data-toggle="tooltip"]').tooltip();
-    $('[data-toggle="popover"]').popover({
-        html: true,
-        content: '<img src="' + [[${application.qrCodeWeChat.url}]] + '" style="width: 100%; height: 100%"/>',
-        trigger: "hover"
-    });
-</script>
+<script th:src="@{/static/fore/js/index.min.js}"></script>
 </html>

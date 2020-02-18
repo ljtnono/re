@@ -75,17 +75,8 @@
         <p class="mr10">本项目github地址：<a href="javascript:">https://github.com/ljtnono/re</a></p>
     </div>
 </footer>
-<script th:src="@{/static/fore/js/common.js}"></script>
+<script th:src="@{/static/fore/js/common.min.js}"></script>
 <script th:inline="javascript">
-    // 百度统计
-    var _hmt = _hmt || [];
-    (function () {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?c6ce7acb41f9f7ea8729ab2253646f1e";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-    })();
-
     // 设置header消息轮播
     setInterval(function () {
         $(".message-list").animate({
@@ -103,5 +94,4 @@
             }
         });
     }, 4000);
-
 </script>
