@@ -1,8 +1,9 @@
 "use strict";
 
 const IMG_DEFAULT = "https://www.ljtnono.cn/re/images/default_img.jpg";
+const IMG_QRCODE_WECHAT = "https://www.ljtnono.cn/re/images/qrcode-wechat.png";
 // markdown编辑器配置
-const editorConfig = {
+const EDITOR_CONFIG = {
     width: "100%",
     height: 730,
     path: '/re/static/fore/lib/editor.md-1.5.0/lib/',
@@ -26,7 +27,8 @@ const editorConfig = {
 
     }
 };
-const swiperConfig = {
+// swiper配置
+const SWIPER_CONFIG = {
     speed: 800,
     loop: true,
     grabCursor: true,
@@ -52,6 +54,31 @@ const swiperConfig = {
         prevEl: '.swiper-button-prev'
     }
 };
+// Valine配置
+const VALINE_CONFIG = {
+    el: '#comments',
+    appId: 'iyTC528gHvHe09Qg8b5HPrvj-gzGzoHsz',
+    appKey: '8ndLNYwjGS7FPLKdzgRKCfeL',
+    notify: false,
+    verify: false,
+    avatar: 'wavatar',
+    placeholder: '评论请留下您的邮箱和昵称....'
+};
+// 配置bootstrap提示
+$('[data-toggle="tooltip"]').tooltip();
+$('[data-toggle="popover"]').popover({
+    html: true,
+    content: '<img src="' + IMG_QRCODE_WECHAT + '" style="width: 100%; height: 100%" alt="我的微信"/>',
+    trigger: "hover"
+});
+// 百度统计
+var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?c6ce7acb41f9f7ea8729ab2253646f1e";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
 
 // 计算初始页面元素的offsetTop
 let $scroll_fixed = $("[scroll-fixed]");
@@ -143,11 +170,7 @@ function ajax(requestObj, withLoading) {
     });
 }
 
-/**
- * 从markdown内容中提取图片链接，只返回第一个作为图片的封面
- * @param markDown 要提取的markdown内容
- * @returns {string|*} 图片链接
- */
+// 提取markdown中图片内容作为封面
 function getImgUrlFromMarkDown(markDown) {
     let reg = /!\[.*?\]\((.*?)\)/im;
     let matches = reg.exec(markDown);
