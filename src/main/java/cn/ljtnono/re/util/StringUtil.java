@@ -15,7 +15,6 @@ public class StringUtil {
      */
     private StringUtil() {}
 
-
     /**
      * 判断字符串是否为空
      *
@@ -25,7 +24,6 @@ public class StringUtil {
     public static boolean isEmpty(final String str) {
         return str == null || str.length() == 0;
     }
-
 
     /**
      * 判断字符串是否为空格或者空串
@@ -48,7 +46,6 @@ public class StringUtil {
         }
         return str;
     }
-
 
     /**
      * 将id数组，替换成 1,2,3,4 类型 方便sql 使用 in 语句
@@ -82,8 +79,16 @@ public class StringUtil {
         return getUUID().replace("-", "");
     }
 
+    /**
+     * 判断是否为null
+     * @param str 字符串对象
+     * @return 如果为null返回true，如果不为null返回false
+     */
+    public static boolean isNull(String str) {
+        return str == null;
+    }
+
     public static void main(String[] args) {
         System.out.println(StringUtil.getUUIDWithoutJoiner());
     }
-
 }

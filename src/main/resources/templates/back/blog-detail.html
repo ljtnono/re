@@ -108,7 +108,7 @@
     </div>
 </div>
 </body>
-<script th:src="@{/static/fore/js/common.js}"></script>
+<script th:src="@{/static/fore/js/common.min.js}"></script>
 <script th:inline="javascript">
     // 根据传递过来的Id属性渲染
     let blogId = [[${#request.getParameter("blogId")}]];
@@ -123,7 +123,7 @@
         if (blogId) {
             // ajax请求获取文章类型
             $.ajax({
-                url: [[${#servletContext.contextPath}]] + "/blog_type",
+                url: "/re/blog_type",
                 method: "GET",
                 dataType: "json",
                 success: function (res) {
@@ -134,7 +134,7 @@
                             options.push(item);
                         });
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/blog/" + blogId,
+                            url: "/re/blog/" + blogId,
                             method: "GET",
                             dataType: "json",
                             success: function (res) {
@@ -144,7 +144,6 @@
                                     blogEntity = blog;
                                     $("#type option").each(function (index, item) {
                                         if ($(item).text() === blog.type) {
-                                            let typeValue = $(item).text();
                                             $(item).attr("selected", "selected");
                                         }
                                     });
@@ -156,7 +155,7 @@
                                         "contentMarkdown": blog.contentMarkdown
                                     });
                                     // 初始化markdown编辑器
-                                    blogEditor = editormd("blog-editormd", editorConfig);
+                                    blogEditor = editormd("blog-editormd", EDITOR_CONFIG);
                                     form.render();
                                 } else {
                                     layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
@@ -173,7 +172,11 @@
                     }
                 },
                 error: function (res) {
-                    layer.msg("请求错误，请检查网络", {icon: 2});
+                    if (res) {
+                        layer.msg(res);
+                    } else {
+                        layer.msg("请求错误，请检查网络", {icon: 2});
+                    }
                 }
             });
             // 设置表单校验
@@ -204,7 +207,7 @@
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/blog/" + blogId,
+                        url: "/re/blog/" + blogId,
                         data: {
                             title: blog.title,
                             author: blog.author,

@@ -29,14 +29,10 @@ public class RedisUtil {
         this.redisTemplate = redisTemplate;
     }
 
-    /**
-     * 默认缓存时间30d
-     */
+    /** 默认缓存时间30d */
     public static Integer EXPIRE_TIME_DEFAULT = 24 * 60 * 60 * 30;
 
-    /**
-     * 分页查询缓存时间为2h
-     */
+    /** 分页查询缓存时间为2h */
     public static Integer EXPIRE_TIME_PAGE_QUERY = 60 * 60 * 2;
 
     /**
@@ -784,7 +780,7 @@ public class RedisUtil {
                 throw new IllegalArgumentException("key值不能为" + key);
             }
             Long remove = redisTemplate.opsForList().remove(key, count, value);
-            return remove;
+            return remove == null ? 0 : remove;
         } catch (Exception e) {
             log.error("移除list缓存失败，原因：" + e.getMessage());
             return 0;
