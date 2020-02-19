@@ -21,7 +21,7 @@
 <body>
 <div class="x-nav">
     <span class="layui-breadcrumb">
-        <a th:href="${#servletContext.contextPath} + '/admin'">首页</a>
+        <a href="javascript:">首页</a>
         <a href="javascript:">博客管理</a>
         <a href="javascript:" onclick="location.reload()"><cite>博客列表</cite></a>
     </span>
@@ -80,7 +80,7 @@
             elem: '.layui-table',
             id: "blogTable",
             height: 450,
-            url: [[${#servletContext.contextPath}]] + "/blog/listBlogPage",
+            url: "/blog/listBlogPage",
             page: true,
             method: "get",
             toolbar: true,
@@ -141,7 +141,7 @@
         });
         // 获取下拉选择框的值
         $.ajax({
-            url: [[${#servletContext.contextPath}]] + "/blog_type",
+            url: "/blog_type",
             method: "GET",
             dataType: "json",
             success: function (res) {
@@ -167,7 +167,7 @@
         form.on('submit(search)', function (data) {
             let searchDTO = data.field;
             table.reload("blogTable", {
-                url: [[${#servletContext.contextPath}]] + "/blog/search",
+                url: "/blog/search",
                 where: {
                     title: searchDTO.title,
                     type: searchDTO.type,
@@ -198,17 +198,17 @@
             let data = obj.data;
             if (layEvent === "toBlog") {
                 // 弹出博客显示的窗口
-                window.parent.location.href = [[${#servletContext.contextPath}]] + "/article/" + data.id;
+                window.parent.location.href = "/article/" + data.id;
             } else if (layEvent === "edit") {
                 // 打开详情窗口进行编辑
-                window.parent.xadmin.add_tab(data.title, "/re/admin/blog-detail?blogId=" + data.id);
+                window.parent.xadmin.add_tab(data.title, "/admin/blog-detail?blogId=" + data.id);
             } else if (layEvent === "delete") {
                 layer.confirm('确认删除此博客？', {
                     btn: ['确认', '取消']
                 }, function (index) {
                     // 发送ajax请求删除
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/blog/" + data.id,
+                        url: "/blog/" + data.id,
                         method: "DELETE",
                         success: function (res) {
                             if (res.request === "success" && res.status === 200) {

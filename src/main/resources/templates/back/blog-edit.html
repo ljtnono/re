@@ -129,7 +129,7 @@
                 content: publishLayerHtml,
                 success: function () {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/blog_type",
+                        url: "/blog_type",
                         method: "GET",
                         dataType: "json",
                         success: function (res) {
@@ -178,7 +178,7 @@
             }, function (index) {
                 let coverImage = getImgUrlFromMarkDown(blog.contentMarkdown);
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/blog",
+                    url: "/blog",
                     data: {
                         title: blog.title,
                         author: blog.author,

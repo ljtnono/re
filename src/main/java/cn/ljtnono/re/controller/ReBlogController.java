@@ -3,6 +3,7 @@ package cn.ljtnono.re.controller;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReBlogSaveDTO;
 import cn.ljtnono.re.dto.ReBlogSearchDTO;
+import cn.ljtnono.re.dto.ReBlogUpdateDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.service.IReBlogService;
@@ -11,6 +12,7 @@ import cn.ljtnono.re.util.StringUtil;
 import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +73,22 @@ public class ReBlogController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新一个博客实体", notes = "id只能是数字类型", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReBlog entity) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogUpdateDTO reBlogUpdateDTO) {
+        ReBlog entity = new ReBlog();
+        BeanUtils.copyProperties(reBlogUpdateDTO, entity);
+        // 设置封面图片，如果没有那么就设置为默认封面图片url
+        if (StringUtil.isEmpty(entity.getCoverImage())) {
+            entity.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
+        }
+        // 设置
+        if (StringUtil.isEmpty(entity.getSummary())) {
+            String deleteHtml = HtmlUtil.delHtmlTagFromStr(entity.getContentHtml());
+            if (deleteHtml.length() <= 300 && deleteHtml.length() >= 4) {
+                entity.setSummary(deleteHtml);
+            } else {
+                entity.setSummary(entity.getSummary());
+            }
+        }
         return iReBlogService.updateEntityById(id, entity);
     }
 

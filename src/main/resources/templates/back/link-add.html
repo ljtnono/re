@@ -91,7 +91,7 @@
         let layer = layui.layer;
         // 获取下拉选择框的值
         $.ajax({
-            url: [[${#servletContext.contextPath}]] + "/link_type",
+            url: "/link_type",
             method: "GET",
             dataType: "json",
             success: function (res) {
@@ -127,7 +127,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/link",
+                    url: "/link",
                     data: {
                         url: link.url,
                         name: link.name,

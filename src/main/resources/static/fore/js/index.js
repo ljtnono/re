@@ -12,7 +12,7 @@ layui.use(["flow", "util"], function () {
         done: function (page, next) {
             let lis = [];
             $.ajax({
-                url: "/re/blog/listBlogPage",
+                url: "/blog/listBlogPage",
                 method: "GET",
                 data: {
                     page: page,
@@ -25,10 +25,10 @@ layui.use(["flow", "util"], function () {
                             if (item.status === 1) {
                                 let text = '<article class="article mb10 p10">'+
                                     '    <header class="article-header mb10">'+
-                                    '        <a href="/re/articles/' + item.type + '"> '+
+                                    '        <a href="/articles/' + item.type + '"> '+
                                     '            <span class="article-label f12 mr5">' + item.type + '<i class="label-arrow"></i></span>'+
                                     '        </a> '+
-                                    '        <a href="/re/article/' + item.id + '">'+
+                                    '        <a href="/article/' + item.id + '">'+
                                     '            <span class="article-title f14">' + item.title + '</span>'+
                                     '        </a>'+
                                     '    </header>'+
@@ -37,7 +37,7 @@ layui.use(["flow", "util"], function () {
                                     '            <img src="' + item.coverImage + '" alt="' + item.title + '" title="' + item.title + '">'+
                                     '        </div>'+
                                     '        <div class="article-summary flex flex-direction-column flex-justify-content-space-between">'+
-                                    '            <a href="/re/article/' + item.id + '">'+
+                                    '            <a href="/article/' + item.id + '">'+
                                     item.summary+
                                     '            </a>'+
                                     '            <div class="article-info">'+

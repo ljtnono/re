@@ -29,7 +29,7 @@
 <!-- 顶部开始 -->
 <div class="container">
     <div class="logo">
-        <a th:href="${#servletContext.contextPath} + '/admin/index'">Root Element</a></div>
+        <a href="/admin/index">Root Element</a></div>
     <div class="left_open">
         <a href="javascript:"><i title="展开左侧栏" class="iconfont">&#xe699;</i></a>
     </div>
@@ -61,11 +61,11 @@
             <a href="javascript:" sec:authentication="name"></a>
             <dl class="layui-nav-child">
                 <!-- 二级菜单 -->
-                <dd><a href="javascript:" onclick="xadmin.add_tab('编写博客','/re/admin/blog-edit')">编写博客</a></dd>
-                <dd><a th:href="${#servletContext.contextPath} + '/admin/logout'">注销</a></dd>
+                <dd><a href="javascript:" onclick="xadmin.add_tab('编写博客','/admin/blog-edit')">编写博客</a></dd>
+                <dd><a href="/admin/logout">注销</a></dd>
             </dl>
         </li>
-        <li class="layui-nav-item to-index"><a th:href="${#servletContext.contextPath}">前台首页</a></li>
+        <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
     </ul>
 </div>
 <!-- 顶部结束 -->
@@ -81,12 +81,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="javascript:" onclick="xadmin.add_tab('博客列表', '/re/admin/blog-list')">
+                        <a href="javascript:" onclick="xadmin.add_tab('博客列表', '/admin/blog-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>博客列表</cite></a>
                     </li>
                     <li>
-                        <a href="javascript:" onclick="xadmin.add_tab('编写博客','/re/admin/blog-edit')">
+                        <a href="javascript:" onclick="xadmin.add_tab('编写博客','/admin/blog-edit')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>编辑博客</cite></a>
                     </li>
@@ -99,12 +99,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('博客类型列表','/re/admin/blogType-list')">
+                        <a onclick="xadmin.add_tab('博客类型列表','/admin/blogType-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>博客类型列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('博客类型新增','/re/admin/blogType-add')">
+                        <a onclick="xadmin.add_tab('博客类型新增','/admin/blogType-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>博客类型新增</cite></a>
                     </li>
@@ -117,12 +117,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('链接列表','/re/admin/link-list')">
+                        <a onclick="xadmin.add_tab('链接列表','/admin/link-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>链接列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('链接新增','/re/admin/link-add')">
+                        <a onclick="xadmin.add_tab('链接新增','/admin/link-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>链接新增</cite></a>
                     </li>
@@ -135,12 +135,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('链接类型列表','/re/admin/linkType-list')">
+                        <a onclick="xadmin.add_tab('链接类型列表','/admin/linkType-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>链接类型列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('链接类型新增','/re/admin/linkType-add')">
+                        <a onclick="xadmin.add_tab('链接类型新增','/admin/linkType-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>链接类型新增</cite></a>
                     </li>
@@ -153,7 +153,7 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('图片列表','/re/admin/image-list')">
+                        <a onclick="xadmin.add_tab('图片列表','/admin/image-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>图片列表</cite></a>
                     </li>
@@ -166,7 +166,7 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('书籍列表','/re/admin/blogType-list')">
+                        <a onclick="xadmin.add_tab('书籍列表','/admin/blogType-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>书籍列表</cite></a>
                     </li>
@@ -179,12 +179,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('技能列表','/re/admin/skill-list')">
+                        <a onclick="xadmin.add_tab('技能列表','/admin/skill-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>技能列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('技能新增','/re/admin/skill-add')">
+                        <a onclick="xadmin.add_tab('技能新增','/admin/skill-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>技能新增</cite></a>
                     </li>
@@ -197,17 +197,17 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('时间轴列表','/re/admin/timeline-list')">
+                        <a onclick="xadmin.add_tab('时间轴列表','/admin/timeline-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>时间轴列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('时间轴新增','/re/admin/timeline-add')">
+                        <a onclick="xadmin.add_tab('时间轴新增','/admin/timeline-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>时间轴新增</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('更新日志时间轴','/re/admin/timeline-log')">
+                        <a onclick="xadmin.add_tab('更新日志时间轴','/admin/timeline-log')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>更新日志时间轴</cite></a>
                     </li>
@@ -220,12 +220,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('用户列表','/re/admin/role-list')">
+                        <a onclick="xadmin.add_tab('用户列表','/admin/role-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>角色列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('角色新增','/re/admin/role-add')">
+                        <a onclick="xadmin.add_tab('角色新增','/admin/role-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>角色新增</cite></a>
                     </li>
@@ -238,12 +238,12 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('用户列表','/re/admin/user-list')">
+                        <a onclick="xadmin.add_tab('用户列表','/admin/user-list')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>用户列表</cite></a>
                     </li>
                     <li>
-                        <a onclick="xadmin.add_tab('用户新增','/re/admin/user-add')">
+                        <a onclick="xadmin.add_tab('用户新增','/admin/user-add')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>用户新增</cite></a>
                     </li>
@@ -256,7 +256,7 @@
                     <i class="iconfont nav_right">&#xe697;</i></a>
                 <ul class="sub-menu">
                     <li>
-                        <a onclick="xadmin.add_tab('图标对应字体','/re/admin/unicode')">
+                        <a onclick="xadmin.add_tab('图标对应字体','/admin/unicode')">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>图标对应字体</cite></a>
                     </li>
@@ -284,7 +284,7 @@
         </div>
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <iframe src='/re/admin/welcome' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
+                <iframe src='/admin/welcome' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
             </div>
         </div>
         <div id="tab_show"></div>

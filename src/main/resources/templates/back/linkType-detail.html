@@ -83,7 +83,7 @@
         if (linkTypeId) {
             // 获取blogType相关信息
             $.ajax({
-                url: [[${#servletContext.contextPath}]] + "/link_type/" + linkTypeId,
+                url: "/link_type/" + linkTypeId,
                 method: "GET",
                 success: function (res) {
                     if (res.request === "success" && res.status === 200 && res.data) {
@@ -112,7 +112,7 @@
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/link_type/" + linkTypeId,
+                        url: "/link_type/" + linkTypeId,
                         data: {
                             name: linkType.name
                         },

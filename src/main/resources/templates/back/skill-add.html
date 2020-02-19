@@ -110,7 +110,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/skill",
+                    url: "/skill",
                     data: {
                         name: skill.name,
                         owner: skill.owner,

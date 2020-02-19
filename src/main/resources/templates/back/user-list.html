@@ -21,7 +21,7 @@
 <body>
 <div class="x-nav">
     <span class="layui-breadcrumb">
-        <a th:href="${#servletContext.contextPath} + '/admin'">首页</a>
+        <a href="javascript:">首页</a>
         <a href="javascript:">用户管理</a>
         <a href="javascript:" onclick="location.reload()"><cite>用户列表</cite></a>
     </span>
@@ -79,7 +79,7 @@
             elem: '.layui-table',
             height: 450,
             id: "userTable",
-            url: [[${#servletContext.contextPath}]] + "/user/listUserPage",
+            url: "/user/listUserPage",
             page: true,
             method: "get",
             toolbar: true,
@@ -141,7 +141,7 @@
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
             table.reload("userTable", {
-                url: [[${#servletContext.contextPath}]] + "/user/search",
+                url: "/user/search",
                 where: {
                     username: data.field.username,
                     tel: data.field.tel,
@@ -171,7 +171,7 @@
             let layEvent = obj.event;
             let data = obj.data;
             if ("edit" === layEvent) {
-                window.parent.xadmin.add_tab(data.username, "/re/admin/user-detail?userId=" + data.id);
+                window.parent.xadmin.add_tab(data.username, "/admin/user-detail?userId=" + data.id);
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {
@@ -181,7 +181,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/user/" + data.id,
+                            url: "/user/" + data.id,
                             method: "DELETE",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {
@@ -210,7 +210,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/user/restore/" + data.id,
+                            url: "/user/restore/" + data.id,
                             method: "PUT",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {

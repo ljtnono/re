@@ -78,7 +78,7 @@
         let util = layui.util;
         // 获取下拉选择框的值
         $.ajax({
-            url: [[${#servletContext.contextPath}]] + "/link_type",
+            url: "/link_type",
             method: "GET",
             dataType: "json",
             success: function (res) {
@@ -102,7 +102,7 @@
             elem: '.layui-table',
             height: 450,
             id: "linkTable",
-            url: [[${#servletContext.contextPath}]] + "/link/listLinkPage",
+            url: "/link/listLinkPage",
             page: true,
             method: "get",
             toolbar: true,
@@ -162,7 +162,7 @@
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
             table.reload("linkTable", {
-                url: [[${#servletContext.contextPath}]] + "/link/search",
+                url: "/link/search",
                 where: {
                     name: data.field.name,
                     url: data.field.url,
@@ -192,7 +192,7 @@
             let layEvent = obj.event;
             let data = obj.data;
             if ("edit" === layEvent) {
-                window.parent.xadmin.add_tab(data.name, "/re/admin/link-detail?linkId=" + data.id)
+                window.parent.xadmin.add_tab(data.name, "/admin/link-detail?linkId=" + data.id)
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {
@@ -202,7 +202,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/link/" + data.id,
+                            url: "/link/" + data.id,
                             method: "DELETE",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {
@@ -231,7 +231,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/link/restore/" + data.id,
+                            url: "/link/restore/" + data.id,
                             method: "PUT",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {

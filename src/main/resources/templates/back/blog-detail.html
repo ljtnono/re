@@ -123,7 +123,7 @@
         if (blogId) {
             // ajax请求获取文章类型
             $.ajax({
-                url: "/re/blog_type",
+                url: "/blog_type",
                 method: "GET",
                 dataType: "json",
                 success: function (res) {
@@ -134,7 +134,7 @@
                             options.push(item);
                         });
                         $.ajax({
-                            url: "/re/blog/" + blogId,
+                            url: "/blog/" + blogId,
                             method: "GET",
                             dataType: "json",
                             success: function (res) {
@@ -207,7 +207,7 @@
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: "/re/blog/" + blogId,
+                        url: "/blog/" + blogId,
                         data: {
                             title: blog.title,
                             author: blog.author,
@@ -216,7 +216,9 @@
                             contentMarkdown: blogEditor.getMarkdown(),
                             contentHtml: blogEditor.getHTML(),
                             status: blogEntity.status,
-                            coverImage: blogEntity.coverImage
+                            coverImage: blogEntity.coverImage,
+                            view: blogEntity.view,
+                            comment: blogEntity.comment
                         },
                         method: "PUT",
                         dateType: "json",

@@ -62,7 +62,7 @@
                 <ul class="hot-list">
                     <li class="hot-item mb10" th:each="hotBlog, status : ${application.guessYouLikeList}">
                         <span class="hot-label" th:text="${status.index + 1}">1</span>
-                        <a th:href="${#servletContext.contextPath} + '/article/' + ${hotBlog.id}" class="hot-title f14"
+                        <a th:href="'/article/' + ${hotBlog.id}" class="hot-title f14"
                            th:text="${hotBlog.title}">Git:一款比付费主题更像是付费主题的WordPress免费主题</a>
                         <span class="hot-comment fr"><i class="fa fa-comment" style="color: #FF8E8E"
                                                         th:text="${hotBlog.comment} + '评论'"></i></span>

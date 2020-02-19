@@ -6,7 +6,7 @@ layui.use(['laypage', 'util'], function () {
 });
 function getData(curr, limit, type) {
     $.ajax({
-        url: "/re/blog/listBlogPageByType",
+        url: "/blog/listBlogPageByType",
         data: {
             type: type,
             page: curr,
@@ -39,7 +39,7 @@ function renderData(data) {
             "                             title='" + data[i].title + "'/>" +
             "                    </div>" +
             "                    <div class=\"article-summary flex flex-direction-column flex-justify-content-space-between\">" +
-            "                        <a href='/re/article/" + data[i].id + "'>" +
+            "                        <a href='/article/" + data[i].id + "'>" +
             data[i].summary +
             "                        </a>" +
             "                        <div class=\"article-info\">" +

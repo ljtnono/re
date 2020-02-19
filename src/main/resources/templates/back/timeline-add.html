@@ -98,7 +98,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/timeline",
+                    url: "/timeline",
                     data: {
                         content: timeline.content,
                         pushDate: timeline.pushDate

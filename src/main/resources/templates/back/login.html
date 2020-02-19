@@ -57,7 +57,7 @@
             let user = data.field;
             layer.msg('正在登陆...', {anim: 5}, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/admin/login",
+                    url: "/admin/login",
                     data: {
                         username: user.username,
                         password: user.password

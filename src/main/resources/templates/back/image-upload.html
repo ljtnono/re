@@ -124,7 +124,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/user",
+                    url: "/user",
                     data: {
                         "username": user.username,
                         "password": user.password,

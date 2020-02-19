@@ -49,7 +49,7 @@
     layui.use(['util'], function () {
         let util = layui.util;
         $.ajax({
-            url: [[${#servletContext.contextPath}]] + "/timeline/listUpdateLogTimeline",
+            url: "/timeline/listUpdateLogTimeline",
             method: "GET",
             success: function (res) {
                 if (res.request === "success" && res.status === 200) {

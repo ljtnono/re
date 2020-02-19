@@ -105,7 +105,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/blog_type",
+                    url: "/blog_type",
                     data: {
                         name: blogType.name,
                         description: blogType.description

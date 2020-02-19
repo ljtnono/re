@@ -111,7 +111,7 @@
         if (userId) {
             // 获取timeline相关信息
             $.ajax({
-                url: [[${#servletContext.contextPath}]] + "/user/" + userId,
+                url: "/user/" + userId,
                 method: "GET",
                 success: function (res) {
                     if (res.request === "success" && res.status === 200 && res.data) {
@@ -144,7 +144,7 @@
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/user/" + userId,
+                        url: "/user/" + userId,
                         data: {
                             "id": user.id,
                             "username": user.username,

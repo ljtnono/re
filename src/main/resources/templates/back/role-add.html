@@ -103,7 +103,7 @@
                 btn: ['确认', '取消']
             }, function (index) {
                 $.ajax({
-                    url: [[${#servletContext.contextPath}]] + "/role",
+                    url: "/role",
                     data: {
                         "name": role.name,
                         "description": role.description

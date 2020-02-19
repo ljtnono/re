@@ -93,7 +93,7 @@
         if (blogTypeId) {
             // 获取blogType相关信息
             $.ajax({
-                url: [[${#servletContext.contextPath}]] + "/blog_type/" + blogTypeId,
+                url: "/blog_type/" + blogTypeId,
                 method: "GET",
                 success: function (res) {
                     if (res.request === "success" && res.status === 200 && res.data) {
@@ -123,7 +123,7 @@
                     btn: ['确认', '取消']
                 }, function (index) {
                     $.ajax({
-                        url: [[${#servletContext.contextPath}]] + "/blog_type/" + blogTypeId,
+                        url: "/blog_type/" + blogTypeId,
                         data: {
                             id: blogType.id,
                             name: blogType.name,

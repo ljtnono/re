@@ -22,7 +22,7 @@ let option = {
 myChart.showLoading();
 // 获取所有的技能列表
 $.ajax({
-    url: "/re/skill",
+    url: "/skill",
     method: "GET",
     success: function (res) {
         if (res.request === "success" && res.status === 200) {

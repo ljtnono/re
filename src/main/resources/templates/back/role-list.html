@@ -21,7 +21,7 @@
 <body>
 <div class="x-nav">
     <span class="layui-breadcrumb">
-        <a th:href="${#servletContext.contextPath} + '/admin'">首页</a>
+        <a href="javascript:">首页</a>
         <a href="javascript:">角色管理</a>
         <a href="javascript:" onclick="location.reload()"><cite>角色列表</cite></a>
     </span>
@@ -75,7 +75,7 @@
             elem: '.layui-table',
             height: 450,
             id: "roleTable",
-            url: [[${#servletContext.contextPath}]] + "/role/listRolePage",
+            url: "/role/listRolePage",
             page: true,
             method: "get",
             toolbar: true,
@@ -134,7 +134,7 @@
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
             table.reload("roleTable", {
-                url: [[${#servletContext.contextPath}]] + "/role/search",
+                url: "/role/search",
                 where: {
                     name: data.field.name,
                     description: data.field.description
@@ -163,7 +163,7 @@
             let layEvent = obj.event;
             let data = obj.data;
             if ("edit" === layEvent) {
-                window.parent.xadmin.add_tab(data.name, "/re/admin/role-detail?roleId=" + data.id);
+                window.parent.xadmin.add_tab(data.name, "/admin/role-detail?roleId=" + data.id);
             } else if ("delete" === layEvent) {
                 // 首先弹出询问窗口进行确认
                 if (data.status === 0) {
@@ -173,7 +173,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/role/" + data.id,
+                            url: "/role/" + data.id,
                             method: "DELETE",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {
@@ -202,7 +202,7 @@
                         btn: ['确认', '取消']
                     }, function (index) {
                         $.ajax({
-                            url: [[${#servletContext.contextPath}]] + "/role/restore/" + data.id,
+                            url: "/role/restore/" + data.id,
                             method: "PUT",
                             success: function (res) {
                                 if (res.request === "success" && res.status === 200) {

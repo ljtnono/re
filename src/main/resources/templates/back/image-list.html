@@ -21,7 +21,7 @@
 <body>
 <div class="x-nav">
     <span class="layui-breadcrumb">
-        <a th:href="${#servletContext.contextPath} + '/admin'">首页</a>
+        <a href="javascript:">首页</a>
         <a href="javascript:">图片管理</a>
         <a href="javascript:" onclick="location.reload()"><cite>图片列表</cite></a>
     </span>
@@ -71,7 +71,7 @@
             elem: '.layui-table',
             height: 450,
             id: "imageTable",
-            url: [[${#servletContext.contextPath}]] + "/image/listImagePage",
+            url: "/image/listImagePage",
             page: true,
             method: "get",
             request: {
@@ -130,7 +130,7 @@
         // 监听表单提交事件
         form.on('submit(search)', function (data) {
             table.reload("imageTable", {
-                url: [[${#servletContext.contextPath}]] + "/image/search",
+                url: "/image/search",
                 where: {
                     originName: data.field.originName,
                     type: data.field.type,
