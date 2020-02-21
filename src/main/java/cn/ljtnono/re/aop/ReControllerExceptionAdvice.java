@@ -4,10 +4,16 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.exception.GlobalToViewException;
 import cn.ljtnono.re.vo.JsonResultVO;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 
 /**
  * 配置springRest风格错误
@@ -17,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 2020/1/18
  */
 @ControllerAdvice
+@Slf4j
 public class ReControllerExceptionAdvice {
 
     /**
@@ -67,7 +74,34 @@ public class ReControllerExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(BindException.class)
     public JsonResultVO bindExceptionHandler(BindException e) {
-        System.out.println(e.getMessage());
-        return null;
+        return handleValidatedException(e);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public JsonResultVO methodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return handleValidatedException(e);
+    }
+
+    /**
+     * 处理controller参数校验异常
+     * @param e 参数校验异常
+     * @return JsonResultVO
+     */
+    public JsonResultVO handleValidatedException(Exception e) {
+        JsonResultVO resultVO = JsonResultVO.fail(GlobalErrorEnum.PARAM_ERROR.getErrorCode());
+        JSONObject errorProperty = new JSONObject();
+        BindingResult bindingResult = ((BindException) e).getBindingResult();
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            fieldErrors.forEach(fieldError -> {
+                String field = fieldError.getField();
+                String defaultMessage = fieldError.getDefaultMessage();
+                errorProperty.accumulate(field, defaultMessage);
+            });
+            resultVO.addField("error", errorProperty);
+        }
+        resultVO.setMessage("参数错误");
+        return resultVO;
     }
 }
