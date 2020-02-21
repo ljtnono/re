@@ -71,12 +71,12 @@
         <script th:inline="javascript">
             document.write("<p>基于JAVA构建" + "\n" + "2019-10-20" + "至" + [[${#dates.format(new java.util.Date().getTime(), 'yyyy-MM-dd')}]] + "</p>");
         </script>
-        <p class="mr10"><a href="javascript:">鄂ICP备18013706号-1</a></p>
+        <p class="mr10"><a href="javascript:">鄂ICP备18013706号</a></p>
         <p class="mr10">本项目github地址：<a href="javascript:">https://github.com/ljtnono/re</a></p>
     </div>
 </footer>
 <script th:src="@{/static/fore/js/common.min.js}"></script>
-<script th:inline="javascript">
+<script>
     // 设置header消息轮播
     setInterval(function () {
         $(".message-list").animate({

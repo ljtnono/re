@@ -1,5 +1,3 @@
-"use strict";
-
 const IMG_DEFAULT = "https://ftp.ljtnono.cn/re/images/default_img.jpg";
 const IMG_QRCODE_WECHAT = "https://ftp.ljtnono.cn/re/images/qrcode-wechat.png";
 // markdown编辑器配置
@@ -73,9 +71,9 @@ $('[data-toggle="popover"]').popover({
 });
 // 百度统计
 var _hmt = _hmt || [];
-(function () {
+(function() {
     var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?c6ce7acb41f9f7ea8729ab2253646f1e";
+    hm.src = "https://hm.baidu.com/hm.js?25d4f481bf3b3c166a6240c7d7b1e21a";
     var s = document.getElementsByTagName("script")[0];
     s.parentNode.insertBefore(hm, s);
 })();

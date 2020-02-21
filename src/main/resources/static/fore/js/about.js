@@ -1,4 +1,3 @@
-"use strict";
 // 初始化评论系统
 new Valine(VALINE_CONFIG);
 const color = ["#49c085", "#f2b63c", "#f58a87", "#6f92ff", "#7782d1", "#d56464"];
@@ -29,13 +28,15 @@ $.ajax({
             let data = [];
             let xAxis = [];
             for (let i = 0; i < res.data.length; i++) {
-                data.push({
-                    name: res.data[i].name,
-                    value: res.data[i].percent,
-                    itemStyle: {
-                        color: color[i % color.length]
-                    }
-                });
+                if (res.data[i].status === 1) {
+                    data.push({
+                        name: res.data[i].name,
+                        value: res.data[i].percent,
+                        itemStyle: {
+                            color: color[i % color.length]
+                        }
+                    });
+                }
                 xAxis.push(res.data[i].name);
             }
             myChart.hideLoading();

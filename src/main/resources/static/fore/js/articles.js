@@ -1,5 +1,3 @@
-"use strict";
-
 let util;
 layui.use(['laypage', 'util'], function () {
     util = layui.util;

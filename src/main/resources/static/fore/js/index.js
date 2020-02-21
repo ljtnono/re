@@ -1,4 +1,3 @@
-"use strict";
 // 配置swiper
 new Swiper(".swiper-container", SWIPER_CONFIG);
 // 流加载

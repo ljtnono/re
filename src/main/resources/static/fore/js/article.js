@@ -1,4 +1,3 @@
-"use strict";
 // 初始化评论系统
 new Valine(VALINE_CONFIG);
 editormd.markdownToHTML("detail-content", {

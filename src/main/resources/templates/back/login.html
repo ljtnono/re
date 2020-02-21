@@ -36,6 +36,14 @@
 </div>
 </body>
 <script th:inline="javascript">
+    // 百度统计
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?25d4f481bf3b3c166a6240c7d7b1e21a";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
     layui.use(['form', 'layer'], function () {
         let form = layui.form;
         let layer = layui.layer;
@@ -68,8 +76,11 @@
                       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
                     },
                     success: function (res) {
-                        if (res.message === "success" && res.status === 200) {
-                            location.href = [[${#servletContext.contextPath}]] + "/admin/index";
+                        if (res.request === "success" && res.status === 200) {
+                            // 拿到了token之后存到本地
+                            let token = res.fields.token;
+                            localStorage.setItem("token", token);
+                            location.href = "/admin/index?token=" + token;
                         } else {
                             layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
                         }
