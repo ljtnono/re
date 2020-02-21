@@ -8,6 +8,7 @@ import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.HtmlUtil;
+import cn.ljtnono.re.util.SpringBeanUtil;
 import cn.ljtnono.re.util.StringUtil;
 import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.Api;
@@ -17,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletContext;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 博客Controller
@@ -34,9 +37,12 @@ public class ReBlogController {
 
     private IReBlogService iReBlogService;
 
+    private SpringBeanUtil springBeanUtil;
+
     @Autowired
-    public ReBlogController(IReBlogService iReBlogService) {
+    public ReBlogController(IReBlogService iReBlogService, SpringBeanUtil springBeanUtil) {
         this.iReBlogService = iReBlogService;
+        this.springBeanUtil = springBeanUtil;
     }
 
     @GetMapping
@@ -47,28 +53,38 @@ public class ReBlogController {
 
     @PostMapping
     @ApiOperation(value = "新增一个博客记录", httpMethod = "POST")
-    public JsonResultVO saveEntityByDTO(@Validated ReBlogSaveDTO reBlogSaveDTO) {
-        ReBlog build = ReBlog.newBuilder()
-                .title(reBlogSaveDTO.getTitle()).author(reBlogSaveDTO.getAuthor())
-                .type(reBlogSaveDTO.getType()).contentHtml(reBlogSaveDTO.getContentHtml())
-                .contentMarkdown(reBlogSaveDTO.getContentMarkdown()).coverImage(reBlogSaveDTO.getCoverImage())
-                .status((byte) 1).createTime(new Date())
-                .modifyTime(new Date()).view(0)
-                .comment(0).build();
+    public JsonResultVO saveEntity(@Validated ReBlogSaveDTO reBlogSaveDTO) {
+        ReBlog entity = ReBlog.newBuilder()
+                .title(reBlogSaveDTO.getTitle())
+                .author(reBlogSaveDTO.getAuthor())
+                .type(reBlogSaveDTO.getType())
+                .contentHtml(reBlogSaveDTO.getContentHtml())
+                .contentMarkdown(reBlogSaveDTO.getContentMarkdown())
+                .coverImage(reBlogSaveDTO.getCoverImage())
+                .status((byte) 1)
+                .createTime(new Date())
+                .modifyTime(new Date())
+                .view(0)
+                .comment(0)
+                .build();
         // 设置封面图片，如果没有那么就设置为默认封面图片url
-        if (StringUtil.isEmpty(build.getCoverImage())) {
-            build.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
+        if (StringUtil.isEmpty(entity.getCoverImage())) {
+            entity.setCoverImage(GlobalVariableEnum.RE_IMAGE_DEFAULT_URL.getValue().toString());
         }
         // 设置
-        if (StringUtil.isEmpty(build.getSummary())) {
-            String deleteHtml = HtmlUtil.delHtmlTagFromStr(build.getContentHtml());
+        if (StringUtil.isEmpty(entity.getSummary())) {
+            String deleteHtml = HtmlUtil.delHtmlTagFromStr(entity.getContentHtml());
             if (deleteHtml.length() <= 300 && deleteHtml.length() >= 4) {
-                build.setSummary(deleteHtml);
+                entity.setSummary(deleteHtml);
             } else {
-                build.setSummary(build.getSummary());
+                entity.setSummary(entity.getSummary());
             }
         }
-        return iReBlogService.saveEntity(build);
+        JsonResultVO jsonResultVO = iReBlogService.saveEntity(entity);
+        ServletContext servletContext = springBeanUtil.getServletContext();
+        List<ReBlog> listGuessYouLike = iReBlogService.listGuessYouLike();
+        servletContext.setAttribute("guessYouLikeList", listGuessYouLike);
+        return jsonResultVO;
     }
 
     @PutMapping("/{id:\\d+}")

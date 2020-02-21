@@ -1,25 +1,25 @@
 package cn.ljtnono.re.util;
 
 /**
- *  文本加解密工具
+ *  Md5文本加解密工具
  *  @author ljt
  *  @date 2018/12/9
  *  @version 1.0.2
 */
-public class EncryptUtil {
+public class Md5Util {
 
     /**
      * 工具类不允许实例化
      */
-    private EncryptUtil(){}
+    private Md5Util(){}
 
-    private volatile static EncryptUtil instance = null;
+    private volatile static Md5Util instance = null;
 
-    public static EncryptUtil getInstance() {
+    public static Md5Util getInstance() {
         if (instance == null) {
-            synchronized (EncryptUtil.class) {
+            synchronized (Md5Util.class) {
                 if (instance == null) {
-                    instance = new EncryptUtil();
+                    instance = new Md5Util();
                 }
             }
         }
@@ -47,7 +47,7 @@ public class EncryptUtil {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             byte[] tmp;
-            synchronized (EncryptUtil.class) {
+            synchronized (Md5Util.class) {
                 md.update(source);
                 tmp = md.digest();
             }

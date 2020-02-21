@@ -6,7 +6,7 @@ import cn.ljtnono.re.dto.ReUserSearchDTO;
 import cn.ljtnono.re.dto.ReUserUpdateDTO;
 import cn.ljtnono.re.entity.ReUser;
 import cn.ljtnono.re.service.IReUserService;
-import cn.ljtnono.re.util.EncryptUtil;
+import cn.ljtnono.re.util.Md5Util;
 import cn.ljtnono.re.vo.JsonResultVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -51,7 +51,7 @@ public class ReUserController {
     public JsonResultVO saveEntity(@Validated ReUserSaveDTO reUserSaveDTO) {
         ReUser entity = new ReUser();
         BeanUtils.copyProperties(reUserSaveDTO, entity);
-        entity.setPassword(EncryptUtil.getInstance().getMd5LowerCase(reUserSaveDTO.getPassword()));
+        entity.setPassword(Md5Util.getInstance().getMd5LowerCase(reUserSaveDTO.getPassword()));
         entity.setStatus((byte) 1);
         entity.setCreateTime(new Date());
         entity.setModifyTime(new Date());
@@ -63,7 +63,7 @@ public class ReUserController {
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReUserUpdateDTO reUserUpdateDTO) {
         ReUser entity = new ReUser();
         BeanUtils.copyProperties(reUserUpdateDTO, entity);
-        entity.setPassword(EncryptUtil.getInstance().getMd5LowerCase(reUserUpdateDTO.getPassword()));
+        entity.setPassword(Md5Util.getInstance().getMd5LowerCase(reUserUpdateDTO.getPassword()));
         entity.setStatus((byte) 1);
         return iReUserService.updateEntityById(id, entity);
     }

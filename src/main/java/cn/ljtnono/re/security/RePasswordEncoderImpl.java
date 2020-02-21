@@ -1,6 +1,6 @@
 package cn.ljtnono.re.security;
 
-import cn.ljtnono.re.util.EncryptUtil;
+import cn.ljtnono.re.util.Md5Util;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +15,11 @@ public class RePasswordEncoderImpl implements PasswordEncoder {
 
     @Override
     public String encode(CharSequence rawPassword) {
-        return EncryptUtil.getInstance().getMd5LowerCase((String) rawPassword);
+        return Md5Util.getInstance().getMd5LowerCase((String) rawPassword);
     }
 
     @Override
     public boolean matches(CharSequence rawPassword, String encodedPassword) {
-        return encodedPassword.equals(EncryptUtil.getInstance().getMd5LowerCase((String) rawPassword));
+        return encodedPassword.equals(Md5Util.getInstance().getMd5LowerCase((String) rawPassword));
     }
 }

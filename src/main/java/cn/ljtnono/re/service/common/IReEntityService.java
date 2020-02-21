@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @date 2020/1/19
  * @version 1.0.2
  */
-public interface IReEntityService <T> {
+public interface IReEntityService <T> extends IReEntityCacheManager <T> {
 
     /**
      * 新增单个实体类
@@ -59,7 +59,7 @@ public interface IReEntityService <T> {
     JsonResultVO getEntityById(Serializable id);
 
     /**
-     * 获取实体类的所有列表
+     * 获取实体类的所有列表, 默认根据最后修改时间降序
      * @return 实体类所有列表
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
      * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}

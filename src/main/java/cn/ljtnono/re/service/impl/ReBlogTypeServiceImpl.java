@@ -72,14 +72,6 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
 
     @Override
     public JsonResultVO listBlogTypePage(Integer page, Integer count) {
-        Optional<Integer> optionalPage = Optional.ofNullable(page);
-        Optional<Integer> optionalCount = Optional.ofNullable(count);
-        optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalPage.filter(p -> p >= 0 && p <= 1000)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR));
-        optionalCount.filter(c -> c >= 0 && c <= 60)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR));
         // 首先从缓存中获取，如果缓存中没有，那么从数据库中获取
         String redisKey = ReEntityRedisKeyEnum.RE_BLOG_TYPE_PAGE_KEY.getKey()
                 .replace(":page", ":" + page)
@@ -237,10 +229,6 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
 
     @Override
     public JsonResultVO updateEntityById(Serializable id, ReBlogType entity) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        Optional<ReBlogType> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int blogTypeId = Integer.parseInt(id.toString());
         if (blogTypeId >= 1) {
             boolean updateResult = update(entity, new UpdateWrapper<ReBlogType>().eq("id", blogTypeId));

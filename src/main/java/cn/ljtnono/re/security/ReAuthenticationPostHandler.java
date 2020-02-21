@@ -32,6 +32,7 @@ public class ReAuthenticationPostHandler implements AuthenticationSuccessHandler
         log.info("登陆时间：{}", DateUtil.formatDate(new Date(), DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("用户信息：{}", JSONObject.fromObject(authentication).toString());
         PrintWriter writer = response.getWriter();
+        // 认证成功生成
         String result = new JSONObject()
                 .accumulate("message", "success")
                 .accumulate("status", 200)

@@ -3,6 +3,7 @@ package cn.ljtnono.re.controller;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.service.IReBlogService;
+import cn.ljtnono.re.util.JJWTUtil;
 import cn.ljtnono.re.util.StringUtil;
 import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -10,12 +11,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -31,10 +35,20 @@ public class PageController {
 
     private IReBlogService iReBlogService;
 
+    private JJWTUtil jjwtUtil;
+
+    private UserDetailsService userDetailsService;
+
+    private AuthenticationManager authenticationManager;
+
     @Autowired
-    public PageController(IReBlogService iReBlogService) {
+    public PageController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
         this.iReBlogService = iReBlogService;
+        this.jjwtUtil = jjwtUtil;
+        this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
+
 
     @GetMapping("/")
     @ApiOperation(value = "跳转到首页")
@@ -138,12 +152,23 @@ public class PageController {
             jsonResultVO = iReBlogService.listBlogPageByType(pageDTO.getPage(), pageDTO.getCount(), type);
             modelMap.addAttribute("type", type);
         }
-        modelMap.addAttribute("data", jsonResultVO.getData());
-        modelMap.addAttribute("request", jsonResultVO.getRequest());
-        modelMap.addAttribute("status", jsonResultVO.getStatus());
-        modelMap.addAttribute("totalCount", jsonResultVO.getTotalCount());
-        modelMap.addAttribute("fields", jsonResultVO.getFields());
+        modelMap.addAttribute("data", jsonResultVO.getData())
+                .addAttribute("request", jsonResultVO.getRequest())
+                .addAttribute("status", jsonResultVO.getStatus())
+                .addAttribute("totalCount", jsonResultVO.getTotalCount())
+                .addAttribute("fields", jsonResultVO.getFields());
         setActivePage("articles", modelMap);
         return "fore/articles";
+    }
+
+    @PostMapping("/admin/login")
+    @ResponseBody
+    public JsonResultVO login(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String jwt = jjwtUtil.generateToken(userDetails);
+        JsonResultVO jsonResultVO = JsonResultVO.successForMessage("登陆成功", 200);
+        jsonResultVO.addField("token", jwt);
+        return jsonResultVO;
     }
 }
