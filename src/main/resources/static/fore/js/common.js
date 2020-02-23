@@ -20,7 +20,7 @@ const EDITOR_CONFIG = {
     sequenceDiagram: true,
     imageUpload: true,
     imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-    imageUploadURL: "/image/upload/md",
+    imageUploadURL: "/image/upload/md?token=" + localStorage.getItem("token"),
     onload: function (data) {
 
     }
@@ -156,26 +156,3 @@ $("#header .side-nav-header .side-nav-bar").on("click", function () {
     $("#header .nav-mini").slideToggle(400);
 });
 
-// 封装Jquery ajax请求
-function ajax(requestObj, withLoading) {
-    // 默认不开启
-    let loading = withLoading || false;
-    $.ajax({
-        data: requestObj.data,
-        method: requestObj.method,
-        dataType: requestObj.dataType || "json",
-        success: requestObj.success || function(){}
-    });
-}
-
-// 提取markdown中图片内容作为封面
-function getImgUrlFromMarkDown(markDown) {
-    let reg = /!\[.*?\]\((.*?)\)/im;
-    let matches = reg.exec(markDown);
-    // 如果没有的话，那么返回默认图片src
-    if (matches === null || matches === undefined || matches.length === 0) {
-        return IMG_DEFAULT;
-    } else {
-        return matches[1];
-    }
-}
