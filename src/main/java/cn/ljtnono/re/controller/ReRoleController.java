@@ -7,6 +7,7 @@ import cn.ljtnono.re.dto.ReRoleUpdateDTO;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.service.IReRoleService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/role")
+@Api(value = "ReRoleController", tags = {"角色接口"})
 public class ReRoleController {
 
     private IReRoleService iReRoleService;

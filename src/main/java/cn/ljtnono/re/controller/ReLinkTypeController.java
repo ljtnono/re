@@ -8,6 +8,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/link_type")
+@Api(value = "ReLinkTypeController", tags = {"链接类型接口"})
 public class ReLinkTypeController {
 
     private final IReLinkTypeService iReLinkTypeService;

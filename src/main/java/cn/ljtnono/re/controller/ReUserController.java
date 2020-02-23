@@ -8,6 +8,7 @@ import cn.ljtnono.re.entity.ReUser;
 import cn.ljtnono.re.service.IReUserService;
 import cn.ljtnono.re.util.Md5Util;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "ReUserController", tags = {"用户接口"})
 public class ReUserController {
 
     private IReUserService iReUserService;

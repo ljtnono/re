@@ -7,6 +7,7 @@ import cn.ljtnono.re.dto.ReSkillUpdateDTO;
 import cn.ljtnono.re.entity.ReSkill;
 import cn.ljtnono.re.service.IReSkillService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/skill")
+@Api(value = "ReSkillController", tags = {"技能接口"})
 public class ReSkillController {
 
     private IReSkillService iReSkillService;

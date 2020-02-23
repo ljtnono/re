@@ -7,6 +7,7 @@ import cn.ljtnono.re.dto.ReLinkUpdateDTO;
 import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.service.IReLinkService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/link")
+@Api(value = "ReLinkController", tags = {"链接接口"})
 public class ReLinkController {
 
     private IReLinkService iReLinkService;

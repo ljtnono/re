@@ -7,6 +7,7 @@ import cn.ljtnono.re.dto.ReTimelineUpdateDTO;
 import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.service.IReTimelineService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +26,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/timeline")
+@Api(value = "ReTimelineController", tags = {"时间轴接口"})
 public class ReTimelineController {
 
     private IReTimelineService iReTimelineService;
