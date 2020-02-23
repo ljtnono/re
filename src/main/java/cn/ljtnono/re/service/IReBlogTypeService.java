@@ -16,11 +16,6 @@ import java.io.Serializable;
  */
 public interface IReBlogTypeService extends IService<ReBlogType>, IReEntityService<ReBlogType> {
 
-    /**
-     * 获取所有的博客类型
-     * @return 所有的博客类型
-     */
-    JsonResultVO listBlogTypeAll();
 
     /**
      * 分页获取博客类型
