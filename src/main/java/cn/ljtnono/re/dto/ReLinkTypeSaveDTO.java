@@ -19,12 +19,11 @@ import java.io.Serializable;
 @ToString
 public class ReLinkTypeSaveDTO implements Serializable {
 
-
     private static final long serialVersionUID = 8322599327802998509L;
 
     /** 链接类型名 */
     @NotNull
-    @Length(min = 2, max = 20, message = "链接类型名不能")
+    @Length(min = 2, max = 20, message = "链接类型名2-20个字符")
     private String name;
 
 }

@@ -23,7 +23,7 @@ public class ReLinkTypeUpdateDTO implements Serializable {
 
     /** 链接类型名 */
     @NotNull
-    @Length(min = 2, max = 20, message = "链接类型名不能")
+    @Length(min = 2, max = 20, message = "链接类型名2-20个字符")
     private String name;
 
 }
