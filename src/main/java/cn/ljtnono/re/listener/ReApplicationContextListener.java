@@ -66,7 +66,7 @@ public class ReApplicationContextListener implements ApplicationListener<Context
      * @param servletContext application实例
      */
     private void loadApplicationContextAttribute(ServletContext servletContext) {
-        List<ReBlogType> listBlogTypeResult = (List<ReBlogType>) iReBlogTypeService.listBlogTypeAll().getData();
+        List<ReBlogType> listBlogTypeResult = (List<ReBlogType>) iReBlogTypeService.listEntityAll().getData();
         // 获取首页外部链接
         List<ReLink> listLinkResult = iReLinkService.listOutLinkAll();
         // 获取所有的配置项

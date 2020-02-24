@@ -5,7 +5,6 @@ import cn.ljtnono.re.dto.ReRoleSearchDTO;
 import cn.ljtnono.re.entity.RePermission;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.enumeration.GlobalVariableEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReRoleMapper;
@@ -55,10 +54,6 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
 
     @Override
     public JsonResultVO listRolePage(Integer page, Integer count) {
-        Optional<Integer> optionalPage = Optional.ofNullable(page);
-        Optional<Integer> optionalCount = Optional.ofNullable(count);
-        optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         String redisKey = ReEntityRedisKeyEnum.RE_ROLE_PAGE_KEY.getKey()
                 .replace(":page", ":" + page)
                 .replace(":count", ":" + count);
@@ -74,7 +69,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         } else {
             // 按照时间降序排列
             IPage<ReRole> pageResult = page(new Page<>(page, count), new QueryWrapper<ReRole>().orderByDesc("modify_time"));
-            log.info("获取" + page + "页角色数据，每页获取" + count + "条");
+            log.info("从数据库中获取" + page + "页角色数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
@@ -83,32 +78,23 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
 
     @Override
     public JsonResultVO restore(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
-        if (roleId >= (Integer) GlobalVariableEnum.RE_ENTITY_MIN_ID.getValue()) {
-            // 更新状态
-            boolean update = update(new UpdateWrapper<ReRole>().set("status", 1).eq("id", roleId));
-            boolean restoreUserRole = getBaseMapper().restoreUserRole(roleId);
-            if (update && restoreUserRole) {
-                // 删除缓存中的相关数据
-                ReRole reRole = getById(roleId);
-                redisUtil.deleteByPattern("re_role:*");
-                redisUtil.deleteByPattern("re_role_page:*");
-                redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResultVO.success(Collections.singletonList(reRole), 1);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        // 更新状态
+        boolean update = update(new UpdateWrapper<ReRole>().set("status", 1).eq("id", roleId));
+        getBaseMapper().restoreUserRole(roleId);
+        if (update) {
+            // 删除缓存中的相关数据
+            ReRole reRole = getById(roleId);
+            deleteCacheAll();
+            return JsonResultVO.success(Collections.singletonList(reRole), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("恢复角色失败, id = {}", id);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO search(ReRoleSearchDTO reRoleSearchDTO, PageDTO pageDTO) {
-        Optional<ReRoleSearchDTO> optionalReRoleSearchDTO = Optional.ofNullable(reRoleSearchDTO);
-        optionalReRoleSearchDTO.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
         QueryWrapper<ReRole> reRoleQueryWrapper = new QueryWrapper<>();
         if (!StringUtil.isEmpty(reRoleSearchDTO.getName())) {
             reRoleQueryWrapper.like("name", reRoleSearchDTO.getName());
@@ -116,133 +102,119 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         if (!StringUtil.isEmpty(reRoleSearchDTO.getDescription())) {
             reRoleQueryWrapper.like("description", reRoleSearchDTO.getDescription());
         }
+        reRoleQueryWrapper.orderByDesc("modify_time");
         IPage<ReRole> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reRoleQueryWrapper);
         if (pageResult != null) {
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
+            log.error("查询角色列表失败, {}, {}", reRoleSearchDTO, pageDTO);
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO saveEntity(ReRole entity) {
-        Optional<ReRole> optionalReRole = Optional.ofNullable(entity);
-        optionalReRole.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
-        String key = ReEntityRedisKeyEnum.RE_ROLE_KEY.getKey()
-                .replace(":id", ":" + entity.getId())
-                .replace(":name", ":" + entity.getName())
-                .replace(":description", ":" + entity.getDescription());
         if (save) {
             // 将实体类存储到缓存中去
-            redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
+            deleteCacheAll();
+            setCache(entity);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
+            log.error("新增角色失败, {}", entity);
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
-        if (roleId >= (Integer) GlobalVariableEnum.RE_ENTITY_MIN_ID.getValue()) {
-            // 在数据库中更新
-            boolean updateResult = update(new UpdateWrapper<ReRole>().set("status", 0).eq("id", roleId));
-            // 删除数据库中所有含有该角色的关联表的数据
-            boolean deleteUserRole = getBaseMapper().deleteUserRole(roleId);
-            if (updateResult && deleteUserRole) {
-                // 删除缓存中的相关数据
-                ReRole reRole = getById(roleId);
-                redisUtil.deleteByPattern("re_role:*");
-                redisUtil.deleteByPattern("re_role_page:*");
-                redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResultVO.success(Collections.singletonList(reRole), 1);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        // 在数据库中更新
+        boolean updateResult = update(new UpdateWrapper<ReRole>().set("status", 0).eq("id", roleId));
+        // 删除数据库中所有含有该角色的关联表的数据
+        getBaseMapper().deleteUserRole(roleId);
+        if (updateResult) {
+            // 删除缓存中的相关数据
+            ReRole reRole = getById(roleId);
+            deleteCacheAll();
+            return JsonResultVO.success(Collections.singletonList(reRole), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("删除角色失败, id = {}", id);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO updateEntityById(Serializable id, ReRole entity) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        Optional<ReRole> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
-        if (roleId >= (Integer) GlobalVariableEnum.RE_ENTITY_MIN_ID.getValue()) {
-            boolean updateResult = update(entity, new UpdateWrapper<ReRole>().eq("id", roleId));
-            if (updateResult) {
-                // 删除所有缓存
-                redisUtil.deleteByPattern("re_role:*");
-                redisUtil.deleteByPattern("re_role_page:*");
-                redisUtil.deleteByPattern("re_role_page_total:*");
-                return JsonResultVO.successForMessage("操作成功", 200);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        boolean updateResult = update(entity, new UpdateWrapper<ReRole>().eq("id", roleId));
+        if (updateResult) {
+            // 删除所有缓存
+            deleteCacheAll();
+            return JsonResultVO.successForMessage("操作成功", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("更新角色失败, {}", entity);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO getEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int roleId = Integer.parseInt(id.toString());
-        if (roleId >= (Integer) GlobalVariableEnum.RE_ENTITY_MIN_ID.getValue()) {
-            JsonResultVO jsonResultVO;
-            // 如果缓存中存在，那么首先从缓存中获取
-            String key = ReEntityRedisKeyEnum.RE_ROLE_KEY.getKey()
-                    .replace(":id", ":" + roleId)
-                    .replace(":name", ":*")
-                    .replace(":description", ":*");
-            boolean b = redisUtil.hasKeyByPattern(key);
-            // 如果存在，那么直接获取
-            ReRole reRole;
-            if (b) {
-                reRole = (ReRole) redisUtil.getByPattern(key);
-                if (reRole == null || reRole.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-            } else {
-                reRole = getById(roleId);
-                // 如果不存在，那么返回 找不到资源错误
-                if (reRole == null || reRole.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-                redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
-                        .replace(":id", ":" + reRole.getId())
-                        .replace(":name", ":" + reRole.getName())
-                        .replace(":description", ":" + reRole.getDescription()), reRole, RedisUtil.EXPIRE_TIME_DEFAULT);
+        JsonResultVO jsonResultVO;
+        // 如果缓存中存在，那么首先从缓存中获取
+        String key = ReEntityRedisKeyEnum.RE_ROLE_KEY.getKey()
+                .replace(":id", ":" + roleId)
+                .replace(":name", ":*")
+                .replace(":description", ":*");
+        boolean b = redisUtil.hasKeyByPattern(key);
+        // 如果存在，那么直接获取
+        ReRole reRole;
+        if (b) {
+            reRole = (ReRole) redisUtil.getByPattern(key);
+            if (reRole == null || reRole.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
             }
-            jsonResultVO = JsonResultVO.success(Collections.singletonList(reRole), 1);
-            jsonResultVO.setMessage("操作成功");
-            return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            reRole = getById(roleId);
+            // 如果不存在，那么返回 找不到资源错误
+            if (reRole == null || reRole.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+            }
+            setCache(reRole);
         }
+        jsonResultVO = JsonResultVO.success(Collections.singletonList(reRole), 1);
+        jsonResultVO.setMessage("操作成功");
+        return jsonResultVO;
     }
 
     @Override
     public JsonResultVO listEntityAll() {
-        List<ReRole> reRoleList = list();
-        Optional<List<ReRole>> optionalList = Optional.ofNullable(reRoleList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
-        optionalList.ifPresent((l) -> l.forEach(reRole -> {
-            redisUtil.set(ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
-                    .replace(":id", ":" + reRole.getId())
-                    .replace(":name", ":" + reRole.getName())
-                    .replace(":description", ":" + reRole.getDescription()), reRole, RedisUtil.EXPIRE_TIME_DEFAULT);
-        }));
-        optionalList.ifPresent(l -> log.info("从数据库中获取所有角色列表，总条数：" + l.size()));
+        List<ReRole> reRoleList = list(new QueryWrapper<ReRole>().orderByDesc("modify_time"));
+        setCache(reRoleList);
+        log.info("从数据库中获取所有角色列表，总条数：" + reRoleList.size());
         JsonResultVO success = JsonResultVO.success(reRoleList, reRoleList.size());
         success.setMessage("操作成功");
         return success;
+    }
+
+    @Override
+    public void setCache(ReRole value) {
+        redisUtil.set(ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
+                .replace(":id", ":" + value.getId())
+                .replace(":name", ":" + value.getName())
+                .replace(":description", ":" + value.getDescription()), value, RedisUtil.EXPIRE_TIME_DEFAULT);
+    }
+
+    @Override
+    public void setCache(List<ReRole> cache) {
+        cache.forEach(this::setCache);
+    }
+
+    @Override
+    public void deleteCacheAll() {
+        redisUtil.deleteByPattern("re_role:*");
+        redisUtil.deleteByPattern("re_role_page:*");
+        redisUtil.deleteByPattern("re_role_page_total:*");
     }
 }

@@ -62,7 +62,7 @@ public class ReUserController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新用户", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReUserUpdateDTO reUserUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReUserUpdateDTO reUserUpdateDTO) {
         ReUser entity = new ReUser();
         BeanUtils.copyProperties(reUserUpdateDTO, entity);
         entity.setPassword(Md5Util.getInstance().getMd5LowerCase(reUserUpdateDTO.getPassword()));

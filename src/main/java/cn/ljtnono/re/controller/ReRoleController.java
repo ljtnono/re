@@ -43,7 +43,7 @@ public class ReRoleController {
 
     @PostMapping
     @ApiOperation(value = "新增一个角色", httpMethod = "POST")
-    public JsonResultVO saveEntity(ReRoleSaveDTO reRoleSaveDTO) {
+    public JsonResultVO saveEntity(@Validated ReRoleSaveDTO reRoleSaveDTO) {
         ReRole entity = new ReRole();
         BeanUtils.copyProperties(reRoleSaveDTO, entity);
         entity.setStatus((byte) 1);
@@ -54,7 +54,7 @@ public class ReRoleController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新角色", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReRoleUpdateDTO reRoleUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReRoleUpdateDTO reRoleUpdateDTO) {
         ReRole entity = new ReRole();
         BeanUtils.copyProperties(reRoleUpdateDTO, entity);
         entity.setStatus((byte) 1);
@@ -88,7 +88,7 @@ public class ReRoleController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接name和description模糊查询", notes = "根据链接name和description模糊查询", httpMethod = "POST")
-    public JsonResultVO search(@Validated ReRoleSearchDTO reRoleSearchDTO, @Validated PageDTO pageDTO) {
+    public JsonResultVO search(ReRoleSearchDTO reRoleSearchDTO, @Validated PageDTO pageDTO) {
         return iReRoleService.search(reRoleSearchDTO, pageDTO);
     }
 }

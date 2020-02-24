@@ -54,7 +54,7 @@ public class ReSkillController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新一个技能实体", notes = "id只能是数字类型", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReSkillUpdateDTO reSkillUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReSkillUpdateDTO reSkillUpdateDTO) {
         ReSkill reSkill = new ReSkill();
         BeanUtils.copyProperties(reSkillUpdateDTO, reSkill);
         reSkill.setStatus((byte) 1);
@@ -87,7 +87,7 @@ public class ReSkillController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接name和owner模糊查询", notes = "根据链接name和owner模糊查询", httpMethod = "POST")
-    public JsonResultVO search(@Validated ReSkillSearchDTO reSkillSearchDTO, @Validated PageDTO pageDTO) {
+    public JsonResultVO search(ReSkillSearchDTO reSkillSearchDTO, @Validated PageDTO pageDTO) {
         return iReSkillService.search(reSkillSearchDTO, pageDTO);
     }
 }

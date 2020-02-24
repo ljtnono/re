@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ public class ReTimelineUpdateDTO implements Serializable {
 
     @NotNull(message = "发布时间不能为null")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Past(message = "日期格式为yyyy-MM-dd")
     private Date pushDate;
 
 }
