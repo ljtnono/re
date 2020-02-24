@@ -21,16 +21,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  * 处理页面路由的Controller
  * @author ljt
  * @date 2019/12/28
  * @version 1.0.1
  */
-@Controller
-@Api(value = "页面路由Controller")
 @Slf4j
+@Controller
+@Api(value = "PageController", tags = {"页面路由"})
 public class PageController {
 
     private IReBlogService iReBlogService;

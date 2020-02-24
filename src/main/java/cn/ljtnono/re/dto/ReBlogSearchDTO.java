@@ -19,10 +19,13 @@ public class ReBlogSearchDTO implements Serializable {
 
     private static final long serialVersionUID = -5072075640967713543L;
 
+    /** 博客标题 */
     private String title;
 
+    /** 博客类型 */
     private String type;
 
+    /** 博客作者 */
     private String author;
 
 }

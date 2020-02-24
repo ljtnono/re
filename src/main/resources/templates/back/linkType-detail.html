@@ -9,8 +9,8 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
     <link rel="stylesheet" th:href="@{/static/back/css/font.css}">
     <link rel="stylesheet" th:href="@{/static/back/css/xadmin.css}">
-    <script th:src="@{/static/back/lib/layui/layui.js}" charset="utf-8"></script>
-    <script th:src="@{/static/back/js/xadmin.js}"></script>
+    <script th:src="@{/static/back/lib/layui/layui.js}"></script>
+    <script th:src="@{/static/back/js/xadmin.min.js}"></script>
     <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -72,83 +72,8 @@
     </div>
 </div>
 </body>
-<script th:src="@{/static/fore/js/common.js}"></script>
 <script th:inline="javascript">
     let linkTypeId = [[${#request.getParameter("linkTypeId")}]];
-    console.log("正在编辑博客类型，blogTypeId = " + linkTypeId);
-    let linkType;
-    layui.use(['form', 'layer'], function () {
-        let form = layui.form;
-        let layer = layui.layer;
-        if (linkTypeId) {
-            // 获取blogType相关信息
-            $.ajax({
-                url: "/link_type/" + linkTypeId,
-                method: "GET",
-                success: function (res) {
-                    if (res.request === "success" && res.status === 200 && res.data) {
-                        linkType = res.data[0];
-                        form.val("form-linkType", {
-                            "id": linkType.id,
-                            "name": linkType.name
-                        });
-                        form.render();
-                    } else {
-                        layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
-                    }
-                },
-                error: function (res) {
-                    if (res) {
-                        layer.msg(res);
-                    } else {
-                        layer.msg("请求错误，请检查网络", {icon: 2});
-                    }
-                }
-            });
-            // 监听提交事件
-            form.on('submit(form-linkType-submit)', function (data) {
-                let linkType = data.field;
-                layer.confirm('确认提交？', {
-                    btn: ['确认', '取消']
-                }, function (index) {
-                    $.ajax({
-                        url: "/link_type/" + linkTypeId,
-                        data: {
-                            name: linkType.name
-                        },
-                        method: "PUT",
-                        dateType: "json",
-                        success: function (res) {
-                            if (res.request === "success" && res.status === 200) {
-                                layer.msg(res.message , {icon: 1});
-                            } else {
-                                layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
-                            }
-                        },
-                        error: function (res) {
-                            if (res) {
-                                layer.msg(res);
-                            } else {
-                                layer.msg("请求错误，请检查网络", {icon: 2});
-                            }
-                        }
-                    });
-                    layer.close(index);
-                });
-                return false;
-            });
-            // 设置表单校验
-            form.verify({
-                name: function (value, item) {
-                    let titleRex = /^[\w\W\s\u4e00-\u9fcc]{2,20}$/;
-                    if (!titleRex.test(value)) {
-                        return "链接类型名只能为2-20个字符";
-                    }
-                }
-            });
-        } else {
-            layer.msg("参数错误", {icon: 2});
-        }
-    });
 </script>
+<script th:src="@{/static/back/js/linkType-detail.min.js}"></script>
 </html>

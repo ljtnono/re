@@ -8,6 +8,7 @@ import cn.ljtnono.re.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 链接类型controller
@@ -24,9 +26,10 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/link_type")
+@Api(value = "ReLinkTypeController", tags = {"链接类型接口"})
 public class ReLinkTypeController {
 
-    private final IReLinkTypeService iReLinkTypeService;
+    private IReLinkTypeService iReLinkTypeService;
 
     @Autowired
     public ReLinkTypeController(IReLinkTypeService iReLinkTypeService) {
@@ -79,9 +82,8 @@ public class ReLinkTypeController {
     @PostMapping("/search")
     @ApiOperation(value = "根据链接类型名字模糊查询", notes = "根据链接类型名模糊查询", httpMethod = "POST")
     public JsonResultVO search(final String name, @Validated PageDTO pageDTO) {
-        if (null == name) {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
-        }
+        Optional.ofNullable(name)
+                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         return iReLinkTypeService.search(name, pageDTO);
     }
 
@@ -90,6 +92,4 @@ public class ReLinkTypeController {
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReLinkTypeService.restore(id);
     }
-
-
 }

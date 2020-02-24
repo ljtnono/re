@@ -9,8 +9,8 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
     <link rel="stylesheet" th:href="@{/static/back/css/font.css}">
     <link rel="stylesheet" th:href="@{/static/back/css/xadmin.css}">
-    <script th:src="@{/static/back/lib/layui/layui.js}" charset="utf-8"></script>
-    <script th:src="@{/static/back/js/xadmin.js}"></script>
+    <script th:src="@{/static/back/lib/layui/layui.js}"></script>
+    <script th:src="@{/static/back/js/xadmin.min.js}"></script>
     <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -62,99 +62,13 @@
     </div>
 </div>
 </body>
-<script th:inline="javascript">
-    layui.use(["laydate", "table", "util", "form"], function () {
-        let form = layui.form;
-        let table = layui.table;
-        let util = layui.util;
-        table.render({
-            elem: '.layui-table',
-            height: 450,
-            id: "imageTable",
-            url: "/image/listImagePage",
-            page: true,
-            method: "get",
-            request: {
-                pageName: "page",
-                limitName: "count"
-            },
-            parseData: function (res) {
-                return {
-                    "status": res.status,
-                    "count": res.fields.totalCount,
-                    "message": res.message,
-                    "data": res.data
-                };
-            },
-            response: {
-                statusName: "status",
-                statusCode: 200,
-                msgName: "message",
-                countName: "count",
-                dataName: "data"
-            },
-            cols: [
-                [
-                    {type: 'checkbox', fixed: 'left'},
-                    {field: 'id', title: 'ID', width: 80, sort: true},
-                    {field: 'originName', title: '图片名', width: 130},
-                    {field: 'size', title: '图片大小（字节）', width: 130},
-                    {field: 'type', title: '图片类型', width: 130},
-                    {field: 'url', title: '图片url', width: 130},
-                    {field: 'owner', title: '上传者', width: 130},
-                    {
-                        field: 'createTime', title: '创建时间', width: 170,
-                        templet: function (d) {
-                            return util.toDateString(d.createTime, "yyyy-MM-dd HH:ss");
-                        }
-                    },
-                    {
-                        field: 'modifyTime', title: '最后修改时间', width: 170, sort: true,
-                        templet: function (d) {
-                            return util.toDateString(d.modifyTime, "yyyy-MM-dd HH:ss");
-                        }
-                    },
-                    {
-                        field: 'status', title: '状态', width: 80, sort: true,
-                        templet: function (d) {
-                            if (d.status === 1) {
-                                return "正常";
-                            } else if (d.status === 0) {
-                                return "已删除";
-                            }
-                        }
-                    }
-                ]
-            ]
-        });
-        // 监听表单提交事件
-        form.on('submit(search)', function (data) {
-            table.reload("imageTable", {
-                url: "/image/search",
-                where: {
-                    originName: data.field.originName,
-                    type: data.field.type,
-                    owner: data.field.owner
-                },
-                method: "POST",
-                parseData: function (res) {
-                    return {
-                        "status": res.status,
-                        "count": res.fields.totalCount,
-                        "message": res.message,
-                        "data": res.data
-                    };
-                },
-                response: {
-                    statusName: "status",
-                    statusCode: 200,
-                    msgName: "message",
-                    countName: "count",
-                    dataName: "data"
-                }
-            });
-            return false;
-        });
-    });
+<!-- 操作工具栏 -->
+<script type="text/html" id="toolbar">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-xs layui-btn-warm" lay-event="edit">编辑</button>
+        <button class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</button>
+        <button class="layui-btn layui-btn-xs layui-btn-normal" lay-event="restore">恢复</button>
+    </div>
 </script>
+<script th:src="@{/static/back/js/image-list.min.js}"></script>
 </html>

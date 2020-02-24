@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * 博客类型Controller
@@ -27,7 +28,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/blog_type")
-@Api(value = "博客分类类型Controller", tags = {"博客类型Controller"})
+@Api(value = "ReBlogTypeController", tags = {"博客类型接口"})
 public class ReBlogTypeController {
 
     private IReBlogTypeService iReBlogTypeService;
@@ -47,8 +48,8 @@ public class ReBlogTypeController {
     @ApiOperation(value = "新增一个博客类型", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReBlogTypeSaveDTO reBlogTypeSaveDTO) {
         ReBlogType entity = new ReBlogType();
-        entity.setStatus((byte) 1);
         BeanUtils.copyProperties(reBlogTypeSaveDTO, entity);
+        entity.setStatus((byte) 1);
         entity.setCreateTime(new Date());
         entity.setModifyTime(new Date());
         return iReBlogTypeService.saveEntity(entity);
@@ -91,9 +92,8 @@ public class ReBlogTypeController {
     @PostMapping("/search")
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
     public JsonResultVO search(final String name, @Validated PageDTO pageDTO) {
-        if (null == name) {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR);
-        }
+        Optional.ofNullable(name)
+                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         return iReBlogTypeService.search(name, pageDTO);
     }
 }

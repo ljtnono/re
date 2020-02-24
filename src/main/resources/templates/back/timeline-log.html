@@ -9,8 +9,8 @@
           content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0"/>
     <link rel="stylesheet" th:href="@{/static/back/css/font.css}">
     <link rel="stylesheet" th:href="@{/static/back/css/xadmin.css}">
-    <script th:src="@{/static/back/lib/layui/layui.js}" charset="utf-8"></script>
-    <script th:src="@{/static/back/js/xadmin.js}"></script>
+    <script th:src="@{/static/back/lib/layui/layui.js}"></script>
+    <script th:src="@{/static/back/js/xadmin.min.js}"></script>
     <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
     <!--[if lt IE 9]>
     <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -45,42 +45,6 @@
         </div>
     </div>
 </div>
-<script th:inline="javascript">
-    layui.use(['util'], function () {
-        let util = layui.util;
-        $.ajax({
-            url: "/timeline/listUpdateLogTimeline",
-            method: "GET",
-            success: function (res) {
-                if (res.request === "success" && res.status === 200) {
-                    for (let i = 0; i < res.data.length; i++) {
-                        if (res.data[i].status !== 0) {
-                            let item = "<li class=\"layui-timeline-item\">" +
-                                "                            <i class=\"layui-icon layui-timeline-axis\">&#xe63f;</i>" +
-                                "                            <div class=\"layui-timeline-content layui-text\">" +
-                                "                                <h3 class=\"layui-timeline-title\">" + util.toDateString(res.data[i].pushDate, "yyyy-MM-dd") + "</h3>" +
-                                "                                <p>" +
-                                res.data[i].content +
-                                "                                </p>" +
-                                "                            </div>" +
-                                "                        </li>";
-                            $("ul.layui-timeline").append(item);
-                        }
-                    }
-                } else {
-                    layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
-                }
-            },
-            error: function (res) {
-                if (res) {
-                    layer.msg(res);
-                } else {
-                    layer.msg("请求错误，请检查网络", {icon: 2});
-                }
-            }
-        });
-    });
-
-</script>
+<script th:src="@{/static/back/js/timeline-log.min.js}"></script>
 </body>
 </html>

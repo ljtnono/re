@@ -32,6 +32,7 @@ public class ReBlogSaveDTO implements Serializable {
     /** 博客的作者 */
     @NotEmpty(message = "博客作者不能为空")
     @NotNull(message = "博客作者不能为null")
+    @Length(min = 2, max = 10, message = "博客作者2-10个字符")
     private String author;
 
     /** 博客的类型 */

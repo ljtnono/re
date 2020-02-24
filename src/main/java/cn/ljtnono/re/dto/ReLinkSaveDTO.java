@@ -28,11 +28,12 @@ public class ReLinkSaveDTO implements Serializable {
 
     /** 链接名 */
     @NotNull(message = "链接名不能为null")
+    @Length(min = 2, max = 20, message = "链接类型名为2-20个字符")
     private String name;
 
     /** 链接所属类型 */
     @NotNull
-    @Length(min = 2, max = 20, message = "类型所属类型为2-20个字符")
+    @Length(min = 2, max = 20, message = "链接类型为2-20个字符")
     private String type;
 
 }

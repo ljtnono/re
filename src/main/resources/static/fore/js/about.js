@@ -23,6 +23,7 @@ myChart.showLoading();
 $.ajax({
     url: "/skill",
     method: "GET",
+    dataType: "json",
     success: function (res) {
         if (res.request === "success" && res.status === 200) {
             let data = [];
@@ -36,8 +37,8 @@ $.ajax({
                             color: color[i % color.length]
                         }
                     });
+                    xAxis.push(res.data[i].name);
                 }
-                xAxis.push(res.data[i].name);
             }
             myChart.hideLoading();
             option.xAxis = {

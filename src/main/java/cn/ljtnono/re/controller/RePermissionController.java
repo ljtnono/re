@@ -3,6 +3,7 @@ package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.entity.RePermission;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +17,7 @@ import java.io.Serializable;
  */
 @RestController
 @RequestMapping("/permission")
+@Api(value = "RePermissionController", tags = {"权限接口"})
 public class RePermissionController {
 
     public JsonResultVO listEntityAll() {

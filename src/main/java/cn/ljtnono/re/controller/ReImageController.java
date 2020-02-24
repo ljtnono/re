@@ -8,9 +8,10 @@ import cn.ljtnono.re.service.IReImageService;
 import cn.ljtnono.re.util.FtpClientUtil;
 import cn.ljtnono.re.util.StringUtil;
 import cn.ljtnono.re.vo.JsonResultVO;
+import cn.ljtnono.re.vo.MarkdownEditorUploadImageVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -29,9 +30,10 @@ import java.util.Objects;
  * @date 2020/1/19
  * @version 1.0.2
  */
+@Slf4j
 @RestController
 @RequestMapping("/image")
-@Slf4j
+@Api(value = "ReImageController", tags = {"图片接口"})
 public class ReImageController {
 
     private IReImageService iReImageService;
@@ -65,8 +67,12 @@ public class ReImageController {
         reImage.setOriginName(originalFilename.substring(0, originalFilename.lastIndexOf(".")));
         reImage.setType(extName);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String name = authentication.getName();
-        reImage.setOwner(name);
+        if (authentication.isAuthenticated()) {
+            String name = authentication.getName();
+            reImage.setOwner(name);
+        } else {
+            reImage.setOwner("ljtnono");
+        }
         reImage.setUrl(GlobalVariableEnum.RE_FTP_SAVE_PREFIX.getValue() + "/images/" + originalFilename);
         return reImage;
     }
@@ -80,8 +86,8 @@ public class ReImageController {
 
     @PostMapping("/upload/md")
     @ApiOperation(value = "editor上传图片接口", notes = "这里参数只能为editormd-image-file", httpMethod = "POST")
-    public JSONObject uploadImageFromMarkdownEditor(@RequestParam(value = "editormd-image-file") MultipartFile multipartFile) {
-        JSONObject result = new JSONObject();
+    public MarkdownEditorUploadImageVO uploadImageFromMarkdownEditor(@RequestParam(value = "editormd-image-file") MultipartFile multipartFile) {
+        MarkdownEditorUploadImageVO result = new MarkdownEditorUploadImageVO();
         try {
             boolean b = ftpClientUtil.uploadFile(multipartFile);
             if (b) {
@@ -89,22 +95,22 @@ public class ReImageController {
                 ReImage reImage = getReImageFromMultipartFile(multipartFile);
                 JsonResultVO jsonResultVO = iReImageService.saveEntity(reImage);
                 if (jsonResultVO.getStatus() == HttpStatus.OK.value()) {
-                    result.put("url", reImage.getUrl());
-                    result.put("success", 1);
-                    result.put("message", "上传成功");
+                    result.setUrl(reImage.getUrl());
+                    result.setSuccess(1);
+                    result.setMessage("上传成功");
                 } else {
-                    result.put("success", 0);
-                    result.put("message", "上传失败");
+                    result.setSuccess(0);
+                    result.setMessage("上传失败");
                 }
             } else {
                 log.error("图片 {} 上传失败", multipartFile.getOriginalFilename());
-                result.put("success", 0);
-                result.put("message", "上传失败");
+                result.setSuccess(0);
+                result.setMessage("上传失败");
             }
         } catch (Exception e) {
             log.error("图片 {} 上传失败", multipartFile.getOriginalFilename());
-            result.put("success", 0);
-            result.put("message", "上传失败");
+            result.setSuccess(0);
+            result.setMessage("上传失败");
         }
         return result;
     }
@@ -146,7 +152,7 @@ public class ReImageController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接originName和url还有type模糊查询", notes = "根据链接originName和url还有type模糊查询", httpMethod = "POST")
-    public JsonResultVO search(ReImageSearchDTO reImageSearchDTO, PageDTO pageDTO) {
+    public JsonResultVO search(ReImageSearchDTO reImageSearchDTO, @Validated PageDTO pageDTO) {
         return iReImageService.search(reImageSearchDTO, pageDTO);
     }
 }

@@ -24,13 +24,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 链接类型服务实现类
  * @author ljt
  * @date 2019/11/23
- * @version 1.0
+ * @version 1.0.1
  */
 @Service
 @Slf4j
@@ -48,164 +47,85 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
 
     @Override
     public JsonResultVO saveEntity(ReLinkType entity) {
-        Optional<ReLinkType> optionalReBook = Optional.ofNullable(entity);
-        optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
-        String key = ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
-                .replace(":id", ":" + entity.getId())
-                .replace(":name", ":" + entity.getName());
         if (save) {
             // 将实体类存储到缓存中去
-            redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            // 删除缓存中的相关数据
-            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
-                    .getKey().replace(":page", ":*")
-                    .replace(":count", ":*"));
-            redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
-                    .getKey().replace(":page", ":*")
-                    .replace(":count", ":*"));
-            // 删除所有的link缓存相关
-            redisUtil.deleteByPattern("re_link:*");
-            redisUtil.deleteByPattern("re_link_page:*");
-            redisUtil.deleteByPattern("re_link_page_total:*");
+            deleteCacheAll();
+            setCache(entity);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
+            log.error("新增链接类型失败, id = {}", entity.getId());
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
-        if (linkTypeId >= 1001) {
-            // 在数据库中更新
-            boolean result = update(new UpdateWrapper<ReLinkType>().set("status", 0).eq("id", linkTypeId));
-            ReLinkType reLinkType = getById(id);
-            // 查看是否有相关类型的博客
-            List<ReLink> type = iReLinkService.list(new QueryWrapper<ReLink>().eq("type", reLinkType.getName()));
-            if (null != type && type.size() > 0) {
-                iReLinkService.update(new UpdateWrapper<ReLink>().set("status", 0).eq("type", reLinkType.getName()));
-            }
-            if (result) {
-                // 删除缓存中的相关数据
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY
-                        .getKey().replace(":id", ":*")
-                        .replace(":name", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                // 删除所有的link缓存相关
-                redisUtil.deleteByPattern("re_link:*");
-                redisUtil.deleteByPattern("re_link_page:*");
-                redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        // 在数据库中更新
+        boolean result = update(new UpdateWrapper<ReLinkType>().set("status", 0).eq("id", linkTypeId));
+        ReLinkType reLinkType = getById(id);
+        // 查看是否有相关类型的博客
+        List<ReLink> type = iReLinkService.list(new QueryWrapper<ReLink>().eq("type", reLinkType.getName()));
+        if (null != type && type.size() > 0) {
+            iReLinkService.update(new UpdateWrapper<ReLink>().set("status", 0).eq("type", reLinkType.getName()));
+        }
+        if (result) {
+            deleteCacheAll();
+            return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("删除链接类型失败, id = {}", id);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO updateEntityById(Serializable id, ReLinkType entity) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        Optional<ReLinkType> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
-        if (linkTypeId >= 1001) {
-            boolean updateResult = update(entity, new UpdateWrapper<ReLinkType>().eq("id", linkTypeId));
-            if (updateResult) {
-                // 删除相关缓存
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY
-                        .getKey().replace(":id", ":*")
-                        .replace(":name", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                // 删除所有的link缓存相关
-                redisUtil.deleteByPattern("re_link:*");
-                redisUtil.deleteByPattern("re_link_page:*");
-                redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResultVO.successForMessage("操作成功", 200);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        boolean updateResult = update(entity, new UpdateWrapper<ReLinkType>().eq("id", linkTypeId));
+        if (updateResult) {
+            deleteCacheAll();
+            return JsonResultVO.successForMessage("操作成功", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("更新链接类型失败, id = {}", id);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
 
     @Override
     public JsonResultVO getEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
-        if (linkTypeId >= 1001) {
-            JsonResultVO jsonResultVO;
-            // 如果缓存中存在，那么首先从缓存中获取
-            String key = ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
-                    .replace(":id", ":" + linkTypeId)
-                    .replace(":name", ":*");
-            boolean b = redisUtil.hasKeyByPattern(key);
-            // 如果存在，那么直接获取
-            ReLinkType reLinkType;
-            if (b) {
-                reLinkType = (ReLinkType) redisUtil.getByPattern(key);
-                if (reLinkType == null || reLinkType.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-            } else {
-                reLinkType = getById(linkTypeId);
-                // 如果不存在，那么返回 找不到资源错误
-                if (reLinkType == null || reLinkType.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-                redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
-                        .replace(":id", ":" + reLinkType.getId())
-                        .replace(":name", ":" + reLinkType.getName()), reLinkType, RedisUtil.EXPIRE_TIME_DEFAULT);
+        JsonResultVO jsonResultVO;
+        // 如果缓存中存在，那么首先从缓存中获取
+        String key = ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
+                .replace(":id", ":" + linkTypeId)
+                .replace(":name", ":*");
+        boolean b = redisUtil.hasKeyByPattern(key);
+        // 如果存在，那么直接获取
+        ReLinkType reLinkType;
+        if (b) {
+            reLinkType = (ReLinkType) redisUtil.getByPattern(key);
+            if (reLinkType == null || reLinkType.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
             }
-            jsonResultVO = JsonResultVO.success(Collections.singletonList(reLinkType), 1);
-            jsonResultVO.setMessage("操作成功");
-            return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
-        }
-    }
-
-    @Override
-    public JsonResultVO listEntityAll() {
-        List<ReLinkType> reLinkTypeList = list();
-        Optional<List<ReLinkType>> optionalList = Optional.ofNullable(reLinkTypeList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
-        optionalList.ifPresent((l) -> l.forEach(reLinkType -> {
+            reLinkType = getById(linkTypeId);
+            // 如果不存在，那么返回 找不到资源错误
+            if (reLinkType == null || reLinkType.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+            }
             redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
                     .replace(":id", ":" + reLinkType.getId())
                     .replace(":name", ":" + reLinkType.getName()), reLinkType, RedisUtil.EXPIRE_TIME_DEFAULT);
-        }));
-        optionalList.ifPresent(l -> log.info("从数据库中获取所有链接类型列表，总条数：" + l.size()));
-        JsonResultVO success = JsonResultVO.success(reLinkTypeList, reLinkTypeList.size());
-        success.setMessage("操作成功");
-        return success;
+        }
+        jsonResultVO = JsonResultVO.success(Collections.singletonList(reLinkType), 1);
+        jsonResultVO.setMessage("操作成功");
+        return jsonResultVO;
     }
-
 
     @Override
     public JsonResultVO listLinkTypePage(Integer page, Integer count) {
-        Optional<Integer> optionalPage = Optional.ofNullable(page);
-        Optional<Integer> optionalCount = Optional.ofNullable(count);
-        optionalPage.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalCount.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         String redisKey = ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY.getKey()
                 .replace(":page", ":" + page)
                 .replace(":count", ":" + count);
@@ -231,57 +151,68 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
 
     @Override
     public JsonResultVO restore(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int linkTypeId = Integer.parseInt(id.toString());
-        if (linkTypeId >= 1001) {
-            // 更新状态
-            boolean update = update(new UpdateWrapper<ReLinkType>().set("status", 1).eq("id", linkTypeId));
-            ReLinkType reLinkType = getById(id);
-            List<ReLink> type = iReLinkService.list(new QueryWrapper<ReLink>().eq("type", reLinkType.getName()));
-            if (null != type && type.size() > 0) {
-                iReLinkService.update(new UpdateWrapper<ReLink>().set("status", 1).eq("type", reLinkType.getName()));
-            }
-            if (update) {
-                // 删除缓存中的相关数据
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY
-                        .getKey().replace(":id", ":*")
-                        .replace(":name", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                redisUtil.deleteByPattern(ReEntityRedisKeyEnum.RE_LINK_TYPE_PAGE_TOTAL_KEY
-                        .getKey().replace(":page", ":*")
-                        .replace(":count", ":*"));
-                // 删除所有的link缓存相关
-                redisUtil.deleteByPattern("re_link:*");
-                redisUtil.deleteByPattern("re_link_page:*");
-                redisUtil.deleteByPattern("re_link_page_total:*");
-                return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        // 更新状态
+        boolean update = update(new UpdateWrapper<ReLinkType>().set("status", 1).eq("id", linkTypeId));
+        ReLinkType reLinkType = getById(id);
+        List<ReLink> type = iReLinkService.list(new QueryWrapper<ReLink>().eq("type", reLinkType.getName()));
+        if (null != type && type.size() > 0) {
+            iReLinkService.update(new UpdateWrapper<ReLink>().set("status", 1).eq("type", reLinkType.getName()));
+        }
+        if (update) {
+            deleteCacheAll();
+            return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("恢复链接类型失败, id = {}", id);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
-    /**
-     * 链接类型名称模糊查询
-     *
-     * @param name    链接类型名称
-     * @param pageDTO 页码对象
-     * @return JsonResult 对象
-     */
     @Override
     public JsonResultVO search(final String name, PageDTO pageDTO) {
-        Optional<String> optionalName = Optional.ofNullable(name);
-        optionalName.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_ERROR));
-        IPage<ReLinkType> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), new QueryWrapper<ReLinkType>().like("name", name));
+        QueryWrapper<ReLinkType> reLinkTypeQueryWrapper = new QueryWrapper<ReLinkType>()
+                .like("name", name)
+                .orderByDesc("modify_time");
+        IPage<ReLinkType> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reLinkTypeQueryWrapper);
         if (pageResult != null) {
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
+            log.error("查询链接类型失败, name = {}, pageDTO = {}", name, pageDTO);
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
+    }
+
+    @Override
+    public JsonResultVO listEntityAll() {
+        List<ReLinkType> reLinkTypeList = list(new QueryWrapper<ReLinkType>().orderByDesc("modify_time"));
+        setCache(reLinkTypeList);
+        log.info("从数据库中获取所有链接类型列表，总条数：" + reLinkTypeList.size());
+        JsonResultVO success = JsonResultVO.success(reLinkTypeList, reLinkTypeList.size());
+        success.setMessage("操作成功");
+        return success;
+    }
+
+    @Override
+    public void setCache(ReLinkType value) {
+        redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
+                .replace(":id", ":" + value.getId())
+                .replace(":name", ":" + value.getName()), value, RedisUtil.EXPIRE_TIME_DEFAULT);
+    }
+
+    @Override
+    public void setCache(List<ReLinkType> cache) {
+        cache.forEach(this::setCache);
+    }
+
+    @Override
+    public void deleteCacheAll() {
+        // 删除缓存中的相关数据
+        redisUtil.deleteByPattern("re_link_type:*");
+        redisUtil.deleteByPattern("re_link_type_page:*");
+        redisUtil.deleteByPattern("re_link_type_page_total:*");
+        // 删除所有的link缓存相关
+        redisUtil.deleteByPattern("re_link:*");
+        redisUtil.deleteByPattern("re_link_page:*");
+        redisUtil.deleteByPattern("re_link_page_total:*");
     }
 }

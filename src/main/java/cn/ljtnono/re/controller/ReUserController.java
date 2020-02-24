@@ -8,6 +8,7 @@ import cn.ljtnono.re.entity.ReUser;
 import cn.ljtnono.re.service.IReUserService;
 import cn.ljtnono.re.util.Md5Util;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "ReUserController", tags = {"用户接口"})
 public class ReUserController {
 
     private IReUserService iReUserService;
@@ -60,7 +62,7 @@ public class ReUserController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新用户", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReUserUpdateDTO reUserUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReUserUpdateDTO reUserUpdateDTO) {
         ReUser entity = new ReUser();
         BeanUtils.copyProperties(reUserUpdateDTO, entity);
         entity.setPassword(Md5Util.getInstance().getMd5LowerCase(reUserUpdateDTO.getPassword()));

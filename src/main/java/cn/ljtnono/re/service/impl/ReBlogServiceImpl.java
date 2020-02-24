@@ -74,6 +74,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             totalRedisKey = totalRedisKey.replace(":type", ":ALL");
         }
         // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
+        // TODO 这里可以尝试先测试key是否存在
         List<?> objects = redisUtil.lGet(redisKey, 0, -1);
         if (!objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页博客数据，每页获取" + count + "条");
@@ -83,12 +84,12 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             // 按照时间降序排列
             QueryWrapper<ReBlog> reBlogQueryWrapper;
             if (!StringUtil.isEmpty(type)) {
-                reBlogQueryWrapper = new QueryWrapper<ReBlog>().eq("type", type).orderByDesc("modify_time");
+                reBlogQueryWrapper = new QueryWrapper<ReBlog>().eq("type", type).orderByDesc("modify_time", "view", "comment");
             } else {
-                reBlogQueryWrapper = new QueryWrapper<ReBlog>().orderByDesc("modify_time");
+                reBlogQueryWrapper = new QueryWrapper<ReBlog>().orderByDesc("modify_time", "view", "comment");
             }
             IPage<ReBlog> pageResult = page(new Page<>(page, count), reBlogQueryWrapper);
-            log.info("获取" + page + "页博客数据，每页获取" + count + "条");
+            log.info("从数据库中获取" + page + "页博客数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
@@ -99,6 +100,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     @Override
     public JsonResultVO search(ReBlogSearchDTO reBlogSearchDTO, PageDTO pageDTO) {
         QueryWrapper<ReBlog> reBlogQueryWrapper = new QueryWrapper<>();
+        reBlogQueryWrapper.orderByDesc("modify_time", "view", "comment");
         if (!StringUtil.isEmpty(reBlogSearchDTO.getTitle())) {
             reBlogQueryWrapper.like("title", reBlogSearchDTO.getTitle());
         }
@@ -112,6 +114,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         if (pageResult != null) {
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
+            log.error("分页查询错误 {} {}", reBlogSearchDTO, pageDTO);
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
@@ -132,8 +135,8 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
-            IPage<ReBlog> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlog>().orderByDesc("modify_time"));
-            log.info("获取" + page + "页博客数据，每页获取" + count + "条");
+            IPage<ReBlog> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlog>().orderByDesc("modify_time", "view", "comment"));
+            log.info("从数据库中获取" + page + "页博客数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
@@ -150,85 +153,72 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             setCache(entity);
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
+            log.error("新增博客失败, id = {}", entity.getId());
             throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int blogId = Integer.parseInt(id.toString());
-        if (blogId >= 10001) {
-            boolean deleteResult = update(new UpdateWrapper<ReBlog>().set("status", 0).eq("id", blogId));
-            if (deleteResult) {
-                // 查出来
-                ReBlog byId = getById(blogId);
-                // 删除所有缓存
-                deleteCacheAll();
-                return JsonResultVO.success(Collections.singletonList(byId), 1);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        boolean deleteResult = update(new UpdateWrapper<ReBlog>().set("status", 0).eq("id", blogId));
+        if (deleteResult) {
+            // 查出来
+            ReBlog byId = getById(blogId);
+            // 删除所有缓存
+            deleteCacheAll();
+            // 返回删除的博客的整体
+            return JsonResultVO.success(Collections.singletonList(byId), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("删除博客失败, id = {}", blogId);
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO updateEntityById(Serializable id, ReBlog entity) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        Optional<ReBlog> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
         int blogId = Integer.parseInt(id.toString());
-        if (blogId >= 10001) {
-            boolean updateResult = update(entity, new UpdateWrapper<ReBlog>().eq("id", blogId));
-            if (updateResult) {
-                // 删除所有缓存
-                deleteCacheAll();
-                return JsonResultVO.successForMessage("操作成功", 200);
-            } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
-            }
+        boolean updateResult = update(entity, new UpdateWrapper<ReBlog>().eq("id", blogId));
+        if (updateResult) {
+            // 删除所有缓存
+            deleteCacheAll();
+            return JsonResultVO.successForMessage("操作成功", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            log.error("更新除博客失败, id = {}", entity.getId());
+            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
 
     @Override
     public JsonResultVO getEntityById(Serializable id) {
         int blogId = Integer.parseInt(id.toString());
-        if (blogId >= 10001) {
-            JsonResultVO jsonResultVO;
-            // 如果缓存中存在，那么首先从缓存中获取
-            String key = ReEntityRedisKeyEnum.RE_BLOG_KEY.getKey()
-                    .replace(":id", ":" + blogId)
-                    .replace(":author", ":*")
-                    .replace(":title", ":*")
-                    .replace(":type", ":*");
-            boolean b = redisUtil.hasKeyByPattern(key);
-            // 如果存在，那么直接获取
-            ReBlog reBlog;
-            if (b) {
-                reBlog = (ReBlog) redisUtil.getByPattern(key);
-                if (reBlog == null || reBlog.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-            } else {
-                reBlog = getById(blogId);
-                // 如果不存在，那么返回 找不到资源错误
-                if (reBlog == null || reBlog.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
-                }
-                setCache(reBlog);
+        JsonResultVO jsonResultVO;
+        // TODO 看看是否可以改进
+        // 如果缓存中存在，那么首先从缓存中获取
+        String key = ReEntityRedisKeyEnum.RE_BLOG_KEY.getKey()
+                .replace(":id", ":" + blogId)
+                .replace(":author", ":*")
+                .replace(":title", ":*")
+                .replace(":type", ":*");
+        boolean b = redisUtil.hasKeyByPattern(key);
+        // 如果存在，那么直接获取
+        ReBlog reBlog;
+        if (b) {
+            reBlog = (ReBlog) redisUtil.getByPattern(key);
+            if (reBlog == null || reBlog.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
             }
-            jsonResultVO = JsonResultVO.success(Collections.singletonList(reBlog), 1);
-            jsonResultVO.setMessage("操作成功");
-            return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            reBlog = getById(blogId);
+            // 如果不存在，那么返回 找不到资源错误
+            if (reBlog == null || reBlog.getStatus() == 0) {
+                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+            }
+            setCache(reBlog);
         }
+        jsonResultVO = JsonResultVO.success(Collections.singletonList(reBlog), 1);
+        jsonResultVO.setMessage("操作成功");
+        return jsonResultVO;
     }
 
     @Override
@@ -247,11 +237,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
 
     @Override
     public void setCache(List<ReBlog> cache) {
-        cache.forEach(reBlog -> redisUtil.set(ReEntityRedisKeyEnum.RE_BLOG_KEY.getKey()
-                .replace(":id", ":" + reBlog.getId())
-                .replace(":author", ":" + reBlog.getAuthor())
-                .replace(":title", ":" + reBlog.getTitle())
-                .replace(":type", ":" + reBlog.getType()), reBlog, RedisUtil.EXPIRE_TIME_DEFAULT));
+        cache.forEach(this::setCache);
     }
 
     @Override

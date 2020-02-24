@@ -13,7 +13,6 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface ReBlogMapper extends BaseMapper<ReBlog> {
 
-
     /**
      * 获取所有博客的浏览量总数
      * @return 所有博客的浏览量总数

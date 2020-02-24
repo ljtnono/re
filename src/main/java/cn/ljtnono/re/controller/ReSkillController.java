@@ -7,6 +7,7 @@ import cn.ljtnono.re.dto.ReSkillUpdateDTO;
 import cn.ljtnono.re.entity.ReSkill;
 import cn.ljtnono.re.service.IReSkillService;
 import cn.ljtnono.re.vo.JsonResultVO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/skill")
+@Api(value = "ReSkillController", tags = {"技能接口"})
 public class ReSkillController {
 
     private IReSkillService iReSkillService;
@@ -52,7 +54,7 @@ public class ReSkillController {
 
     @PutMapping("/{id:\\d+}")
     @ApiOperation(value = "根据id更新一个技能实体", notes = "id只能是数字类型", httpMethod = "PUT")
-    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, ReSkillUpdateDTO reSkillUpdateDTO) {
+    public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReSkillUpdateDTO reSkillUpdateDTO) {
         ReSkill reSkill = new ReSkill();
         BeanUtils.copyProperties(reSkillUpdateDTO, reSkill);
         reSkill.setStatus((byte) 1);
@@ -85,7 +87,7 @@ public class ReSkillController {
 
     @PostMapping("/search")
     @ApiOperation(value = "根据链接name和owner模糊查询", notes = "根据链接name和owner模糊查询", httpMethod = "POST")
-    public JsonResultVO search(@Validated ReSkillSearchDTO reSkillSearchDTO, @Validated PageDTO pageDTO) {
+    public JsonResultVO search(ReSkillSearchDTO reSkillSearchDTO, @Validated PageDTO pageDTO) {
         return iReSkillService.search(reSkillSearchDTO, pageDTO);
     }
 }

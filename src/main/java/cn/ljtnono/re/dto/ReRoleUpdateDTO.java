@@ -26,7 +26,7 @@ public class ReRoleUpdateDTO implements Serializable {
     private String name;
 
     @NotNull(message = "角色描述不能为null")
-    @Length(min = 0, max = 255, message = "角色描述不能超过255个字符")
+    @Length(max = 255, message = "角色描述不能超过255个字符")
     private String description;
 
 }
