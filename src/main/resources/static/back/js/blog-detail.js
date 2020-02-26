@@ -1,10 +1,10 @@
-console.log("正在编辑博客，blogId = " + blogId);
-let options = [];
-let blogEntity;
-let blogEditor;
-layui.use(['form', 'layer'], function () {
+layui.use(['form', 'layer', 'upload'], function () {
     let form = layui.form;
     let layer = layui.layer;
+    let upload = layui.upload;
+    let options = [];
+    let blogEntity;
+    let blogEditor;
     // 判断是否存在blogId, 如果不存在就报错
     if (blogId) {
         // ajax请求获取文章类型
@@ -43,6 +43,7 @@ layui.use(['form', 'layer'], function () {
                                 // 初始化markdown编辑器
                                 blogEditor = editormd("blog-editormd", EDITOR_CONFIG);
                                 form.render();
+                                $("#coverImage").attr("src", blog.coverImage);
                             } else {
                                 layer.msg(res.message + ", 错误码: " + res.status , {icon: 2});
                             }
@@ -89,6 +90,7 @@ layui.use(['form', 'layer'], function () {
         });
         form.on('submit(form-blog-submit)', function (data) {
             let blog = data.field;
+            let coverImage = $("#coverImage").attr("src") || IMG_DEFAULT;
             layer.confirm('确认提交？', {
                 btn: ['确认', '取消']
             }, function (index) {
@@ -102,7 +104,7 @@ layui.use(['form', 'layer'], function () {
                         contentMarkdown: blogEditor.getMarkdown(),
                         contentHtml: blogEditor.getHTML(),
                         status: blogEntity.status,
-                        coverImage: blogEntity.coverImage,
+                        coverImage: coverImage,
                         view: blogEntity.view,
                         comment: blogEntity.comment
                     },
@@ -126,6 +128,33 @@ layui.use(['form', 'layer'], function () {
                 layer.close(index);
             });
             return false;
+        });
+        //普通图片上传
+        let uploadInst = upload.render({
+            elem: '#upload-button',
+            url: '/image/upload?token=' + localStorage.getItem("token"),
+            method: "POST",
+            multiple: true,
+            field: "file",
+            before: function(obj){
+                obj.preview(function(index, file, result){
+                    $('#coverImage').attr('src', result);
+                });
+            },
+            done: function(res){
+                if(res.request === "success" && res.status === 200){
+                    $('#coverImage').attr('src', res.data[0].url);
+                    layer.msg("上传成功！");
+                }
+            },
+            error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
         });
     } else {
         layer.msg("参数错误", {icon: 2});
