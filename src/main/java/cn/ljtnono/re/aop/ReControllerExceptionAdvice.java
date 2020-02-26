@@ -1,6 +1,6 @@
 package cn.ljtnono.re.aop;
 
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.exception.GlobalToViewException;
 import cn.ljtnono.re.vo.JsonResultVO;
@@ -31,31 +31,15 @@ public class ReControllerExceptionAdvice {
      * @param e 异常信息
      * @return JsonResult 携带异常信息
      */
-    @ExceptionHandler({GlobalToJsonException.class})
+    @ExceptionHandler({GlobalToJsonException.class, IllegalArgumentException.class})
     @ResponseBody
     public JsonResultVO globalToJsonExceptionHandler(GlobalToJsonException e) {
         return JsonResultVO.newBuilder()
-                .message(e.getGlobalErrorEnum().getErrorMsg())
+                .message(e.getHttpStatusEnum().getMsg())
                 .data(null)
                 .request("fail")
                 .totalCount(null)
-                .status(e.getGlobalErrorEnum().getErrorCode())
-                .build();
-    }
-
-    /**
-     * 处理参数异常信息
-     * @return JsonResult 携带异常信息
-     */
-    @ExceptionHandler({IllegalArgumentException.class})
-    @ResponseBody
-    public JsonResultVO illegalArgumentExceptionHandler() {
-        return JsonResultVO.newBuilder()
-                .message(GlobalErrorEnum.PARAM_ERROR.getErrorMsg())
-                .data(null)
-                .request("fail")
-                .totalCount(null)
-                .status(GlobalErrorEnum.PARAM_ERROR.getErrorCode())
+                .status(e.getHttpStatusEnum().getCode())
                 .build();
     }
 
@@ -67,8 +51,8 @@ public class ReControllerExceptionAdvice {
     @ExceptionHandler({GlobalToViewException.class})
     public ModelAndView globalToViewExceptionHandler(GlobalToViewException e) {
         return new ModelAndView("error/fail")
-                .addObject("errorCode", e.getGlobalErrorEnum().getErrorCode())
-                .addObject("errorMsg", e.getGlobalErrorEnum().getErrorMsg());
+                .addObject("errorCode", e.getHttpStatusEnum().getCode())
+                .addObject("errorMsg", e.getHttpStatusEnum().getMsg());
     }
 
     @ResponseBody
@@ -89,7 +73,7 @@ public class ReControllerExceptionAdvice {
      * @return JsonResultVO
      */
     public JsonResultVO handleValidatedException(Exception e) {
-        JsonResultVO resultVO = JsonResultVO.fail(GlobalErrorEnum.PARAM_ERROR.getErrorCode());
+        JsonResultVO resultVO = JsonResultVO.fail(HttpStatusEnum.PARAM_ERROR.getCode());
         JSONObject errorProperty = new JSONObject();
         BindingResult bindingResult = ((BindException) e).getBindingResult();
         if (bindingResult.hasErrors()) {
