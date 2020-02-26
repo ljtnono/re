@@ -52,7 +52,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
-                .antMatchers("/admin/**").authenticated()
+                .antMatchers("/admin/**", "/image/upload").authenticated()
                 .and()
                 .exceptionHandling();
         // 配置token拦截
