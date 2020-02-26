@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.entity.ReConfig;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReConfigMapper;
@@ -37,20 +37,11 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
         this.redisUtil = redisUtil;
     }
 
-    /**
-     * 新增单个实体类
-     *
-     * @param entity 具体的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
+
     @Override
     public JsonResultVO saveEntity(ReConfig entity) {
         Optional<ReConfig> optionalReBook = Optional.ofNullable(entity);
-        optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalReBook.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
         String key = ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
                 .replace(":id", ":" + entity.getId())
@@ -60,24 +51,15 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
-    /**
-     * 根据id删除一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {删除的实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
+
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer configId = Integer.parseInt(id.toString());
         if (configId >= 1) {
             // 在数据库中更新
@@ -94,30 +76,20 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
                 }
                 return JsonResultVO.success(Collections.singletonList(reConfig), 1);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
-    /**
-     * 根据id更新一个实体类
-     *
-     * @param id     实体类的id
-     * @param entity 要更新的实体类
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
+
     @Override
     public JsonResultVO updateEntityById(Serializable id, ReConfig entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReConfig> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
+        optionalEntity.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer configId = Integer.parseInt(id.toString());
         if (configId >= 1) {
             boolean updateResult = update(new UpdateWrapper<ReConfig>().setEntity(entity).eq("id", configId));
@@ -132,27 +104,18 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
                 }
                 return JsonResultVO.successForMessage("操作成功", 200);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
-    /**
-     * 根据id获取一个实体类
-     *
-     * @param id 实体类id
-     * @return 返回操作结果
-     * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
-     * {request: "success", status: 200, message: "操作成功“, data: {实体类}}
-     * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
+
     @Override
     public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer configId = Integer.parseInt(id.toString());
         if (configId >= 1) {
             JsonResultVO jsonResultVO;
@@ -166,14 +129,14 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
             if (b) {
                 reConfig = (ReConfig) redisUtil.getByPattern(key);
                 if (reConfig == null || reConfig.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 jsonResultVO = JsonResultVO.success(Collections.singletonList(reConfig), 1);
             } else {
                 reConfig = getById(configId);
                 // 如果不存在，那么返回 找不到资源错误
                 if (reConfig == null || reConfig.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 redisUtil.set(ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
                         .replace(":id", ":" + reConfig.getId())
@@ -183,22 +146,15 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
             jsonResultVO.setMessage("操作成功");
             return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
-    /**
-     * 获取实体类的所有列表
-     *
-     * @return 实体类所有列表
-     * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
-     * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
-     */
     @Override
     public JsonResultVO listEntityAll() {
         List<ReConfig> reConfigList = list();
         Optional<List<ReConfig>> optionalList = Optional.ofNullable(reConfigList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
+        optionalList.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR));
         optionalList.ifPresent((l) -> l.forEach(reConfig -> {
             redisUtil.set(ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
                     .replace(":id", ":" + reConfig.getId())

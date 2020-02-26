@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.entity.RePermission;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.RePermissionMapper;
@@ -45,12 +45,12 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     @Override
     public JsonResultVO saveEntity(RePermission entity) {
         Optional<RePermission> optionalReBook = Optional.ofNullable(entity);
-        optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalReBook.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
         String key = ReEntityRedisKeyEnum.RE_PERMISSION_KEY.getKey()
                 .replace(":id", ":" + entity.getId())
@@ -60,7 +60,7 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -72,12 +72,12 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“, data: {删除的实体类}}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer permissionId = Integer.parseInt(id.toString());
         if (permissionId >= 1) {
             // 在数据库中更新
@@ -94,10 +94,10 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
                 }
                 return JsonResultVO.success(Collections.singletonList(rePermission), 1);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
@@ -110,14 +110,14 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     @Override
     public JsonResultVO updateEntityById(Serializable id, RePermission entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<RePermission> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
+        optionalEntity.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer permissionId = Integer.parseInt(id.toString());
         if (permissionId >= 1) {
             boolean updateResult = update(new UpdateWrapper<RePermission>().setEntity(entity).eq("id", permissionId));
@@ -132,10 +132,10 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
                 }
                 return JsonResultVO.successForMessage("操作成功", 200);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
@@ -147,12 +147,12 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“, data: {实体类}}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     @Override
     public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer permissionId = Integer.parseInt(id.toString());
         if (permissionId >= 1) {
             JsonResultVO jsonResultVO;
@@ -166,14 +166,14 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
             if (b) {
                 rePermission = (RePermission) redisUtil.getByPattern(key);
                 if (rePermission == null || rePermission.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 jsonResultVO = JsonResultVO.success(Collections.singletonList(rePermission), 1);
             } else {
                 rePermission = getById(permissionId);
                 // 如果不存在，那么返回 找不到资源错误
                 if (rePermission == null || rePermission.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
                         .replace(":id", ":" + rePermission.getId())
@@ -183,7 +183,7 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
             jsonResultVO.setMessage("操作成功");
             return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
@@ -192,13 +192,13 @@ public class RePermissionServiceImpl extends ServiceImpl<RePermissionMapper, ReP
      *
      * @return 实体类所有列表
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
-     * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * 操作失败{request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     @Override
     public JsonResultVO listEntityAll() {
         List<RePermission> rePermissionList = list();
         Optional<List<RePermission>> optionalList = Optional.ofNullable(rePermissionList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
+        optionalList.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR));
         optionalList.ifPresent((l) -> l.forEach(rePermission -> {
             redisUtil.set(ReEntityRedisKeyEnum.RE_CONFIG_KEY.getKey()
                     .replace(":id", ":" + rePermission.getId())

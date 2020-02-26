@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.impl;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReSkillSearchDTO;
 import cn.ljtnono.re.entity.ReSkill;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReSkillMapper;
@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 技能类服务实现类
@@ -53,7 +52,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增技能失败, {}", entity);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -70,7 +69,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             return JsonResultVO.success(Collections.singletonList(reSkill), 1);
         } else {
             log.error("删除技能失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -85,7 +84,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新技能失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -105,13 +104,13 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
         if (b) {
             reSkill = (ReSkill) redisUtil.getByPattern(key);
             if (reSkill == null || reSkill.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reSkill = getById(skillId);
             // 如果不存在，那么返回 找不到资源错误
             if (reSkill == null || reSkill.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reSkill);
         }
@@ -157,7 +156,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             return JsonResultVO.success(Collections.singletonList(skill), 1);
         } else {
             log.error("恢复技能失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -177,7 +176,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询技能失败, {}, {}", reSkillSearchDTO, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 

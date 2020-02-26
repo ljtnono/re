@@ -358,13 +358,14 @@ public class ReFtpClient {
         if (!isActive()) {
             connect();
         }
-        log.info("切换目录: {}", reFtpClientConfig.getFtpServerDirBase() + path);
-        if (!ftpClient.changeWorkingDirectory(reFtpClientConfig.getFtpServerDirBase() + path)) {
+        String p = reFtpClientConfig.getFtpServerDirBase() + path;
+        log.info("切换目录: {}", p);
+        if (!ftpClient.changeWorkingDirectory(p)) {
             //如果目录不存在创建目录
-            log.info("目录不存在，进行创建: {}", reFtpClientConfig.getFtpServerDirBase() + path);
+            log.info("目录不存在，进行创建: {}", p);
             String[] dirs = path.split("/");
             String tempPath = reFtpClientConfig.getFtpServerDirBase();
-            log.info("循环创建: {}", reFtpClientConfig.getFtpServerDirBase() + path);
+            log.info("循环创建: {}", p);
             for (String dir : dirs) {
                 if (null == dir || "".equals(dir)) {
                     continue;
@@ -372,7 +373,7 @@ public class ReFtpClient {
                 tempPath += "/" + dir;
                 if (!ftpClient.changeWorkingDirectory(tempPath)) {
                     if (!ftpClient.makeDirectory(tempPath)) {
-                        log.info("循环创建: {}", reFtpClientConfig.getFtpServerDirBase() + path + "成功");
+                        log.info("循环创建: {}", p + "成功");
                         break;
                     } else {
                         ftpClient.changeWorkingDirectory(tempPath);
@@ -491,5 +492,40 @@ public class ReFtpClient {
         } else {
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * 删除当前文件夹下指定文件
+     * @param dirPath 文件所在目录路径 images document 不需要前面加 \
+     * @param name 文件名
+     * @return 删除成功返回true，失败返回false
+     */
+    public boolean deleteFile(String dirPath, String name) {
+        if (!isActive()) {
+            throw new IllegalArgumentException("ftp服务器没有连接, 请先连接再进行操作");
+        }
+        boolean flag = false;
+        try {
+            changeWorkingDirectory("/" + dirPath);
+            if (FTPReply.isPositiveCompletion(ftpClient.dele(name))) {
+                flag = true;
+                log.info("文件 {} 删除成功", name);
+            } else {
+                log.info("文件 {} 删除失败, {}", name, ftpClient.getReplyString());
+            }
+        } catch (Exception e) {
+            log.info("文件 {} 删除失败, {}", name, e.getMessage());
+            flag = false;
+        }
+        return flag;
+    }
+
+    public static void main(String[] args) throws IOException {
+        ReFtpClient ftpClient = new ReFtpClient();
+        ftpClient.init();
+        ftpClient.connect();
+//        ftpClient.uploadFile("images", "swiper_button.png", new FileInputStream("C:\\Users\\ljt\\Desktop\\swiper_button.png"));
+        boolean b = ftpClient.deleteFile("images", "swiper_button.png");
+//        System.out.println(b);
     }
 }

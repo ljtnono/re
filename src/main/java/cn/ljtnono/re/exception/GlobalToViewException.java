@@ -1,6 +1,6 @@
 package cn.ljtnono.re.exception;
 
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 
 import java.io.Serializable;
 
@@ -14,21 +14,21 @@ public class GlobalToViewException extends RuntimeException implements Serializa
 
     private static final long serialVersionUID = -6668131900686521973L;
 
-    private GlobalErrorEnum globalErrorEnum;
+    private HttpStatusEnum httpStatusEnum;
 
-    public GlobalToViewException(GlobalErrorEnum globalErrorEnum) {
-        this.globalErrorEnum = globalErrorEnum;
+    public GlobalToViewException(HttpStatusEnum httpStatusEnum) {
+        this.httpStatusEnum = httpStatusEnum;
     }
 
     public GlobalToViewException() {
-        this(GlobalErrorEnum.SYSTEM_ERROR);
+        this(HttpStatusEnum.INTERNAL_SERVER_ERROR);
     }
 
-    public GlobalErrorEnum getGlobalErrorEnum() {
-        return globalErrorEnum;
+    public HttpStatusEnum getHttpStatusEnum() {
+        return httpStatusEnum;
     }
 
-    public void setGlobalErrorEnum(GlobalErrorEnum globalErrorEnum) {
-        this.globalErrorEnum = globalErrorEnum;
+    public void setHttpStatusEnum(HttpStatusEnum httpStatusEnum) {
+        this.httpStatusEnum = httpStatusEnum;
     }
 }

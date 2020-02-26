@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.impl;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReBlogSearchDTO;
 import cn.ljtnono.re.entity.ReBlog;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBlogMapper;
@@ -45,7 +45,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     @Override
     public List<ReBlog> listGuessYouLike() {
         // 根据modify, view, comment降序获取前6条记录
-        return list(new QueryWrapper<ReBlog>().orderByDesc("modify_time", "view", "comment").last("LIMIT 6"));
+        return list(new QueryWrapper<ReBlog>().eq("status", 1).orderByDesc("modify_time", "view", "comment").last("LIMIT 6"));
     }
 
     @Override
@@ -115,7 +115,24 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("分页查询错误 {} {}", reBlogSearchDTO, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public JsonResultVO restore(Serializable id) {
+        int blogId = Integer.parseInt(id.toString());
+        boolean restoreResult = update(new UpdateWrapper<ReBlog>().set("status", 1).eq("id", blogId));
+        if (restoreResult) {
+            // 查出来
+            ReBlog byId = getById(blogId);
+            // 删除所有缓存
+            deleteCacheAll();
+            // 返回删除的博客的整体
+            return JsonResultVO.success(Collections.singletonList(byId), 1);
+        } else {
+            log.error("恢复博客失败, id = {}", blogId);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -154,7 +171,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("新增博客失败, id = {}", entity.getId());
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -171,7 +188,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.success(Collections.singletonList(byId), 1);
         } else {
             log.error("删除博客失败, id = {}", blogId);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -185,7 +202,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新除博客失败, id = {}", entity.getId());
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -206,13 +223,13 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         if (b) {
             reBlog = (ReBlog) redisUtil.getByPattern(key);
             if (reBlog == null || reBlog.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reBlog = getById(blogId);
             // 如果不存在，那么返回 找不到资源错误
             if (reBlog == null || reBlog.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reBlog);
         }
