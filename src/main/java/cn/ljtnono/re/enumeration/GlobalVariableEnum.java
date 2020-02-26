@@ -12,10 +12,7 @@ public enum GlobalVariableEnum {
     RE_IMAGE_DEFAULT_URL("https://ftp.ljtnono.cn/re/images/default_img.jpg"),
 
     /** 本项目ftp服务器的基础存储地址 */
-    RE_FTP_SAVE_PREFIX("https://ftp.ljtnono.cn/re"),
-
-    /** 所有实体类在数据库的最小id值 */
-    RE_ENTITY_MIN_ID(1001);
+    RE_FTP_SAVE_PREFIX("https://ftp.ljtnono.cn/re");
 
     private Object value;
 
