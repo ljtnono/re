@@ -13,6 +13,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,7 +67,7 @@ public class ReApplicationContextListener implements ApplicationListener<Context
      * @param servletContext application实例
      */
     private void loadApplicationContextAttribute(ServletContext servletContext) {
-        List<ReBlogType> listBlogTypeResult = (List<ReBlogType>) iReBlogTypeService.listEntityAll().getData();
+        Collection<?> listBlogTypeResult = iReBlogTypeService.listEntityAll().getData();
         // 获取首页外部链接
         List<ReLink> listLinkResult = iReLinkService.listOutLinkAll();
         // 获取所有的配置项

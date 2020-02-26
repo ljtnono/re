@@ -4,7 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReUserSearchDTO;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.entity.ReUser;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReUserMapper;
@@ -94,7 +94,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             return JsonResultVO.success(Collections.singletonList(user), 1);
         } else {
             log.error("恢复用户失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -116,7 +116,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询用户失败, {}, {}", reUserSearchDTO, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -130,7 +130,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增用户失败, {}", entity);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -148,7 +148,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             return JsonResultVO.success(Collections.singletonList(reUser), 1);
         } else {
             log.error("删除用户失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -163,7 +163,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新用户失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -184,13 +184,13 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         if (b) {
             reUser = (ReUser) redisUtil.getByPattern(key);
             if (reUser == null || reUser.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reUser = getById(userId);
             // 如果不存在，那么返回 找不到资源错误
             if (reUser == null || reUser.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reUser);
         }

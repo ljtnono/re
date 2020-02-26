@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.impl;
 
 import cn.ljtnono.re.entity.ReBookType;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBookTypeMapper;
@@ -39,7 +39,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     @Override
     public JsonResultVO saveEntity(ReBookType entity) {
         Optional<ReBookType> optionalReBook = Optional.ofNullable(entity);
-        optionalReBook.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalReBook.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         boolean save = save(entity);
         String key = ReEntityRedisKeyEnum.RE_BOOK_TYPE_KEY.getKey()
                 .replace(":id", ":" + entity.getId())
@@ -49,14 +49,14 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer bookTypeId = Integer.parseInt(id.toString());
         if (bookTypeId >= 1) {
             // 在数据库中更新
@@ -73,10 +73,10 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 }
                 return JsonResultVO.success(Collections.singletonList(reBookType), 1);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
@@ -84,8 +84,8 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     public JsonResultVO updateEntityById(Serializable id, ReBookType entity) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
         Optional<ReBookType> optionalEntity = Optional.ofNullable(entity);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        optionalEntity.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
+        optionalEntity.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         Integer bookTypeId = Integer.parseInt(id.toString());
         if (bookTypeId >= 1) {
             boolean updateResult = update(new UpdateWrapper<ReBookType>().setEntity(entity).eq("id", bookTypeId));
@@ -100,18 +100,18 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
                 }
                 return JsonResultVO.successForMessage("操作成功", 200);
             } else {
-                throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
     @Override
     public JsonResultVO getEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
-        Integer bookTypeId = Integer.parseInt(id.toString());
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
+        int bookTypeId = Integer.parseInt(id.toString());
         if (bookTypeId >= 1) {
             JsonResultVO jsonResultVO;
             // 如果缓存中存在，那么首先从缓存中获取
@@ -124,14 +124,14 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
             if (b) {
                 reBookType = (ReBookType) redisUtil.getByPattern(key);
                 if (reBookType == null || reBookType.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 jsonResultVO = JsonResultVO.success(Collections.singletonList(reBookType), 1);
             } else {
                 reBookType = getById(bookTypeId);
                 // 如果不存在，那么返回 找不到资源错误
                 if (reBookType == null || reBookType.getStatus() == 0) {
-                    throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                    throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
                 }
                 redisUtil.set(ReEntityRedisKeyEnum.RE_BOOK_TYPE_KEY.getKey()
                         .replace(":id", ":" + reBookType.getId())
@@ -141,7 +141,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
             jsonResultVO.setMessage("操作成功");
             return jsonResultVO;
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.PARAM_INVALID_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.PARAM_INVALID_ERROR);
         }
     }
 
@@ -149,7 +149,7 @@ public class ReBookTypeServiceImpl extends ServiceImpl<ReBookTypeMapper, ReBookT
     public JsonResultVO listEntityAll() {
         List<ReBookType> reBookTypeList = list();
         Optional<List<ReBookType>> optionalList = Optional.ofNullable(reBookTypeList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
+        optionalList.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR));
         optionalList.ifPresent((l) -> l.forEach(reBookType -> {
             redisUtil.set(ReEntityRedisKeyEnum.RE_BOOK_TYPE_KEY.getKey()
                     .replace(":id", ":" + reBookType.getId())

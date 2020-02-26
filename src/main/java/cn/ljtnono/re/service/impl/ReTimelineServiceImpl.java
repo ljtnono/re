@@ -4,7 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReTimelineSearchDTO;
 import cn.ljtnono.re.entity.ReTimeline;
 import cn.ljtnono.re.enumeration.DateStyleEnum;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReTimelineMapper;
@@ -54,7 +54,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增时间轴失败, {}", entity);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -70,7 +70,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             return JsonResultVO.success(Collections.singletonList(reTimeline), 1);
         } else {
             log.error("删除时间轴失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,7 +84,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新时间轴失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -102,13 +102,13 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
         if (b) {
             reTimeline = (ReTimeline) redisUtil.getByPattern(key);
             if (reTimeline == null || reTimeline.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reTimeline = getById(timelineId);
             // 如果不存在，那么返回 找不到资源错误
             if (reTimeline == null || reTimeline.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reTimeline);
         }
@@ -169,7 +169,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             return JsonResultVO.success(Collections.singletonList(timeline), 1);
         } else {
             log.error("恢复时间轴失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -204,7 +204,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询时间轴失败, {}, {}", reTimelineSearchDTO, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 

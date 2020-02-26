@@ -1,9 +1,13 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
+import cn.ljtnono.re.dto.ReImageSaveDTO;
 import cn.ljtnono.re.dto.ReImageSearchDTO;
+import cn.ljtnono.re.dto.ReImageUpdateDTO;
 import cn.ljtnono.re.entity.ReImage;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.GlobalVariableEnum;
+import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.service.IReImageService;
 import cn.ljtnono.re.util.FtpClientUtil;
 import cn.ljtnono.re.util.StringUtil;
@@ -13,7 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +25,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 图片controller
@@ -78,15 +84,38 @@ public class ReImageController {
     }
 
     @PostMapping("/upload")
-    public JsonResultVO uploadImage(MultipartFile multipartFile)  {
-        ReImage reImage = getReImageFromMultipartFile(multipartFile);
-
-        return null;
+    @PreAuthorize("hasRole('root')")
+    @ApiOperation(value = "上传图片接口", httpMethod = "POST")
+    public JsonResultVO uploadImage(@RequestParam("file") MultipartFile multipartFile) {
+        JsonResultVO jsonResultVO;
+        Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
+        try {
+            boolean b = ftpClientUtil.uploadFile(multipartFile);
+            if (b) {
+                // 创建一个image对象
+                ReImage reImage = getReImageFromMultipartFile(multipartFile);
+                jsonResultVO = iReImageService.saveEntity(reImage);
+                // 如果存储失败，那么删除
+                if (!jsonResultVO.getStatus().equals(HttpStatusEnum.OK.getCode())) {
+                    ftpClientUtil.deleteFile("images", multipartFile.getOriginalFilename());
+                } else {
+                    jsonResultVO.setData(Collections.singleton(reImage));
+                }
+            } else {
+                jsonResultVO = JsonResultVO.fail(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode());
+            }
+        } catch (Exception e) {
+            log.error("图片 {} 上传失败", multipartFile.getOriginalFilename());
+            jsonResultVO = JsonResultVO.fail(HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode());
+        }
+        return jsonResultVO;
     }
 
     @PostMapping("/upload/md")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "editor上传图片接口", notes = "这里参数只能为editormd-image-file", httpMethod = "POST")
-    public MarkdownEditorUploadImageVO uploadImageFromMarkdownEditor(@RequestParam(value = "editormd-image-file") MultipartFile multipartFile) {
+    public MarkdownEditorUploadImageVO uploadImageFromMarkdownEditor(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
+        Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         MarkdownEditorUploadImageVO result = new MarkdownEditorUploadImageVO();
         try {
             boolean b = ftpClientUtil.uploadFile(multipartFile);
@@ -94,11 +123,12 @@ public class ReImageController {
                 // 创建一个image对象
                 ReImage reImage = getReImageFromMultipartFile(multipartFile);
                 JsonResultVO jsonResultVO = iReImageService.saveEntity(reImage);
-                if (jsonResultVO.getStatus() == HttpStatus.OK.value()) {
+                if (jsonResultVO.getStatus().equals(HttpStatusEnum.OK.getCode())) {
                     result.setUrl(reImage.getUrl());
                     result.setSuccess(1);
                     result.setMessage("上传成功");
                 } else {
+                    ftpClientUtil.deleteFile("images", multipartFile.getOriginalFilename());
                     result.setSuccess(0);
                     result.setMessage("上传失败");
                 }
@@ -119,28 +149,28 @@ public class ReImageController {
     @GetMapping
     @ApiOperation(value = "获取所有图片列表", httpMethod = "GET")
     public JsonResultVO listEntityAll() {
+        return iReImageService.listEntityAll();
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('root')")
+    public JsonResultVO saveEntity(@Validated ReImageSaveDTO reImageSaveDTO) {
         return null;
     }
 
-
-    public JsonResultVO saveEntity(ReImage entity) {
+    @PutMapping("/{id:\\d+}")
+    public JsonResultVO updateEntityById(@PathVariable("id") Serializable id, ReImageUpdateDTO reImageUpdateDTO) {
         return null;
     }
 
-
-    public JsonResultVO updateEntityById(Serializable id, ReImage entity) {
+    @DeleteMapping("/{id:\\d+}")
+    public JsonResultVO deleteEntityById(@PathVariable("id") Serializable id) {
         return null;
     }
-
-
-    public JsonResultVO deleteEntityById(Serializable id) {
-        return null;
-    }
-
 
     @GetMapping("/{id:\\w+}")
     @ApiOperation(value = "根据id获取一个图片", httpMethod = "GET")
-    public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
+    public JsonResultVO getEntityById(@PathVariable("id") Serializable id) {
         return iReImageService.getEntityById(id);
     }
 

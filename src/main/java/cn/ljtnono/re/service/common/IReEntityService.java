@@ -1,6 +1,6 @@
 package cn.ljtnono.re.service.common;
 
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.vo.JsonResultVO;
 
 import java.io.Serializable;
@@ -20,7 +20,7 @@ public interface IReEntityService <T> extends IReEntityCacheManager <T> {
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     JsonResultVO saveEntity(T entity);
 
@@ -31,7 +31,7 @@ public interface IReEntityService <T> extends IReEntityCacheManager <T> {
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“, data: {删除的实体类}}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     JsonResultVO deleteEntityById(Serializable id);
 
@@ -43,7 +43,7 @@ public interface IReEntityService <T> extends IReEntityCacheManager <T> {
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     JsonResultVO updateEntityById(Serializable id, T entity);
 
@@ -54,7 +54,7 @@ public interface IReEntityService <T> extends IReEntityCacheManager <T> {
      * 操作成功返回（如果有附加信息，那么通过fields字段带回，其中特别注意如果data为null，那么不返回)
      * {request: "success", status: 200, message: "操作成功“, data: {实体类}}
      * 操作失败返回
-     * {request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * {request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     JsonResultVO getEntityById(Serializable id);
 
@@ -62,7 +62,7 @@ public interface IReEntityService <T> extends IReEntityCacheManager <T> {
      * 获取实体类的所有列表, 默认根据最后修改时间降序
      * @return 实体类所有列表
      * 操作成功{request: "success", status: 200, message: "操作成功“, data: {列表}}
-     * 操作失败{request: "fail", status: 具体错误码{@link GlobalErrorEnum}, message: 具体错误信息{@link GlobalErrorEnum}}
+     * 操作失败{request: "fail", status: 具体错误码{@link HttpStatusEnum}, message: 具体错误信息{@link HttpStatusEnum}}
      */
     JsonResultVO listEntityAll();
 }

@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.impl;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReLink;
 import cn.ljtnono.re.entity.ReLinkType;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReLinkTypeMapper;
@@ -55,7 +55,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增链接类型失败, id = {}", entity.getId());
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -75,7 +75,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
         } else {
             log.error("删除链接类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -88,7 +88,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新链接类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -107,13 +107,13 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
         if (b) {
             reLinkType = (ReLinkType) redisUtil.getByPattern(key);
             if (reLinkType == null || reLinkType.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reLinkType = getById(linkTypeId);
             // 如果不存在，那么返回 找不到资源错误
             if (reLinkType == null || reLinkType.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             redisUtil.set(ReEntityRedisKeyEnum.RE_LINK_TYPE_KEY.getKey()
                     .replace(":id", ":" + reLinkType.getId())
@@ -164,7 +164,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             return JsonResultVO.success(Collections.singletonList(reLinkType), 1);
         } else {
             log.error("恢复链接类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -178,7 +178,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询链接类型失败, name = {}, pageDTO = {}", name, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 

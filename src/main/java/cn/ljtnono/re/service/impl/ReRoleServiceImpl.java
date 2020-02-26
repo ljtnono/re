@@ -4,7 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReRoleSearchDTO;
 import cn.ljtnono.re.entity.RePermission;
 import cn.ljtnono.re.entity.ReRole;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReRoleMapper;
@@ -45,7 +45,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
     public List<RePermission> listPermissionByRoleId(Integer roleId) {
         Optional<Integer> id = Optional.ofNullable(roleId);
         // 如果为null 抛出参数缺失异常
-        id.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        id.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         // 如果id > 0 并且 id < 60 执行查询
         Optional<List<RePermission>> rePermissions = id.filter(i -> i > 0 && i < 60)
                 .map((i) -> getBaseMapper().listPermissionByRoleId(i));
@@ -89,7 +89,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
             return JsonResultVO.success(Collections.singletonList(reRole), 1);
         } else {
             log.error("恢复角色失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -108,7 +108,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询角色列表失败, {}, {}", reRoleSearchDTO, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -122,7 +122,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增角色失败, {}", entity);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -140,7 +140,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
             return JsonResultVO.success(Collections.singletonList(reRole), 1);
         } else {
             log.error("删除角色失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -154,7 +154,7 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新角色失败, {}", entity);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -173,13 +173,13 @@ public class ReRoleServiceImpl extends ServiceImpl<ReRoleMapper, ReRole> impleme
         if (b) {
             reRole = (ReRole) redisUtil.getByPattern(key);
             if (reRole == null || reRole.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reRole = getById(roleId);
             // 如果不存在，那么返回 找不到资源错误
             if (reRole == null || reRole.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reRole);
         }

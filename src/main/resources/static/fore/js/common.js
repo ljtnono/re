@@ -62,6 +62,16 @@ const VALINE_CONFIG = {
     avatar: 'wavatar',
     placeholder: '评论请留下您的邮箱和昵称....'
 };
+//git talk配置
+const GITTALK_CONFIG = {
+    clientID: '5cc717ab6cb59ddac50c',
+    clientSecret: 'a0d53f27cde720cb65c570cb60843309697eab0d',
+    repo: 're_comment',
+    owner: 'ljtnono',
+    admin: ['ljtnono'],
+    id: location.href,
+    distractionFreeMode: false
+};
 // 配置bootstrap提示
 $('[data-toggle="tooltip"]').tooltip();
 $('[data-toggle="popover"]').popover({

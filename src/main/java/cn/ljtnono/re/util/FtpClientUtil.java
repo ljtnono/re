@@ -122,4 +122,20 @@ public class FtpClientUtil {
         return result;
     }
 
+    //################################### 操作文件方法 ###################################//
+
+    /**
+     * 删除当前文件夹下指定文件
+     * @param dirPath 文件所在目录路径 images document 不需要前面加 \
+     * @param name 文件名
+     * @throws Exception 获取对象失败抛出异常
+     * @return 删除成功返回true，失败返回false
+     * @see ReFtpClient#deleteFile(String, String)
+     */
+    public boolean deleteFile(String dirPath, String name) throws Exception {
+        ReFtpClient reFtpClient = reFtpClientPool.borrowObject();
+        boolean b = reFtpClient.deleteFile(dirPath, name);
+        reFtpClientPool.returnObject(reFtpClient);
+        return b;
+    }
 }

@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.impl;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReImageSearchDTO;
 import cn.ljtnono.re.entity.ReImage;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReImageMapper;
@@ -139,7 +139,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         if (pageResult != null) {
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -151,14 +151,14 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
             setCache(entity);
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
         Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         int imageId = Integer.parseInt(id.toString());
         // 在数据库中更新
         boolean updateResult = update(new UpdateWrapper<ReImage>().set("status", 0).eq("id", imageId));
@@ -176,7 +176,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
             }
             return JsonResultVO.success(Collections.singletonList(reImage), 1);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -197,7 +197,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
             }
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -216,13 +216,13 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         if (b) {
             reImage = (ReImage) redisUtil.getByPattern(key);
             if (reImage == null || reImage.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reImage = getById(id);
             // 如果不存在，那么返回 找不到资源错误
             if (reImage == null || reImage.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reImage);
         }
@@ -233,9 +233,9 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
 
     @Override
     public JsonResultVO listEntityAll() {
-        List<ReImage> reImageList = list();
+        List<ReImage> reImageList = list(new QueryWrapper<ReImage>().orderByDesc("modify_time"));
         Optional<List<ReImage>> optionalList = Optional.ofNullable(reImageList);
-        optionalList.orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR));
+        optionalList.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR));
         optionalList.ifPresent(this::setCache);
         optionalList.ifPresent(l -> log.info("从数据库中获取所有图片列表，总条数：" + l.size()));
         JsonResultVO success = JsonResultVO.success(reImageList, reImageList.size());

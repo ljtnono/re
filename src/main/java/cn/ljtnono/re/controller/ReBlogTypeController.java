@@ -4,7 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReBlogTypeSaveDTO;
 import cn.ljtnono.re.dto.ReBlogTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReBlogType;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.service.IReBlogTypeService;
 import cn.ljtnono.re.vo.JsonResultVO;
@@ -93,7 +93,7 @@ public class ReBlogTypeController {
     @ApiOperation(value = "根据博客类型名字模糊查询", notes = "根据博客类型名模糊查询", httpMethod = "POST")
     public JsonResultVO search(final String name, @Validated PageDTO pageDTO) {
         Optional.ofNullable(name)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+                .orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         return iReBlogTypeService.search(name, pageDTO);
     }
 }

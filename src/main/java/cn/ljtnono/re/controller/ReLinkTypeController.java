@@ -4,7 +4,7 @@ import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.dto.ReLinkTypeSaveDTO;
 import cn.ljtnono.re.dto.ReLinkTypeUpdateDTO;
 import cn.ljtnono.re.entity.ReLinkType;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.service.IReLinkTypeService;
 import cn.ljtnono.re.vo.JsonResultVO;
@@ -83,7 +83,7 @@ public class ReLinkTypeController {
     @ApiOperation(value = "根据链接类型名字模糊查询", notes = "根据链接类型名模糊查询", httpMethod = "POST")
     public JsonResultVO search(final String name, @Validated PageDTO pageDTO) {
         Optional.ofNullable(name)
-                .orElseThrow(() -> new GlobalToJsonException(GlobalErrorEnum.PARAM_MISSING_ERROR));
+                .orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         return iReLinkTypeService.search(name, pageDTO);
     }
 

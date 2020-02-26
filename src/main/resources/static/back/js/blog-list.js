@@ -122,38 +122,69 @@ layui.use(["laydate", "table", "util", "form"], function () {
     table.on('tool(blog)', function (obj) {
         let layEvent = obj.event;
         let data = obj.data;
-        if (layEvent === "toBlog") {
-            // 弹出博客显示的窗口
-            window.parent.location.href = "/article/" + data.id;
+        if (layEvent === "restore") {
+            if (data.status === 1) {
+                layer.msg("不能恢复正常的项！", {icon: 2});
+            } else {
+                layer.confirm('确认恢复此博客？', {
+                    btn: ['确认', '取消']
+                }, function (index) {
+                    // 发送ajax请求删除
+                    $.ajax({
+                        url: "/blog/restore/" + data.id,
+                        method: "PUT",
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.request === "success" && res.status === 200) {
+                                layer.msg(res.message, {icon: 1});
+                            } else {
+                                layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                            }
+                        },
+                        error: function (res) {
+                            if (res) {
+                                layer.msg(res);
+                            } else {
+                                layer.msg("请求错误，请检查网络", {icon: 2});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
         } else if (layEvent === "edit") {
             // 打开详情窗口进行编辑
             window.parent.xadmin.add_tab(data.title, "/admin/blog-detail?blogId=" + data.id + "&token=" + localStorage.getItem("token"));
         } else if (layEvent === "delete") {
-            layer.confirm('确认删除此博客？', {
-                btn: ['确认', '取消']
-            }, function (index) {
-                // 发送ajax请求删除
-                $.ajax({
-                    url: "/blog/" + data.id,
-                    method: "DELETE",
-                    dataType: "json",
-                    success: function (res) {
-                        if (res.request === "success" && res.status === 200) {
-                            layer.msg(res.message, {icon: 1});
-                        } else {
-                            layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+            if (data.status === 0) {
+                layer.msg("不能删除已经删除的项！", {icon: 2});
+            } else {
+                layer.confirm('确认删除此博客？', {
+                    btn: ['确认', '取消']
+                }, function (index) {
+                    // 发送ajax请求删除
+                    $.ajax({
+                        url: "/blog/" + data.id,
+                        method: "DELETE",
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.request === "success" && res.status === 200) {
+                                layer.msg(res.message, {icon: 1});
+                            } else {
+                                layer.msg(res.message + ", 错误码: " + res.status, {icon: 2});
+                            }
+                        },
+                        error: function (res) {
+                            if (res) {
+                                layer.msg(res);
+                            } else {
+                                layer.msg("请求错误，请检查网络", {icon: 2});
+                            }
                         }
-                    },
-                    error: function (res) {
-                        if (res) {
-                            layer.msg(res);
-                        } else {
-                            layer.msg("请求错误，请检查网络", {icon: 2});
-                        }
-                    }
+                    });
+                    layer.close(index);
                 });
-                layer.close(index);
-            });
+            }
         }
     });
 });

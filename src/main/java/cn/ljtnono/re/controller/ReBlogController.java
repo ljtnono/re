@@ -111,4 +111,10 @@ public class ReBlogController {
         }
         return iReBlogService.search(reBlogSearchDTO, pageDTO);
     }
+
+    @PutMapping("/restore/{id:\\d+}")
+    @ApiOperation(value = "根据id恢复博客", httpMethod = "PUT")
+    public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
+        return iReBlogService.restore(id);
+    }
 }

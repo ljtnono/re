@@ -7,6 +7,7 @@ import cn.ljtnono.re.service.common.IReEntityService;
 import cn.ljtnono.re.vo.JsonResultVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -59,4 +60,11 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @return 返回结果对象
      */
     JsonResultVO search(ReBlogSearchDTO reBlogSearchDTO, PageDTO pageDTO);
+
+    /**
+     * 根据博客id恢复博客
+     * @param id 博客id
+     * @return 返回结果对象
+     */
+    JsonResultVO restore(Serializable id);
 }

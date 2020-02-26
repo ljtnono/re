@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.impl;
 import cn.ljtnono.re.dto.PageDTO;
 import cn.ljtnono.re.entity.ReBlog;
 import cn.ljtnono.re.entity.ReBlogType;
-import cn.ljtnono.re.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReBlogTypeMapper;
@@ -94,7 +94,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             return JsonResultVO.success(Collections.singletonList(reBlogType), 1);
         } else {
             log.error("恢复博客类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -112,7 +112,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             return JsonResultVO.success(pageResult.getRecords(), pageResult.getRecords().size()).addField("totalPages", pageResult.getPages()).addField("totalCount", pageResult.getTotal());
         } else {
             log.error("查询博客类型失败, name = {}, pageDTO = {}", name, pageDTO);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -127,7 +127,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             return JsonResultVO.successForMessage("操作成功！", 200);
         } else {
             log.error("新增博客类型失败, id = {}", entity.getId());
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -148,7 +148,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             return JsonResultVO.success(Collections.singletonList(reBlogType), 1);
         } else {
             log.error("删除博客类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -162,7 +162,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             return JsonResultVO.successForMessage("操作成功", 200);
         } else {
             log.error("更新博客类型失败, id = {}", id);
-            throw new GlobalToJsonException(GlobalErrorEnum.SYSTEM_ERROR);
+            throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -180,13 +180,13 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         if (b) {
             reBlogType = (ReBlogType) redisUtil.getByPattern(key);
             if (reBlogType == null || reBlogType.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
         } else {
             reBlogType = getById(blogTypeId);
             // 如果不存在，那么返回 找不到资源错误
             if (reBlogType == null || reBlogType.getStatus() == 0) {
-                throw new GlobalToJsonException(GlobalErrorEnum.NOT_EXIST_ERROR);
+                throw new GlobalToJsonException(HttpStatusEnum.NOT_FOUND);
             }
             setCache(reBlogType);
         }
