@@ -25,15 +25,15 @@
         <li>
             <a href="/articles?type=ALL&page=1&count=10"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
         </li>
-        <li>
-            <a href="/topic"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>
-        </li>
-        <li>
-            <a href="/books"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
-        </li>
-        <li>
-            <a href="/apps"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
-        </li>
+<!--        <li>-->
+<!--            <a href="/topic"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="/books"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>-->
+<!--        </li>-->
+<!--        <li>-->
+<!--            <a href="/apps"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>-->
+<!--        </li>-->
         <li>
             <a href="/support"><i class="fa fa-thumbs-up" aria-hidden="true"></i>支持我</a>
         </li>
@@ -52,18 +52,18 @@
                 <a href="/articles?type=ALL&page=1&count=10" th:if="${currentPage == 'articles'}" class="nav-active"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
                 <a href="/articles?type=ALL&page=1&count=10" th:if="${currentPage != 'articles'}"><i class="fa fa-wrench" aria-hidden="true"></i>技术文章</a>
             </li>
-            <li class="nav-item fl">
-                <a href="/topic" th:if="${currentPage == 'topic'}" class="nav-active"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>
-                <a href="/topic" th:if="${currentPage != 'topic'}"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>
-            </li>
-            <li class="nav-item fl">
-                <a href="/books" th:if="${currentPage == 'books'}" class="nav-active"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
-                <a href="/books" th:if="${currentPage != 'books'}"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>
-            </li>
-            <li class="nav-item fl">
-                <a href="/apps" th:if="${currentPage == 'apps'}" class="nav-active"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
-                <a href="/apps" th:if="${currentPage != 'apps'}"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>
-            </li>
+<!--            <li class="nav-item fl">-->
+<!--                <a href="/topic" th:if="${currentPage == 'topic'}" class="nav-active"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>-->
+<!--                <a href="/topic" th:if="${currentPage != 'topic'}"><i class="fa fa-pencil-square" aria-hidden="true"></i>专题</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item fl">-->
+<!--                <a href="/books" th:if="${currentPage == 'books'}" class="nav-active"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>-->
+<!--                <a href="/books" th:if="${currentPage != 'books'}"><i class="fa fa-book" aria-hidden="true"></i>推荐书单</a>-->
+<!--            </li>-->
+<!--            <li class="nav-item fl">-->
+<!--                <a href="/apps" th:if="${currentPage == 'apps'}" class="nav-active"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>-->
+<!--                <a href="/apps" th:if="${currentPage != 'apps'}"><i class="fa fa-gear" aria-hidden="true"></i>小应用</a>-->
+<!--            </li>-->
             <li class="nav-item fl">
                 <a href="/support" th:if="${currentPage == 'support'}" class="nav-active"><i class="fa fa-thumbs-up" aria-hidden="true"></i>支持我</a>
                 <a href="/support" th:if="${currentPage != 'support'}"><i class="fa fa-thumbs-up" aria-hidden="true"></i>支持我</a>
