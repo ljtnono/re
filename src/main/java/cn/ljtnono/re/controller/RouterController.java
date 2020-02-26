@@ -6,7 +6,6 @@ import cn.ljtnono.re.service.IReBlogService;
 import cn.ljtnono.re.util.JJWTUtil;
 import cn.ljtnono.re.util.StringUtil;
 import cn.ljtnono.re.vo.JsonResultVO;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +28,8 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @Controller
-@Api(value = "PageController", tags = {"页面路由"})
-public class PageController {
+@Api(value = "RouterController", tags = {"页面路由"})
+public class RouterController {
 
     private IReBlogService iReBlogService;
 
@@ -41,7 +40,7 @@ public class PageController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    public PageController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    public RouterController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
         this.iReBlogService = iReBlogService;
         this.jjwtUtil = jjwtUtil;
         this.userDetailsService = userDetailsService;
@@ -90,15 +89,15 @@ public class PageController {
             case "support":
                 map.addAttribute("currentPage", "support");
                 break;
-            case "topic":
-                map.addAttribute("currentPage", "topic");
-                break;
-            case "books":
-                map.addAttribute("currentPage", "books");
-                break;
-            case "apps":
-                map.addAttribute("currentPage", "apps");
-                break;
+//            case "topic":
+//                map.addAttribute("currentPage", "topic");
+//                break;
+//            case "books":
+//                map.addAttribute("currentPage", "books");
+//                break;
+//            case "apps":
+//                map.addAttribute("currentPage", "apps");
+//                break;
             case "about":
                 map.addAttribute("currentPage", "about");
                 break;
@@ -129,7 +128,8 @@ public class PageController {
         // 每访问一次，将该博客的浏览量 + 1
         modelMap.addAttribute("blog", byId);
         ReBlog next = iReBlogService.getById(Integer.parseInt(id) + 1);
-        iReBlogService.update(new UpdateWrapper<ReBlog>().eq("id", byId.getId()).set("view", byId.getView() + 1));
+        byId.setView(byId.getView() + 1);
+        iReBlogService.updateEntityById(byId.getId(), byId);
         if (next != null) {
             modelMap.addAttribute("next", next);
         }
