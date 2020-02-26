@@ -39,7 +39,7 @@
             <div th:if="${data.isEmpty()}" style="height: 1000px;text-align: center;">
                 <h1 class="f16">没有数据</h1>
             </div>
-            <article class="article mb10 p10" th:if="${!data.isEmpty()}" th:each="article : ${data}">
+            <article class="article mb10 p10" th:if="${!data.isEmpty() && article.getStatus() == 1}" th:each="article : ${data}">
                 <header class="article-header mb10">
                     <span class="article-label f12 mr5" th:text="${article.type}">
                 SpringBoot
@@ -89,7 +89,7 @@
 </body>
 <script th:src="@{/static/fore/js/articles.min.js}"></script>
 <script th:inline="javascript">
-    layui.use(['laypage', 'util'], function () {
+    layui.use(['laypage'], function () {
         let layPage = layui.laypage;
         let type = [[${type}]] || "";
         layPage.render({
