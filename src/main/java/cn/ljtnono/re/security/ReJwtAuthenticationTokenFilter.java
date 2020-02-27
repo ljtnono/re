@@ -32,7 +32,7 @@ public class ReJwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // 验证请求参数
+        // 验证请求参数，如果在
         final String authorization = request.getParameter("token");
         String username = null;
         String jwt = null;

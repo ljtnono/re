@@ -33,7 +33,7 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .description("RootElement接口文档")
-                .termsOfServiceUrl("http://www.ljtnono.cn/re")
+                .termsOfServiceUrl("https://rootelement.cn")
                 .version("v1.0.0")
                 .build();
     }

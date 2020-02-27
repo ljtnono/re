@@ -1,5 +1,7 @@
 package cn.ljtnono.re.util;
 
+import cn.ljtnono.re.enumeration.HttpStatusEnum;
+import cn.ljtnono.re.exception.GlobalToJsonException;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * JWT工具类
@@ -181,8 +184,15 @@ public class JJWTUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
+    /**
+     * 根据token解析出token中的username
+     * @param token 令牌
+     * @return username
+     */
     public String getUsernameFromToken(String token) {
         Claims claimsFromToken = getClaimsFromToken(token);
+        Optional.ofNullable(claimsFromToken)
+                .orElseThrow(() ->new GlobalToJsonException(HttpStatusEnum.FORBIDDEN));
         return claimsFromToken.get("username").toString();
     }
 

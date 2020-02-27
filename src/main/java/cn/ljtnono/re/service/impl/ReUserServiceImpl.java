@@ -6,6 +6,7 @@ import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.entity.ReUser;
 import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.enumeration.ReEntityRedisKeyEnum;
+import cn.ljtnono.re.enumeration.ReRoleEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
 import cn.ljtnono.re.mapper.ReUserMapper;
 import cn.ljtnono.re.vo.JsonResultVO;
@@ -124,7 +125,8 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
     @Override
     public JsonResultVO saveEntity(ReUser entity) {
         boolean save = save(entity);
-        if (save) {
+        boolean b = getBaseMapper().insertUserRole(entity.getId(), ReRoleEnum.ROLE_USER.getId());
+        if (save && b) {
             // 将实体类存储到缓存中去
             setCache(entity);
             return JsonResultVO.successForMessage("操作成功！", 200);
