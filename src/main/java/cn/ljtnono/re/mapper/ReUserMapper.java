@@ -3,6 +3,7 @@ package cn.ljtnono.re.mapper;
 import cn.ljtnono.re.entity.ReRole;
 import cn.ljtnono.re.entity.ReUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -33,7 +34,7 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
     /**
      * 在用户删除时删除相关表的记录
      * @param userId 用户id
-     * @return JsonResult对象
+     * @return
      */
     @Update("UPDATE re_user_role SET status = 0 WHERE user_id = #{userId}")
     boolean deleteUserRole(@Param("userId") Integer userId);
@@ -41,8 +42,18 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
     /**
      * 恢复数据库相关表中的记录
      * @param userId 用户id
-     * @return JsonResult对象
+     * @return
      */
     @Update("UPDATE re_user_role SET status = 1 WHERE user_id = #{userId}")
     boolean restoreUserRole(@Param("userId") Integer userId);
+
+
+    /**
+     * 新增用户的时候新增相关角色
+     * @param userId 用户id
+     * @param roleId 角色id
+     * @return
+     */
+    @Insert("INSERT INTO re_user_role(user_id, role_id, create_time, modify_time, status) values(#{userId}, #{roleId}, NOW(), NOW(), 1)")
+    boolean insertUserRole(@Param("userId") Integer userId, @Param("roleId") Integer roleId);
 }

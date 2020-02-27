@@ -1,7 +1,6 @@
 package cn.ljtnono.re.controller;
 
 import cn.ljtnono.re.dto.PageDTO;
-import cn.ljtnono.re.dto.ReImageSaveDTO;
 import cn.ljtnono.re.dto.ReImageSearchDTO;
 import cn.ljtnono.re.dto.ReImageUpdateDTO;
 import cn.ljtnono.re.entity.ReImage;
@@ -85,7 +84,7 @@ public class ReImageController {
 
     @PostMapping("/upload")
     @PreAuthorize("hasRole('root')")
-    @ApiOperation(value = "上传图片接口", httpMethod = "POST")
+    @ApiOperation(value = "上传图片接口", notes = "需要具有root权限",httpMethod = "POST")
     public JsonResultVO uploadImage(@RequestParam("file") MultipartFile multipartFile) {
         JsonResultVO jsonResultVO;
         Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
@@ -113,7 +112,7 @@ public class ReImageController {
 
     @PostMapping("/upload/md")
     @PreAuthorize("hasRole('root')")
-    @ApiOperation(value = "editor上传图片接口", notes = "这里参数只能为editormd-image-file", httpMethod = "POST")
+    @ApiOperation(value = "editor上传图片接口", notes = "这里参数只能为editormd-image-file，需要具有root权限", httpMethod = "POST")
     public MarkdownEditorUploadImageVO uploadImageFromMarkdownEditor(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
         Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         MarkdownEditorUploadImageVO result = new MarkdownEditorUploadImageVO();
@@ -152,18 +151,12 @@ public class ReImageController {
         return iReImageService.listEntityAll();
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('root')")
-    public JsonResultVO saveEntity(@Validated ReImageSaveDTO reImageSaveDTO) {
-        return null;
-    }
-
-    @PutMapping("/{id:\\d+}")
+    @PutMapping("/{id:\\w+}")
     public JsonResultVO updateEntityById(@PathVariable("id") Serializable id, ReImageUpdateDTO reImageUpdateDTO) {
         return null;
     }
 
-    @DeleteMapping("/{id:\\d+}")
+    @DeleteMapping("/{id:\\w+}")
     public JsonResultVO deleteEntityById(@PathVariable("id") Serializable id) {
         return null;
     }
