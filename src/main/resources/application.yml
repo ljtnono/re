@@ -47,6 +47,12 @@ spring:
         min-idle: 8
         max-wait: -1
   # 配置使用elasticsearch
+  elasticsearch:
+    rest:
+      uris: http://127.0.0.1:9200
+      username: elastic
+      password: changeme
+
 server:
   port: 8080
   tomcat:
