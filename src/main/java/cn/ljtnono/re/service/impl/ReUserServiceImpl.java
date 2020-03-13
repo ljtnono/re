@@ -106,10 +106,10 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
             reUserQueryWrapper.like("username", reUserSearchDTO.getUsername());
         }
         if (!StringUtil.isEmpty(reUserSearchDTO.getTel())) {
-            reUserQueryWrapper.like("tel", reUserSearchDTO.getUsername());
+            reUserQueryWrapper.like("tel", reUserSearchDTO.getTel());
         }
         if (!StringUtil.isEmpty(reUserSearchDTO.getEmail())) {
-            reUserQueryWrapper.like("email", reUserSearchDTO.getUsername());
+            reUserQueryWrapper.like("email", reUserSearchDTO.getEmail());
         }
         reUserQueryWrapper.orderByDesc("modify_time");
         IPage<ReUser> pageResult = page(new Page<>(pageDTO.getPage(), pageDTO.getCount()), reUserQueryWrapper);

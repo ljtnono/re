@@ -24,6 +24,8 @@ public class ReTimelineUpdateDTO implements Serializable {
 
     private static final long serialVersionUID = 7208228803587071074L;
 
+    @NotNull
+    private Integer id;
 
     @NotNull
     @Length(min = 2, max = 255, message = "内容为2-255个字符")
