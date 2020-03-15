@@ -25,15 +25,6 @@ spring:
       max-open-prepared-statements: 20
       username: root_element
       password: ljtLJT715336
-  thymeleaf:
-    mode: HTML
-    prefix: classpath:/templates/
-    suffix: .html
-    encoding: UTF-8
-    servlet:
-      content-type: text/html
-    cache: false
-    enabled: true
   redis:
     host: 139.9.73.191
     password: ljtLJT715336

@@ -117,4 +117,16 @@ public class ReBlogController {
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.restore(id);
     }
+
+    @GetMapping("/listHotArticles")
+    @ApiOperation(value = "获取热门文章列表", httpMethod = "GET")
+    public JsonResultVO listHotArticles() {
+        return iReBlogService.listHotArticles();
+    }
+
+    @GetMapping("/listGuessYouLike")
+    @ApiOperation(value = "获取猜你喜欢文章列表", httpMethod = "GET")
+    public JsonResultVO listGuessYouLike() {
+        return iReBlogService.listGuessYouLike();
+    }
 }
