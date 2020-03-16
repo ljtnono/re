@@ -41,7 +41,7 @@ public class AppController {
         this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/admin/doLogin")
+    @PostMapping("/doLogin")
     @ResponseBody
     public JsonResultVO login(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -51,5 +51,4 @@ public class AppController {
         jsonResultVO.addField("token", jwt);
         return jsonResultVO;
     }
-
 }

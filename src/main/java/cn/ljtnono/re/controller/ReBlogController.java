@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class ReBlogController {
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
+
     public JsonResultVO listEntityAll() {
         return iReBlogService.listEntityAll();
     }
