@@ -47,12 +47,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests()
-                .antMatchers("/fore/**", "/favicon.ico").permitAll()
-                .and()
+        http
                 .authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
-                .antMatchers("/admin/**", "/image/upload").authenticated()
+                .antMatchers("/image/upload").authenticated()
                 .and()
                 .exceptionHandling();
         // 配置token拦截
