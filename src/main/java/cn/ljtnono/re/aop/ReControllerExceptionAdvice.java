@@ -6,6 +6,7 @@ import cn.ljtnono.re.exception.GlobalToViewException;
 import cn.ljtnono.re.vo.JsonResultVO;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -87,5 +88,13 @@ public class ReControllerExceptionAdvice {
         }
         resultVO.setMessage("参数错误");
         return resultVO;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public JsonResultVO handlerException(AccessDeniedException e){
+        JsonResultVO fail = JsonResultVO.fail(HttpStatusEnum.FORBIDDEN.getCode());
+        fail.setMessage("请求失败！权限不足");
+        return fail;
     }
 }

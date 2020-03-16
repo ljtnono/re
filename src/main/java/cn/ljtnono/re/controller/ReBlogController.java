@@ -41,7 +41,7 @@ public class ReBlogController {
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
-
+    @PreAuthorize("hasRole('admin')")
     public JsonResultVO listEntityAll() {
         return iReBlogService.listEntityAll();
     }
