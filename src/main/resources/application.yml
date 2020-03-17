@@ -40,7 +40,7 @@ spring:
   # 配置使用elasticsearch
   elasticsearch:
     rest:
-      uris: http://127.0.0.1:9200
+      uris: 139.9.73.191:9200
       username: elastic
       password: changeme
 
