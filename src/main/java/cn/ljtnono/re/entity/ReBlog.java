@@ -1,8 +1,6 @@
 package cn.ljtnono.re.entity;
 
 import cn.ljtnono.re.entity.common.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -28,20 +26,13 @@ public class ReBlog extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -3699612037615768897L;
 
     /** 博客的id */
-    @TableId(type = IdType.AUTO)
-<<<<<<< HEAD
     @Field(type = FieldType.Integer)
-=======
->>>>>>> future
     @Id
     private Integer id;
 
     /** 博客的标题 */
-<<<<<<< HEAD
-    @Field(type = FieldType.Text, analyzer = "ik_smart")
-=======
+
     @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
->>>>>>> future
     private String title;
 
     /** 博客的作者 */
@@ -53,7 +44,6 @@ public class ReBlog extends BaseEntity implements Serializable {
     private String type;
 
     /** 博客的摘要信息 */
-<<<<<<< HEAD
     @Field(type = FieldType.Text, analyzer = "ik_smart")
     private String summary;
 
@@ -62,18 +52,7 @@ public class ReBlog extends BaseEntity implements Serializable {
     private String contentMarkdown;
 
     /** 博客的html */
-    @Field(type = FieldType.Text, analyzer = "ik_smart")
-=======
     @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
-    private String summary;
-
-    /** 博客的markdown */
-    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
-    private String contentMarkdown;
-
-    /** 博客的html */
-    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
->>>>>>> future
     private String contentHtml;
 
     /** 博客的封面图片url */
