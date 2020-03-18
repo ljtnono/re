@@ -44,14 +44,17 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
     @Override
     public List<ReLink> listOutLinkAll() {
         // 首先从缓存获取
-        List<ReLink> reLinks = (List<ReLink>) redisUtil.getByPattern("re_link:*");
-        if (reLinks == null || reLinks.size() == 0) {
+        Object byPattern = redisUtil.getByPattern("re_link:*");
+        List<ReLink> reLinks;
+        if (byPattern == null) {
             // 从数据库获取
             List<ReLink> list = list(new QueryWrapper<ReLink>().eq("type", "外部链接").orderByDesc("modify_time"));
             setCache(list);
-            return list;
+            reLinks = list;
+        } else {
+            reLinks = (List<ReLink>) byPattern;
+            log.info("从缓存中加载全部外链数据");
         }
-        log.info("从缓存中加载全部外链数据");
         return reLinks;
     }
 

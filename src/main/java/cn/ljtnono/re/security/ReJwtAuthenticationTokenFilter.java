@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,9 +34,17 @@ public class ReJwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 验证请求参数，如果在
-        final String authorization = request.getParameter("token");
+        Cookie[] cookies = request.getCookies();
+        String authorization = null;
         String username = null;
         String jwt = null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    authorization = cookie.getValue();
+                }
+            }
+        }
         if (authorization != null) {
             jwt = authorization;
             username = jjwtUtil.getUsernameFromToken(jwt);
