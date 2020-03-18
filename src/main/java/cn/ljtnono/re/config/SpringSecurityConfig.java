@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -47,12 +48,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests()
-                .antMatchers("/fore/**", "/favicon.ico").permitAll()
-                .and()
+        http
                 .authorizeRequests()
                 .antMatchers("/admin/login").permitAll()
-                .antMatchers("/admin/**", "/image/upload").authenticated()
+                .antMatchers("/image/upload").authenticated()
                 .and()
                 .exceptionHandling();
         // 配置token拦截

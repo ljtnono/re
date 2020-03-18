@@ -35,6 +35,12 @@ public class ReLinkController {
         this.iReLinkService = iReLinkService;
     }
 
+    @GetMapping
+    @ApiOperation(value = "获取所有链接", httpMethod = "GET")
+    public JsonResultVO listLinkAll() {
+        return iReLinkService.listEntityAll();
+    }
+
     @PostMapping
     @ApiOperation(value = "新增一个链接类型", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReLinkSaveDTO reLinkSaveDTO) {

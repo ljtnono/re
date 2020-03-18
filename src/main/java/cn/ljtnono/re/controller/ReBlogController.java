@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +41,7 @@ public class ReBlogController {
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
+    @PreAuthorize("hasRole('admin')")
     public JsonResultVO listEntityAll() {
         return iReBlogService.listEntityAll();
     }
@@ -116,5 +118,17 @@ public class ReBlogController {
     @ApiOperation(value = "根据id恢复博客", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.restore(id);
+    }
+
+    @GetMapping("/listHotArticles")
+    @ApiOperation(value = "获取热门文章列表", httpMethod = "GET")
+    public JsonResultVO listHotArticles() {
+        return iReBlogService.listHotArticles();
+    }
+
+    @GetMapping("/listGuessYouLike")
+    @ApiOperation(value = "获取猜你喜欢文章列表", httpMethod = "GET")
+    public JsonResultVO listGuessYouLike() {
+        return iReBlogService.listGuessYouLike();
     }
 }

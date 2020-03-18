@@ -43,9 +43,16 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     }
 
     @Override
-    public List<ReBlog> listGuessYouLike() {
+    public JsonResultVO listGuessYouLike() {
         // 根据modify, view, comment降序获取前6条记录
-        return list(new QueryWrapper<ReBlog>().eq("status", 1).orderByDesc("modify_time", "view", "comment").last("LIMIT 6"));
+        List<ReBlog> list = list(new QueryWrapper<ReBlog>().eq("status", 1).orderByDesc("modify_time", "view", "comment").last("LIMIT 6"));
+        return JsonResultVO.success(list, list.size());
+    }
+
+    @Override
+    public JsonResultVO listHotArticles() {
+        List<ReBlog> list = list(new QueryWrapper<ReBlog>().eq("status", 1).orderByDesc("modify_time", "view", "comment").last("LIMIT 6"));
+        return JsonResultVO.success(list, list.size());
     }
 
     @Override
@@ -135,6 +142,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @Override
     public JsonResultVO listBlogPage(Integer page, Integer count) {

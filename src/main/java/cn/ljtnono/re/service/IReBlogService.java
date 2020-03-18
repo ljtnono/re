@@ -30,7 +30,7 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * 获取首页猜你喜欢
      * @return 首页猜你喜欢博客数据
      */
-    List<ReBlog> listGuessYouLike();
+    JsonResultVO listGuessYouLike();
 
     /**
      * 分页查询博客列表
@@ -67,4 +67,10 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @return 返回结果对象
      */
     JsonResultVO restore(Serializable id);
+
+    /**
+     * 获取首页热门文章列表
+     * @return 热门文章列表
+     */
+    JsonResultVO listHotArticles();
 }

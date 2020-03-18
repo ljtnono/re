@@ -29,21 +29,31 @@ public class ReBlog extends BaseEntity implements Serializable {
 
     /** 博客的id */
     @TableId(type = IdType.AUTO)
+<<<<<<< HEAD
     @Field(type = FieldType.Integer)
+=======
+>>>>>>> future
     @Id
     private Integer id;
 
     /** 博客的标题 */
+<<<<<<< HEAD
     @Field(type = FieldType.Text, analyzer = "ik_smart")
+=======
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
+>>>>>>> future
     private String title;
 
     /** 博客的作者 */
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
     private String author;
 
     /** 博客的类型 */
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
     private String type;
 
     /** 博客的摘要信息 */
+<<<<<<< HEAD
     @Field(type = FieldType.Text, analyzer = "ik_smart")
     private String summary;
 
@@ -53,6 +63,17 @@ public class ReBlog extends BaseEntity implements Serializable {
 
     /** 博客的html */
     @Field(type = FieldType.Text, analyzer = "ik_smart")
+=======
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
+    private String summary;
+
+    /** 博客的markdown */
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
+    private String contentMarkdown;
+
+    /** 博客的html */
+    @Field(type = FieldType.Text, searchAnalyzer = "ik_smart", store = true, analyzer = "ik_smart")
+>>>>>>> future
     private String contentHtml;
 
     /** 博客的封面图片url */
