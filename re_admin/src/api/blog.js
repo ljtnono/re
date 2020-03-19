@@ -36,3 +36,46 @@ export const search = (searchForm, pageParam) => {
     }
   });
 };
+
+export const getBlogById = (blogId) => {
+  let id = parseInt(blogId);
+  return axios.get("/api/blog/" + id);
+};
+
+export const updateBlog = (blogForm) => {
+  const data = qs.stringify({
+    id: blogForm.id,
+    title: blogForm.title,
+    type: blogForm.type,
+    author: blogForm.author,
+    summary: blogForm.summary,
+    contentMarkdown: blogForm.contentMarkdown,
+    contentHtml: blogForm.contentHtml,
+    coverImage: blogForm.coverImage,
+    status: blogForm.status,
+    view: blogForm.view,
+    comment: blogForm.comment
+  });
+  return axios.put("/api/blog/" + blogForm.id, data, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  });
+};
+
+export const addBlog = (blogForm) => {
+  const data = qs.stringify({
+    title: blogForm.title,
+    type: blogForm.type,
+    author: blogForm.author,
+    summary: blogForm.summary,
+    contentMarkdown: blogForm.contentMarkdown,
+    contentHtml: blogForm.contentHtml,
+    coverImage: blogForm.coverImage
+  });
+  return axios.post("/api/blog", data, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  });
+};

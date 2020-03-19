@@ -38,7 +38,8 @@ export default [
         path: 'blog-detail',
         name: 'blog-detail',
         meta: {
-          title: '博客详情'
+          title: '博客详情',
+          hideInMenu: true
         },
         component: () => import('@/view/blog/blog-detail')
       },
