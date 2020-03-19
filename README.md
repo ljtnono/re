@@ -26,7 +26,7 @@
 后台系统，博客后台管理系统，不对外开放
 
 ## 项目架构
-<div style="text-align: center;">
+<div align="center">
     <img src="http://rootelement.oss-cn-beijing.aliyuncs.com/images/%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84%E5%9B%BE.png" />
     <p style="margin-bottom: 20px;">组织架构图</p>
 </div>
