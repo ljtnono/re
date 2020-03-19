@@ -1,6 +1,8 @@
 package cn.rootelement.entity;
 
 import cn.rootelement.entity.common.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -28,6 +30,7 @@ public class ReBlog extends BaseEntity implements Serializable {
     /** 博客的id */
     @Field(type = FieldType.Integer)
     @Id
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /** 博客的标题 */
