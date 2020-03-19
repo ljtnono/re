@@ -2,7 +2,6 @@ package cn.ljtnono.re.aop;
 
 import cn.ljtnono.re.enumeration.HttpStatusEnum;
 import cn.ljtnono.re.exception.GlobalToJsonException;
-import cn.ljtnono.re.exception.GlobalToViewException;
 import cn.ljtnono.re.vo.JsonResultVO;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -12,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -44,17 +42,6 @@ public class ReControllerExceptionAdvice {
                 .build();
     }
 
-    /**
-     * 处理需要返回错误页面的异常
-     * @param e 异常信息
-     * @return ModelAndView 携带了错误信息和页面
-     */
-    @ExceptionHandler({GlobalToViewException.class})
-    public ModelAndView globalToViewExceptionHandler(GlobalToViewException e) {
-        return new ModelAndView("error/fail")
-                .addObject("errorCode", e.getHttpStatusEnum().getCode())
-                .addObject("errorMsg", e.getHttpStatusEnum().getMsg());
-    }
 
     @ResponseBody
     @ExceptionHandler(BindException.class)
