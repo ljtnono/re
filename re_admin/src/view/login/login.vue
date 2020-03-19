@@ -24,11 +24,16 @@ export default {
     ]),
     handleSubmit ({ username, password }) {
       this.handleLogin({ username, password }).then(res => {
-        this.$router.push({
-          name: this.$config.homeName
-        });
+        if (res.data.request === "success" && res.data.status === 200) {
+          this.$Message.success("登陆成功");
+          this.$router.push({
+            name: this.$config.homeName
+          });
+        } else {
+          this.$Message.success(res.data.message);
+        }
       }).catch(e => {
-        console.log(e);
+        this.$Message.success(e);
       })
     }
   }

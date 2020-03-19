@@ -16,6 +16,7 @@ module.exports = {
         .set('@s', resolve('src'))
         .set('@c', resolve('src/components'))
         .set('@a', resolve('src/assets'))
+        .set('@v', resolve('src/view'))
     },
     devServer: {
         port: 8081,

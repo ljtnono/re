@@ -19,7 +19,7 @@
     methods: {
       backHome() {
         this.$router.replace({
-          name: this.$config.homeName
+          name: "index"
         })
       },
       backPrev() {
@@ -29,8 +29,8 @@
     mounted() {
       this.timer = setInterval(() => {
         if (this.second === 0) this.backPrev();
-        else this.second--
-      }, 1000)
+        else this.second--;
+      }, 1000);
     },
     beforeDestroy() {
       clearInterval(this.timer);

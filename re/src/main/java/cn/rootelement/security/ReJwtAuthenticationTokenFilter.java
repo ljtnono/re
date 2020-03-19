@@ -1,6 +1,7 @@
 package cn.rootelement.security;
 
 import cn.rootelement.util.JJWTUtil;
+import cn.rootelement.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +46,7 @@ public class ReJwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 }
             }
         }
-        if (authorization != null) {
+        if (!StringUtil.isEmpty(authorization)) {
             jwt = authorization;
             username = jjwtUtil.getUsernameFromToken(jwt);
         }
