@@ -4,11 +4,6 @@
 网站的站点：[https://rootelement.cn/](https://rootelement.cn/)<br>
 
 ## 博客的技术选型
-<div style="margin-bottom: 20px; text-align: center;">
-    <a href="https://rootelement.cn">
-        <img src="http://rootelement.oss-cn-beijing.aliyuncs.com/images/logo_word.png" />
-    </a>
-</div>
 
 [![GitHub stars](https://img.shields.io/github/stars/ljtnono/re.svg)](https://github.com/ljtnono/re/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/ljtnono/re.svg)](https://github.com/ljtnono/re/network)
