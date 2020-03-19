@@ -6,7 +6,7 @@
 ## 博客的技术选型
 <div style="margin-bottom: 20px; text-align: center;">
     <a href="https://rootelement.cn">
-        <img src="https://ftp.ljtnono.cn/re/images/logo_word.png" />
+        <img src="http://rootelement.oss-cn-beijing.aliyuncs.com/images/logo_word.png" />
     </a>
 </div>
 
