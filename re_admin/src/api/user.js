@@ -95,13 +95,6 @@ export const getUserInfo = (token) => {
   });
 };
 
-export const logout = (token) => {
-  return axios.request({
-    url: "logout",
-    method: "post"
-  });
-};
-
 export const getUnreadCount = () => {
   return axios.request({
     url: "message/count",

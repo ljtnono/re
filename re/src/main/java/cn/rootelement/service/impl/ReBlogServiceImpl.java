@@ -154,7 +154,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
                 .replace(":count", ":" + count);
         // 首先从缓存中拿 这里lGet如果查询不到，会自动返回空集合
         List<?> objects = redisUtil.lGet(redisKey, 0, -1);
-        if (!objects.isEmpty()) {
+        if (objects != null && !objects.isEmpty()) {
             log.info("从缓存中获取" + page + "页博客数据，每页获取" + count + "条");
             String getByPattern = (String) redisUtil.getByPattern(totalRedisKey);
             return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);

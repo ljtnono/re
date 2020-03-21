@@ -35,7 +35,7 @@ public class ReControllerLogAdvice {
     /**
      * 定义请求日志切入点，其切入点表达式有多种匹配方式,这里是指定路径
      */
-    @Pointcut("execution(public * cn.ljtnono.re.controller.*.*(..))")
+    @Pointcut("execution(public * cn.rootelement.controller.*.*(..))")
     public void webLogPointcut() {}
 
     /**

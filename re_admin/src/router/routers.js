@@ -392,26 +392,6 @@ export default [
       }
     ]
   },
-  // {
-  //   path: '/tools_methods',
-  //   name: 'tools_methods',
-  //   meta: {
-  //     hideInBread: true
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'tools_methods_page',
-  //       name: 'tools_methods_page',
-  //       meta: {
-  //         icon: 'ios-hammer',
-  //         title: '工具方法',
-  //         beforeCloseName: 'before_close_normal'
-  //       },
-  //       component: () => import('@/view/tools-methods/tools-methods.vue')
-  //     }
-  //   ]
-  // },
   {
     path: '/i18n',
     name: 'i18n',
@@ -428,45 +408,6 @@ export default [
           title: 'i18n'
         },
         component: () => import('@/view/i18n/i18n-page.vue')
-      }
-    ]
-  },
-  // {
-  //   path: '/error_store',
-  //   name: 'error_store',
-  //   meta: {
-  //     hideInBread: true
-  //   },
-  //   component: Main,
-  //   children: [
-  //     {
-  //       path: 'error_store_page',
-  //       name: 'error_store_page',
-  //       meta: {
-  //         icon: 'ios-bug',
-  //         title: '错误收集'
-  //       },
-  //       component: () => import('@/view/error-store/error-store.vue')
-  //     }
-  //   ]
-  // },
-  {
-    path: '/error_logger',
-    name: 'error_logger',
-    meta: {
-      hideInBread: true,
-      hideInMenu: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'error_logger_page',
-        name: 'error_logger_page',
-        meta: {
-          icon: 'ios-bug',
-          title: '错误收集'
-        },
-        component: () => import('@/view/single-page/error-logger.vue')
       }
     ]
   },

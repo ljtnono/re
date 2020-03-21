@@ -28,7 +28,7 @@ public class ReTransactionAdvice {
 
     private static final int AOP_TIME_OUT = 50000;
 
-    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.ljtnono.re.service.impl.*.*(..)))";
+    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.rootelement.service.impl.*.*(..)))";
 
     private final PlatformTransactionManager transactionManager;
 

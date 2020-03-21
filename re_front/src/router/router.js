@@ -59,8 +59,10 @@ let routes = [
   }
 ];
 
-export default new Router({
+let router = new Router({
   mode: 'history',
   base: '/',
   routes
 });
+
+export default router

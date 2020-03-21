@@ -7,10 +7,19 @@ const {title, cookieExpires, useI18n} = config;
 
 export const TOKEN_KEY = "token";
 
+/**
+ * 设置token, 默认时间为1天
+ * @param token 值
+ *
+ */
 export const setToken = (token) => {
   Cookies.set(TOKEN_KEY, token, {expires: cookieExpires || 1});
 };
 
+/**
+ * 获取token
+ * @returns {boolean|*} 存在返回token，不存在返回false
+ */
 export const getToken = () => {
   const token = Cookies.get(TOKEN_KEY);
   if (token) return token;
