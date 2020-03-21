@@ -393,25 +393,6 @@ export default [
     ]
   },
   {
-    path: '/i18n',
-    name: 'i18n',
-    meta: {
-      hideInBread: true
-    },
-    component: Main,
-    children: [
-      {
-        path: 'i18n_page',
-        name: 'i18n_page',
-        meta: {
-          icon: 'md-planet',
-          title: 'i18n'
-        },
-        component: () => import('@/view/i18n/i18n-page.vue')
-      }
-    ]
-  },
-  {
     path: '/401',
     name: 'error_401',
     meta: {

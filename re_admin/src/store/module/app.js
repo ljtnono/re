@@ -11,7 +11,6 @@ import {
   localSave,
   localRead
 } from "@/libs/util";
-import {saveErrorLogger} from "@/api/data";
 import router from "@/router";
 import routers from "@/router/routers";
 import config from "@/config";
@@ -80,28 +79,9 @@ export default {
     setLocal(state, lang) {
       localSave("local", lang);
       state.local = lang;
-    },
-    addError(state, error) {
-      state.errorList.push(error);
-    },
-    setHasReadErrorLoggerStatus(state, status = true) {
-      state.hasReadErrorPage = status;
     }
   },
   actions: {
-    addErrorLog({commit, rootState}, info) {
-      if (!window.location.href.includes("error_logger_page")) commit("setHasReadErrorLoggerStatus", false);
-      const {user: {token, userId, userName}} = rootState;
-      let data = {
-        ...info,
-        time: Date.parse(new Date()),
-        token,
-        userId,
-        userName
-      };
-      saveErrorLogger(info).then(() => {
-        commit("addError", data);
-      });
-    }
+
   }
 };

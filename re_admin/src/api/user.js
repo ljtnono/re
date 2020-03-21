@@ -1,11 +1,10 @@
-import axios from "@/libs/api.request";
 import qs from "querystring";
-import ax from "axios";
+import axios from "axios";
 
 export const listUserPage = (page, count) => {
   let p = page || 1;
   let c = count || 10;
-  return ax.get("/api/user/listUserPage", {
+  return axios.get("/api/user/listUserPage", {
     params: {
       page: p,
       count: c
@@ -15,12 +14,12 @@ export const listUserPage = (page, count) => {
 
 export const deleteUser = (index) => {
   let id = parseInt(index);
-  return ax.delete("/api/user/" + id);
+  return axios.delete("/api/user/" + id);
 };
 
 export const restoreUser = (index) => {
   let id = parseInt(index);
-  return ax.put("/api/user/restore/" + id);
+  return axios.put("/api/user/restore/" + id);
 };
 
 export const search = (searchForm, pageParam) => {
@@ -31,7 +30,7 @@ export const search = (searchForm, pageParam) => {
     page: pageParam.page,
     count: pageParam.count
   });
-  return ax.post("/api/user/search", data, {
+  return axios.post("/api/user/search", data, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
@@ -47,7 +46,7 @@ export const updateUser = (userForm) => {
     url: userForm.url,
     email: userForm.email
   });
-  return ax.put("/api/user/" + userForm.id, data, {
+  return axios.put("/api/user/" + userForm.id, data, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
@@ -55,7 +54,7 @@ export const updateUser = (userForm) => {
 };
 
 export const getUserById = (userId) => {
-  return ax.get("/api/user/" + userId);
+  return axios.get("/api/user/" + userId);
 };
 
 export const addUser = (userForm) => {
@@ -66,7 +65,7 @@ export const addUser = (userForm) => {
     tel: userForm.tel,
     email: userForm.email
   });
-  return ax.post("/api/user", data, {
+  return axios.post("/api/user", data, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
@@ -78,7 +77,7 @@ export const login = (username, password) => {
     username: username,
     password: password
   });
-  return ax.post("/api/doLogin", data, {
+  return axios.post("/api/doLogin", data, {
     headers: {
       "Content-Type": "application/x-www-form-urlencoded"
     }
@@ -86,63 +85,9 @@ export const login = (username, password) => {
 };
 
 export const getUserInfo = (token) => {
-  return ax.get("/api/user/getUserInfoByToken", {
+  return axios.get("/api/user/getUserInfoByToken", {
     params: {
       token: token
-    }
-  });
-};
-
-export const getUnreadCount = () => {
-  return axios.request({
-    url: "message/count",
-    method: "get"
-  });
-};
-
-export const getMessage = () => {
-  return axios.request({
-    url: "message/init",
-    method: "get"
-  });
-};
-
-export const getContentByMsgId = msg_id => {
-  return axios.request({
-    url: "message/content",
-    method: "get",
-    params: {
-      msg_id
-    }
-  });
-};
-
-export const hasRead = msg_id => {
-  return axios.request({
-    url: "message/has_read",
-    method: "post",
-    data: {
-      msg_id
-    }
-  });
-};
-
-export const removeReaded = msg_id => {
-  return axios.request({
-    url: "message/remove_readed",
-    method: "post",
-    data: {
-      msg_id
-    }
-  });
-};
-
-export const restoreTrash = msg_id => {
-  return axios.request({
-    url: "message/restore",
-    method: "post",
-    data: {
-      msg_id
     }
   });
 };
