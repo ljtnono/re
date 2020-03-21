@@ -8,6 +8,7 @@ import {getToken, canTurnTo, setTitle} from "@/libs/util";
 Vue.use(Router);
 
 const LOGIN_PAGE_NAME = "login";
+
 const router = new Router({
   routes,
   base: "/admin/",
