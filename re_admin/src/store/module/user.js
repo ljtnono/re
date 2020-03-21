@@ -8,15 +8,15 @@ import {
   restoreTrash,
   getUnreadCount
 } from "@/api/user";
-import {setToken, getToken} from "@/libs/util";
+import {setToken} from "@/libs/util";
 
 export default {
   state: {
     userName: "",
     userId: "",
-    avatarImgPath: "https://ftp.ljtnono.cn/re/images/avatar.png",
-    token: getToken(),
-    access: "",
+    avatarImgPath: "",
+    token: "",
+    access: [],
     hasGetInfo: false,
     unreadCount: 0,
     messageUnreadList: [],
@@ -73,16 +73,19 @@ export default {
   },
   actions: {
     // 登录
-    handleLogin({ commit }, { username, password }) {
+    handleLogin({ dispatch, commit }, { username, password }) {
       return new Promise((resolve, reject) => {
         login(username, password).then(res => {
           if (res.data.request === "success" && res.data.status === 200) {
             const data = res.data;
             commit("setToken", data.fields.token);
+            dispatch("getUserInfo").catch(e => {
+              reject(e)
+            });
             // 设置用户信息
             resolve();
           } else {
-            reject();
+            reject("登陆失败");
           }
         }).catch(err => {
           reject(err);
@@ -103,13 +106,15 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.token).then(res => {
-            const data = res.data;
-            commit("setAvatar", data.avatar);
-            commit("setUserName", data.name);
-            commit("setUserId", data.user_id);
-            commit("setAccess", data.access);
-            commit("setHasGetInfo", true);
-            resolve(data);
+            if (res.data.request === "success" && res.status === 200) {
+              let fields = res.data.fields;
+              commit("setUserName", fields.username);
+              commit("setAccess", fields.authorities);
+              commit("setAvatar", "https://ftp.ljtnono.cn/re/images/avatar.png");
+              commit("setHasGetInfo", true);
+            } else {
+              reject("获取用户信息失败");
+            }
           }).catch(err => {
             reject(err);
           });

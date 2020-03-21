@@ -86,12 +86,10 @@ export const login = (username, password) => {
 };
 
 export const getUserInfo = (token) => {
-  return axios.request({
-    url: "get_info",
+  return ax.get("/api/user/getUserInfoByToken", {
     params: {
-      token
-    },
-    method: "get"
+      token: token
+    }
   });
 };
 
