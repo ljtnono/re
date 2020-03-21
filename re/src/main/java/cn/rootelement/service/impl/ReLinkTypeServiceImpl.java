@@ -52,7 +52,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
             // 将实体类存储到缓存中去
             deleteCacheAll();
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增链接类型失败, id = {}", entity.getId());
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -85,7 +85,7 @@ public class ReLinkTypeServiceImpl extends ServiceImpl<ReLinkTypeMapper, ReLinkT
         boolean updateResult = update(entity, new UpdateWrapper<ReLinkType>().eq("id", linkTypeId));
         if (updateResult) {
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新链接类型失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);

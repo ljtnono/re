@@ -402,7 +402,10 @@ public enum HttpStatusEnum {
     PARAM_INVALID_ERROR(10003, "参数无效"),
 
     /** 参数异常 */
-    PARAM_ERROR(10004, "参数异常");
+    PARAM_ERROR(10004, "参数异常"),
+
+    /** token过期 */
+    TOKEN_EXPIRED(10005, "token过期");
 
     /** 状态码 */
     private Integer code;

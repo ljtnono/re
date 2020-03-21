@@ -47,7 +47,7 @@ public class AppController {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String jwt = jjwtUtil.generateToken(userDetails);
-        JsonResultVO jsonResultVO = JsonResultVO.successForMessage("登陆成功", 200);
+        JsonResultVO jsonResultVO = JsonResultVO.forMessage("登陆成功", 200);
         jsonResultVO.addField("token", jwt);
         return jsonResultVO;
     }

@@ -149,7 +149,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         if (save) {
             // 将实体类存储到缓存中去
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
@@ -195,7 +195,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
             if (b) {
                 redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
             }
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }

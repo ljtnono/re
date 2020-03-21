@@ -124,7 +124,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
             // 将实体类存储到缓存中去
             deleteCacheAll();
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增博客类型失败, id = {}", entity.getId());
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -159,7 +159,7 @@ public class ReBlogTypeServiceImpl extends ServiceImpl<ReBlogTypeMapper, ReBlogT
         if (updateResult) {
             // 删除所有的缓存
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新博客类型失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);

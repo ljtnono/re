@@ -106,7 +106,7 @@ public class JsonResultVO implements Serializable {
      * @param status 响应状态码
      * @return 返回通用的成功消息JsonResult模板
      */
-    public static JsonResultVO successForMessage(String message, Integer status) {
+    public static JsonResultVO forMessage(String message, Integer status) {
         JsonResultVO success = new JsonResultVO();
         success.setRequest("success");
         success.setStatus(status);

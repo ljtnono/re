@@ -5,18 +5,22 @@ import cn.rootelement.dto.ReUserSaveDTO;
 import cn.rootelement.dto.ReUserSearchDTO;
 import cn.rootelement.dto.ReUserUpdateDTO;
 import cn.rootelement.entity.ReUser;
+import cn.rootelement.enumeration.HttpStatusEnum;
 import cn.rootelement.service.IReUserService;
+import cn.rootelement.util.JJWTUtil;
 import cn.rootelement.util.Md5Util;
 import cn.rootelement.vo.JsonResultVO;
+import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 /**
  * 用户controller
@@ -91,5 +95,31 @@ public class ReUserController {
     @ApiOperation(value = "分页查询用户列表", httpMethod = "GET")
     public JsonResultVO listUserPage(@Validated PageDTO pageDTO) {
         return iReUserService.listUserPage(pageDTO.getPage(), pageDTO.getCount());
+    }
+
+    @GetMapping("/getUserInfoByToken")
+    @ApiOperation(value = "通过token获取用户的信息", httpMethod = "GET")
+    public JsonResultVO getUserInfoByToken(@RequestParam("token") String token) {
+        JJWTUtil instance = JJWTUtil.getInstance();
+        JsonResultVO resultVO;
+        if (instance.isTokenExpired(token)) {
+            resultVO = JsonResultVO.forMessage(HttpStatusEnum.TOKEN_EXPIRED.getMsg(), HttpStatusEnum.TOKEN_EXPIRED.getCode());
+        } else {
+            Claims claims = instance.getClaimsFromToken(token);
+            String username = (String) claims.get("username");
+            Collection<? extends GrantedAuthority> authorities = (Collection<? extends GrantedAuthority>) claims.get("authorities");
+            Map<String, Object> user = new HashMap<>(3);
+            user.put("username", username);
+            user.put("authorities", authorities);
+            resultVO = JsonResultVO.newBuilder()
+                    .data(null)
+                    .message("请求成功")
+                    .request("success")
+                    .status(HttpStatusEnum.OK.getCode())
+                    .totalCount(null)
+                    .fields(user)
+                    .build();
+        }
+        return resultVO;
     }
 }

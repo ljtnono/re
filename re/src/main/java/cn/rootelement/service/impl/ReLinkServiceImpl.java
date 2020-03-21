@@ -128,7 +128,7 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
         if (save) {
             deleteCacheAll();
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增链接失败, id = {}", entity.getId());
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -161,7 +161,7 @@ public class ReLinkServiceImpl extends ServiceImpl<ReLinkMapper, ReLink> impleme
             // 如果缓存中有的话，那么淘汰缓存
             // 删除所有缓存
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新链接失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);

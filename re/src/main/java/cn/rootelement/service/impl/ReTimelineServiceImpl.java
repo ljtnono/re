@@ -51,7 +51,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
             // 将实体类存储到缓存中去
             deleteCacheAll();
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增时间轴失败, {}", entity);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -81,7 +81,7 @@ public class ReTimelineServiceImpl extends ServiceImpl<ReTimelineMapper, ReTimel
         if (updateResult) {
             // 删除相关缓存
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新时间轴失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);

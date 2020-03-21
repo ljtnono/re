@@ -129,7 +129,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         if (save && b) {
             // 将实体类存储到缓存中去
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增用户失败, {}", entity);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -162,7 +162,7 @@ public class ReUserServiceImpl extends ServiceImpl<ReUserMapper, ReUser> impleme
         if (updateResult) {
             // 删除所有缓存
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新用户失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);

@@ -49,7 +49,7 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
         if (save) {
             // 将实体类存储到缓存中去
             redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
         }
@@ -102,7 +102,7 @@ public class ReConfigServiceImpl extends ServiceImpl<ReConfigMapper, ReConfig> i
                 if (b) {
                     redisUtil.set(key, entity, RedisUtil.EXPIRE_TIME_DEFAULT);
                 }
-                return JsonResultVO.successForMessage("操作成功", 200);
+                return JsonResultVO.forMessage("操作成功", 200);
             } else {
                 throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }

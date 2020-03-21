@@ -49,7 +49,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
             // 将实体类存储到缓存中去
             deleteCacheAll();
             setCache(entity);
-            return JsonResultVO.successForMessage("操作成功！", 200);
+            return JsonResultVO.forMessage("操作成功！", 200);
         } else {
             log.error("新增技能失败, {}", entity);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -81,7 +81,7 @@ public class ReSkillServiceImpl extends ServiceImpl<ReSkillMapper, ReSkill> impl
         if (update) {
             // 删除缓存
             deleteCacheAll();
-            return JsonResultVO.successForMessage("操作成功", 200);
+            return JsonResultVO.forMessage("操作成功", 200);
         } else {
             log.error("更新技能失败, id = {}", id);
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
