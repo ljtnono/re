@@ -30,8 +30,7 @@ public class JJWTUtil {
     /** jwt默认加密算法HS256 */
     public final SignatureAlgorithm DEFAULT_SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
-    private JJWTUtil() {
-    }
+    private JJWTUtil() {}
 
     private static class Holder {
         private static JJWTUtil instance = new JJWTUtil();
@@ -163,7 +162,7 @@ public class JJWTUtil {
      * @param token token
      * @return 过期返回false, 未过期返回true
      */
-    public Boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         try {
             Claims claims = getClaimsFromToken(token);
             Date expiration = claims.getExpiration();
@@ -174,12 +173,12 @@ public class JJWTUtil {
     }
 
     /**
-     * 验证token是否过期
+     * 验证token是否合法
      * @param token token
      * @param userDetails userDetails
-     * @return 过期返回false,未过期返回true
+     * @return 合法返回true,不合法返回false
      */
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
