@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class ReBlogTypeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "新增一个博客类型", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReBlogTypeSaveDTO reBlogTypeSaveDTO) {
         ReBlogType entity = new ReBlogType();
@@ -56,6 +58,7 @@ public class ReBlogTypeController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新博客类型", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogTypeUpdateDTO reBlogTypeUpdateDTO) {
         ReBlogType reBlogType = new ReBlogType();
@@ -66,6 +69,7 @@ public class ReBlogTypeController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个博客类型", notes = "id只能为数字类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.deleteEntityById(id);
@@ -84,6 +88,7 @@ public class ReBlogTypeController {
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的博客类型", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReBlogTypeService.restore(id);

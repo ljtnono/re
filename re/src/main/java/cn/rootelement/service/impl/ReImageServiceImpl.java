@@ -7,6 +7,8 @@ import cn.rootelement.enumeration.HttpStatusEnum;
 import cn.rootelement.enumeration.ReEntityRedisKeyEnum;
 import cn.rootelement.exception.GlobalToJsonException;
 import cn.rootelement.mapper.ReImageMapper;
+import cn.rootelement.service.common.IReEntityService;
+import cn.rootelement.util.FtpClientUtil;
 import cn.rootelement.vo.JsonResultVO;
 import cn.rootelement.service.IReImageService;
 import cn.rootelement.util.RedisUtil;
@@ -35,68 +37,17 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
-public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> implements IReImageService {
+public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> implements IReImageService, IReEntityService<ReImage> {
 
     private RedisUtil redisUtil;
 
+    private FtpClientUtil ftpClientUtil;
+
     @Autowired
-    public ReImageServiceImpl(RedisUtil redisUtil) {
+    public ReImageServiceImpl(RedisUtil redisUtil, FtpClientUtil ftpClientUtil) {
         this.redisUtil = redisUtil;
+        this.ftpClientUtil = ftpClientUtil;
     }
-
-    @Override
-    public ReImage getAvatar() {
-        // 尝试从缓存获取
-        ReImage avatar = (ReImage) redisUtil.getByPattern("re_image:*:avatar:*");
-        if (avatar == null) {
-            // 尝试从数据库获取
-            ReImage one = getOne(new QueryWrapper<ReImage>().eq("origin_name", "avatar"));
-            setCache(one);
-            return one;
-        }
-        log.info("从缓存中加载用户头像数据");
-        return avatar;
-    }
-
-    @Override
-    public ReImage getQrCodeWeChat() {
-        ReImage qrCodeWeChat = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-wechat:*");
-        if (qrCodeWeChat == null) {
-            // 尝试从数据库获取
-            ReImage one = getOne(new QueryWrapper<ReImage>().eq("origin_name", "qrcode-wechat"));
-            setCache(one);
-            return one;
-        }
-        log.info("从缓存中加载用户微信二维码图片");
-        return qrCodeWeChat;
-    }
-
-    @Override
-    public ReImage getQrCodeWeChatSk() {
-        ReImage qrCodeWeChatSk = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-wechat-sk:*");
-        if (qrCodeWeChatSk == null) {
-            // 尝试从数据库获取
-            ReImage one = getOne(new QueryWrapper<ReImage>().eq("origin_name", "qrcode-wechat-sk"));
-            setCache(one);
-            return one;
-        }
-        log.info("从缓存中加载用户微信扫码支付二维码图片");
-        return qrCodeWeChatSk;
-    }
-
-    @Override
-    public ReImage getQrCodeZfb() {
-        ReImage qrCodeZfb = (ReImage) redisUtil.getByPattern("re_image:*:qrcode-zfb:*");
-        if (qrCodeZfb == null) {
-            // 尝试从数据库获取
-            ReImage one = getOne(new QueryWrapper<ReImage>().eq("origin_name", "qrcode-zfb"));
-            setCache(one);
-            return one;
-        }
-        log.info("从缓存中加载用户支付宝支付二维码图片");
-        return qrCodeZfb;
-    }
-
 
     @Override
     public JsonResultVO listImagePage(Integer page, Integer count) {
@@ -148,6 +99,7 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
         boolean save = save(entity);
         if (save) {
             // 将实体类存储到缓存中去
+            deleteCacheAll();
             setCache(entity);
             return JsonResultVO.forMessage("操作成功！", 200);
         } else {
@@ -157,23 +109,23 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
 
     @Override
     public JsonResultVO deleteEntityById(Serializable id) {
-        Optional<Serializable> optionalId = Optional.ofNullable(id);
-        optionalId.orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
-        int imageId = Integer.parseInt(id.toString());
         // 在数据库中更新
-        boolean updateResult = update(new UpdateWrapper<ReImage>().set("status", 0).eq("id", imageId));
-        if (updateResult) {
+        ReImageMapper baseMapper = getBaseMapper();
+        ReImage reImage = getById(id.toString());
+        int updateResult = baseMapper.deleteById(id);
+        if (updateResult >= 0) {
             // 删除缓存中的相关数据
-            ReImage reImage = getById(imageId);
-            String key = ReEntityRedisKeyEnum.RE_IMAGE_KEY.getKey()
-                    .replace(":id", ":" + reImage.getId())
-                    .replace(":origin_name", ":" + reImage.getOriginName())
-                    .replace(":type", ":" + reImage.getType())
-                    .replace(":owner", ":" + reImage.getOwner());
-            boolean b = redisUtil.hasKey(key);
-            if (b) {
-                redisUtil.del(key);
+            try {
+                boolean result = ftpClientUtil.deleteFile("images", reImage.getOriginName() + "." + reImage.getType());
+                if (!result) {
+                    log.error("删除图片失败");
+                    throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e) {
+                log.error("删除图片失败");
+                throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
             }
+            deleteCacheAll();
             return JsonResultVO.success(Collections.singletonList(reImage), 1);
         } else {
             throw new GlobalToJsonException(HttpStatusEnum.INTERNAL_SERVER_ERROR);
@@ -259,6 +211,8 @@ public class ReImageServiceImpl extends ServiceImpl<ReImageMapper, ReImage> impl
 
     @Override
     public void deleteCacheAll() {
-
+        redisUtil.deleteByPattern("re_image:*");
+        redisUtil.deleteByPattern("re_image_page:*");
+        redisUtil.deleteByPattern("re_image_page_total:*");
     }
 }

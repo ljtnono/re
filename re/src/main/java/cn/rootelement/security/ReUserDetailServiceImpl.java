@@ -36,7 +36,7 @@ public class ReUserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 根据用户名查询出来用户信息和用户权限
-        ReUser reUser = iReUserService.getBaseMapper().selectOne(new QueryWrapper<ReUser>().eq("username", username));
+        ReUser reUser = iReUserService.getBaseMapper().selectOne(new QueryWrapper<ReUser>().eq("username", username).eq("status", 1));
         // 如果为null 抛出异常
         Optional.ofNullable(reUser)
                 .orElseThrow(() -> new UsernameNotFoundException("用户" + username + "不存在"));

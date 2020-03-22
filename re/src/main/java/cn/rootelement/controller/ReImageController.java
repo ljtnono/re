@@ -2,7 +2,6 @@ package cn.rootelement.controller;
 
 import cn.rootelement.dto.PageDTO;
 import cn.rootelement.dto.ReImageSearchDTO;
-import cn.rootelement.dto.ReImageUpdateDTO;
 import cn.rootelement.entity.ReImage;
 import cn.rootelement.enumeration.HttpStatusEnum;
 import cn.rootelement.enumeration.GlobalVariableEnum;
@@ -11,7 +10,7 @@ import cn.rootelement.service.IReImageService;
 import cn.rootelement.util.FtpClientUtil;
 import cn.rootelement.util.StringUtil;
 import cn.rootelement.vo.JsonResultVO;
-import cn.rootelement.vo.MarkdownEditorUploadImageVO;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -89,10 +88,18 @@ public class ReImageController {
         JsonResultVO jsonResultVO;
         Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
         try {
+            // 创建一个image对象
+            ReImage reImage = getReImageFromMultipartFile(multipartFile);
+            ReImage img = iReImageService.getBaseMapper()
+                    .selectOne(new QueryWrapper<ReImage>()
+                            .eq("origin_name", reImage.getOriginName())
+                            .eq("status", 1));
+            if (img != null) {
+                return JsonResultVO.forMessage("图片名已存在", HttpStatusEnum.INTERNAL_SERVER_ERROR.getCode());
+            }
             boolean b = ftpClientUtil.uploadFile(multipartFile);
             if (b) {
-                // 创建一个image对象
-                ReImage reImage = getReImageFromMultipartFile(multipartFile);
+
                 jsonResultVO = iReImageService.saveEntity(reImage);
                 // 如果存储失败，那么删除
                 if (!jsonResultVO.getStatus().equals(HttpStatusEnum.OK.getCode())) {
@@ -110,40 +117,6 @@ public class ReImageController {
         return jsonResultVO;
     }
 
-    @PostMapping("/upload/md")
-    @PreAuthorize("hasRole('root')")
-    @ApiOperation(value = "editor上传图片接口", notes = "这里参数只能为editormd-image-file，需要具有root权限", httpMethod = "POST")
-    public MarkdownEditorUploadImageVO uploadImageFromMarkdownEditor(@RequestParam("editormd-image-file") MultipartFile multipartFile) {
-        Optional.ofNullable(multipartFile).orElseThrow(() -> new GlobalToJsonException(HttpStatusEnum.PARAM_MISSING_ERROR));
-        MarkdownEditorUploadImageVO result = new MarkdownEditorUploadImageVO();
-        try {
-            boolean b = ftpClientUtil.uploadFile(multipartFile);
-            if (b) {
-                // 创建一个image对象
-                ReImage reImage = getReImageFromMultipartFile(multipartFile);
-                JsonResultVO jsonResultVO = iReImageService.saveEntity(reImage);
-                if (jsonResultVO.getStatus().equals(HttpStatusEnum.OK.getCode())) {
-                    result.setUrl(reImage.getUrl());
-                    result.setSuccess(1);
-                    result.setMessage("上传成功");
-                } else {
-                    ftpClientUtil.deleteFile("images", multipartFile.getOriginalFilename());
-                    result.setSuccess(0);
-                    result.setMessage("上传失败");
-                }
-            } else {
-                log.error("图片 {} 上传失败", multipartFile.getOriginalFilename());
-                result.setSuccess(0);
-                result.setMessage("上传失败");
-            }
-        } catch (Exception e) {
-            log.error("图片 {} 上传失败", multipartFile.getOriginalFilename());
-            result.setSuccess(0);
-            result.setMessage("上传失败");
-        }
-        return result;
-    }
-
 
     @GetMapping
     @ApiOperation(value = "获取所有图片列表", httpMethod = "GET")
@@ -151,14 +124,11 @@ public class ReImageController {
         return iReImageService.listEntityAll();
     }
 
-    @PutMapping("/{id:\\w+}")
-    public JsonResultVO updateEntityById(@PathVariable("id") Serializable id, ReImageUpdateDTO reImageUpdateDTO) {
-        return null;
-    }
 
     @DeleteMapping("/{id:\\w+}")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO deleteEntityById(@PathVariable("id") Serializable id) {
-        return null;
+        return iReImageService.deleteEntityById(id);
     }
 
     @GetMapping("/{id:\\w+}")

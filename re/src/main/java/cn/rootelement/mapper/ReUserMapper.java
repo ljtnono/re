@@ -27,7 +27,7 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
             "FROM re_user " +
             "LEFT JOIN re_user_role ON re_user_role.user_id = re_user.id " +
             "LEFT JOIN re_role ON re_user_role.role_id = re_role.id " +
-            "WHERE re_user.id = #{userId}")
+            "WHERE re_user.id = #{userId} AND re_user.status = 1")
     List<ReRole> listRoleByUserId(@Param("userId") Integer userId);
 
 

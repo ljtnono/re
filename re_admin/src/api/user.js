@@ -43,7 +43,7 @@ export const updateUser = (userForm) => {
     username: userForm.username,
     password: userForm.password,
     qq: userForm.qq,
-    url: userForm.url,
+    tel: userForm.tel,
     email: userForm.email
   });
   return axios.put("/api/user/" + userForm.id, data, {

@@ -1,6 +1,8 @@
 package cn.rootelement.entity;
 
 import cn.rootelement.entity.common.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,7 @@ public class ReImage extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -5419098997286534575L;
 
     /** 图片存储的id */
+    @TableId
     private String id;
 
     /** 图片的文件名 */

@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,7 @@ public class ReTimelineController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "新增一个时间轴记录", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReTimelineSaveDTO reTimelineSaveDTO) {
         ReTimeline reTimeline = new ReTimeline();
@@ -53,6 +55,7 @@ public class ReTimelineController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新一个时间轴实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReTimelineUpdateDTO reTimelineUpdateDTO) {
         ReTimeline reTimeline = new ReTimeline();
@@ -61,12 +64,14 @@ public class ReTimelineController {
         return iReTimelineService.updateEntityById(id, reTimeline);
     }
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个timeline记录", notes = "id只能为数字类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReTimelineService.deleteEntityById(id);
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的时间轴", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReTimelineService.restore(id);

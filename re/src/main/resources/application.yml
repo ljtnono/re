@@ -7,7 +7,7 @@ spring:
   # 配置数据源
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/re?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://139.9.73.191:3306/re?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
       validation-query: SELECT 1
@@ -26,7 +26,7 @@ spring:
       username: root_element
       password: ljtLJT715336
   redis:
-    host: 127.0.0.1
+    host: 139.9.73.191
     password: ljtLJT715336
     port: 6379
     timeout: 12000
@@ -39,7 +39,7 @@ spring:
   # 配置使用elasticsearch
   elasticsearch:
     rest:
-      uris: 127.0.0.1:9200
+      uris: 139.9.73.191:9200
       username: elastic
       password: changeme
 

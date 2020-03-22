@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +47,6 @@ public class ReBlogController {
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
-//    @PreAuthorize("hasRole('admin')")
     public JsonResultVO listEntityAll() {
         JsonResultVO resultVO = iReBlogService.listEntityAll();
         List<ReBlog> blogList = (List<ReBlog>) resultVO.getData();
@@ -57,6 +57,7 @@ public class ReBlogController {
 
     @PostMapping
     @ApiOperation(value = "新增一个博客记录", httpMethod = "POST")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO saveEntity(@Validated ReBlogSaveDTO reBlogSaveDTO) {
         ReBlog entity = new ReBlog();
         BeanUtils.copyProperties(reBlogSaveDTO, entity);
@@ -75,6 +76,7 @@ public class ReBlogController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新一个博客实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReBlogUpdateDTO reBlogUpdateDTO) {
         ReBlog entity = new ReBlog();
@@ -91,12 +93,14 @@ public class ReBlogController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个博客实体", notes = "id只能是数字类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.deleteEntityById(id);
     }
 
     @GetMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id获取一个博客实体", notes = "id只能是数字类型", httpMethod = "GET")
     public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.getEntityById(id);
@@ -129,6 +133,7 @@ public class ReBlogController {
 
     @PutMapping("/restore/{id:\\d+}")
     @ApiOperation(value = "根据id恢复博客", httpMethod = "PUT")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.restore(id);
     }

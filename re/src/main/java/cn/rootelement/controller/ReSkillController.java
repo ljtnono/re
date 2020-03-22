@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,7 @@ public class ReSkillController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "新增技能", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReSkillSaveDTO reSkillSaveDTO) {
         ReSkill reSkill = new ReSkill();
@@ -53,6 +55,7 @@ public class ReSkillController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新一个技能实体", notes = "id只能是数字类型", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReSkillUpdateDTO reSkillUpdateDTO) {
         ReSkill reSkill = new ReSkill();
@@ -62,12 +65,14 @@ public class ReSkillController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个skill记录", notes = "id只能为数字类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReSkillService.deleteEntityById(id);
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的技能", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReSkillService.restore(id);

@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,7 @@ public class ReUserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "新增一个用户", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReUserSaveDTO reUserSaveDTO) {
         ReUser entity = new ReUser();
@@ -65,6 +67,7 @@ public class ReUserController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新用户", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReUserUpdateDTO reUserUpdateDTO) {
         ReUser entity = new ReUser();
@@ -75,11 +78,13 @@ public class ReUserController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReUserService.deleteEntityById(id);
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的用户", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReUserService.restore(id);

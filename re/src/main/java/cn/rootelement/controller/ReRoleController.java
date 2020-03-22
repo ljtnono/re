@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class ReRoleController {
 
     @PostMapping
     @ApiOperation(value = "新增一个角色", httpMethod = "POST")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO saveEntity(@Validated ReRoleSaveDTO reRoleSaveDTO) {
         ReRole entity = new ReRole();
         BeanUtils.copyProperties(reRoleSaveDTO, entity);
@@ -53,6 +55,7 @@ public class ReRoleController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id更新角色", httpMethod = "PUT")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReRoleUpdateDTO reRoleUpdateDTO) {
         ReRole entity = new ReRole();
@@ -62,12 +65,14 @@ public class ReRoleController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个角色", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
         return iReRoleService.deleteEntityById(id);
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的角色", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReRoleService.restore(id);

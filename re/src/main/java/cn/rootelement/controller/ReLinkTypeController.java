@@ -11,6 +11,7 @@ import cn.rootelement.vo.JsonResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class ReLinkTypeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "新增一个链接类型", httpMethod = "POST")
     public JsonResultVO saveEntity(@Validated ReLinkTypeSaveDTO reLinkTypeSaveDTO) {
         ReLinkType reLinkType = new ReLinkType();
@@ -54,6 +56,7 @@ public class ReLinkTypeController {
     }
 
     @PutMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     public JsonResultVO updateEntityById(@PathVariable(value = "id") Serializable id, @Validated ReLinkTypeUpdateDTO reLinkTypeUpdateDTO) {
         ReLinkType reLinkType = new ReLinkType();
         reLinkType.setName(reLinkTypeUpdateDTO.getName());
@@ -62,6 +65,7 @@ public class ReLinkTypeController {
     }
 
     @DeleteMapping("/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除链接类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable("id") Serializable id) {
         return iReLinkTypeService.deleteEntityById(id);
@@ -88,6 +92,7 @@ public class ReLinkTypeController {
     }
 
     @PutMapping("/restore/{id:\\d+}")
+    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "恢复删除的链接类型", notes = "id只能为数字类型", httpMethod = "PUT")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
         return iReLinkTypeService.restore(id);
