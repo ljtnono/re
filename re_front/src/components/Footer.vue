@@ -73,7 +73,7 @@
           <span class="author">
             copyright
             <i class="fa fa-copyright" aria-hidden="true"></i>
-            {{author}}
+            {{$config.author}}
           </span>
           <i class="fa">|</i>
           <span>

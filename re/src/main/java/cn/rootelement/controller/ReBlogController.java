@@ -5,6 +5,7 @@ import cn.rootelement.dto.ReBlogSaveDTO;
 import cn.rootelement.dto.ReBlogSearchDTO;
 import cn.rootelement.dto.ReBlogUpdateDTO;
 import cn.rootelement.entity.ReBlog;
+import cn.rootelement.es.service.IReBlogEsService;
 import cn.rootelement.service.IReBlogService;
 import cn.rootelement.util.HtmlUtil;
 import cn.rootelement.util.StringUtil;
@@ -13,12 +14,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 博客Controller
@@ -34,16 +36,23 @@ public class ReBlogController {
 
     private IReBlogService iReBlogService;
 
+    private IReBlogEsService iReBlogEsService;
+
     @Autowired
-    public ReBlogController(IReBlogService iReBlogService) {
+    public ReBlogController(IReBlogService iReBlogService, IReBlogEsService iReBlogEsService) {
         this.iReBlogService = iReBlogService;
+        this.iReBlogEsService = iReBlogEsService;
     }
 
     @GetMapping
     @ApiOperation(value = "获取全部博客信息列表", httpMethod = "GET")
-    @PreAuthorize("hasRole('admin')")
+//    @PreAuthorize("hasRole('admin')")
     public JsonResultVO listEntityAll() {
-        return iReBlogService.listEntityAll();
+        JsonResultVO resultVO = iReBlogService.listEntityAll();
+        List<ReBlog> blogList = (List<ReBlog>) resultVO.getData();
+        iReBlogEsService.deleteAll();
+        blogList.forEach(iReBlogEsService::save);
+        return resultVO;
     }
 
     @PostMapping
@@ -61,6 +70,7 @@ public class ReBlogController {
             String deleteHtml = HtmlUtil.delHtmlTagFromStr(entity.getContentHtml());
             entity.setSummary(deleteHtml.substring(0, 300));
         }
+        iReBlogEsService.save(entity);
         return iReBlogService.saveEntity(entity);
     }
 
@@ -74,6 +84,9 @@ public class ReBlogController {
             String deleteHtml = HtmlUtil.delHtmlTagFromStr(entity.getContentHtml());
             entity.setSummary(deleteHtml.substring(0, 300));
         }
+        entity.setId(Integer.parseInt((String) id));
+        iReBlogEsService.delete(entity);
+        iReBlogEsService.save(entity);
         return iReBlogService.updateEntityById(id, entity);
     }
 
@@ -130,5 +143,16 @@ public class ReBlogController {
     @ApiOperation(value = "获取猜你喜欢文章列表", httpMethod = "GET")
     public JsonResultVO listGuessYouLike() {
         return iReBlogService.listGuessYouLike();
+    }
+
+    @GetMapping("/search/es")
+    @ApiOperation(value = "从elasticsearch中模糊查询", httpMethod = "GET")
+    public JsonResultVO searchEsPageByCondition(String condition, PageDTO pageDTO) {
+        Page<ReBlog> query = iReBlogEsService.query(condition, pageDTO);
+        List<ReBlog> blogList = query.toList();
+        JsonResultVO success = JsonResultVO.success(blogList, blogList.size());
+        success.addField("totalPages", query.getTotalPages());
+        success.addField("totalCount", query.getTotalElements());
+        return success;
     }
 }

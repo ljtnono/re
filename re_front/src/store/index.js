@@ -1,17 +1,21 @@
 import Vue from "vue"
 import Vuex from "vuex"
-import blog from "./module/blog"
+import search from "./module/search"
 import web from "./module/web"
+import blogType from "./module/blogType"
+// import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
 
-export const store = new Vuex.Store({
+export default new Vuex.Store({
   state: {},
   getters: {},
   mutations: {},
   actions: {},
   modules: {
-    blog,
-    web
-  }
+    search,
+    web,
+    blogType
+  },
+  // plugins: [createPersistedState()]
 });

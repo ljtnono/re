@@ -10,12 +10,15 @@
         </a>
       </div>
       <!-- 导航按钮和搜索按钮 -->
-      <div class="side-nav-header" @click="showMinMenu">
-        <div class="side-nav-bar cursor-pointer fl">
+      <div class="side-nav-header">
+        <div class="side-nav-bar cursor-pointer fl" @click="showMiniMenuFlag = !showMiniMenuFlag">
           <i class="fa fa-bars" aria-hidden="true"></i>
         </div>
         <div class="side-nav-search cursor-pointer fr">
-          <i class="fa fa-search" aria-hidden="true"></i>
+          <i class="fa fa-search" aria-hidden="true" @click="doSearch"></i>
+        </div>
+        <div class="side-nav-input cursor-pointer fr">
+          <b-form-input v-model="condition" :type="type" class="search" placeholder="请输入关键字" @keyup.enter.native="doSearch"/>
         </div>
       </div>
       <!-- 小分辨率下的导航栏 -->
@@ -37,10 +40,15 @@
             </a>
             <a :href="page.url" v-else><i :class="page.icon" aria-hidden="true"></i>{{page.name}}</a>
           </li>
-          <li class="nav-item nav-search fr">
+          <li class="nav-item nav-search fr" @click="doSearch">
             <a href="#" style="padding: 20px 22px;">
               <i class="fa fa-search" aria-hidden="true"></i>
             </a>
+          </li>
+          <li class="nav-item nav-search-input fr">
+            <div class="container flex flex-direction-column justify-content-center">
+              <b-form-input v-model="condition" :type="type" class="search" placeholder="请输入关键字" @keyup.enter.native="doSearch"/>
+            </div>
           </li>
         </ul>
       </nav>
@@ -61,12 +69,15 @@
 </template>
 
 <script>
+  import {mapActions} from "vuex";
 
   export default {
     name: 'Header',
     data() {
       return {
         showMiniMenuFlag: false,
+        type: "search",
+        condition: "",
         messages: [
           "看到网上新闻美国的贴吧将成为中国公司",
           "主题更新一下，修复了头像挂掉的问题",
@@ -89,16 +100,33 @@
       }
     },
     methods: {
-      showMinMenu() {
-        this.showMiniMenuFlag = !this.showMiniMenuFlag;
-      },
+      ...mapActions([
+        "searchEsPageByCondition"
+      ]),
       getCurrentPage() {
-        let articleRex = /\/article[s]?/;
+        let articleRex = /\/article[s]?|\/search/;
         if (articleRex.test(this.$route.path)) {
           return "/articles/ALL";
         } else {
           return this.$route.path;
         }
+      },
+      doSearch() {
+        let data = {
+          condition: this.condition,
+          pageParam: {
+            page: 1,
+            count: 10
+          }
+        };
+        let searchRex = /\/search[#]?/;
+        this.searchEsPageByCondition(data);
+        if (!searchRex.test(this.$route.path)) {
+          this.$router.push({
+            name: "search"
+          });
+        }
+        this.currentPage = this.getCurrentPage();
       }
     }
   }
@@ -158,6 +186,22 @@
       left: 0;
       color: #ffffff;
 
+      .side-nav-input {
+        height: auto;
+        width: 200px;
+        position: relative;
+        top: 8px;
+        .search {
+          border-radius: 40px;
+          -webkit-border-radius: 40px;
+          -moz-border-radius: 40px;
+          background: none;
+          color: #ffffff;
+          height: 25px;
+          border: none;
+        }
+      }
+
       .side-nav-bar, .side-nav-search {
         padding: 10px;
 
@@ -183,6 +227,19 @@
 
         .nav-search {
           background-color: #5F9EA0;
+        }
+
+        .container {
+          height: 100%;
+          .search {
+            border-radius: 40px;
+            -webkit-border-radius: 40px;
+            -moz-border-radius: 40px;
+            background: #4A4A4A;
+            color: #ffffff;
+            height: 30px;
+            border: none;
+          }
         }
 
         .nav-item {

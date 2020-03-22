@@ -4,6 +4,7 @@ import Articles from "../view/Articles";
 import Support from "../view/Support";
 import About from "../view/About";
 import Article from "../view/Article";
+import Search from "../view/Search";
 
 let routes = [
   {
@@ -31,6 +32,11 @@ let routes = [
     path: "/about",
     name: "about",
     component: About
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: Search
   },
   {
     path: '/401',

@@ -4,7 +4,7 @@
     <div class="content-main">
       <!-- 导航路径 -->
       <div class="nav-path mb15 mt15 p10">
-        <i class="fa fa-home"></i>
+        <i class="fa fa-home mr5"></i>
         <span>技术文章</span>
         <i class="fa fa-angle-double-right mr5 ml5"></i>
         <span>{{type}}</span>

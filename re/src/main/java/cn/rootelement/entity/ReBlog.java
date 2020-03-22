@@ -22,7 +22,7 @@ import java.io.Serializable;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Document(indexName = "re", type = "blog")
+@Document(indexName = "re", type = "blog", refreshInterval="-1")
 public class ReBlog extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -3699612037615768897L;
@@ -59,12 +59,15 @@ public class ReBlog extends BaseEntity implements Serializable {
     private String contentHtml;
 
     /** 博客的封面图片url */
+    @Field(type = FieldType.Text)
     private String coverImage;
 
     /** 博客的评论数 */
+    @Field(type = FieldType.Integer)
     private int comment;
 
     /** 博客的浏览量 */
+    @Field(type = FieldType.Integer)
     private int view;
 
 }

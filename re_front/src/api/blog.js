@@ -33,3 +33,13 @@ export const listBlogPageByType = (type, pageParam) => {
     }
   });
 };
+
+export const searchEsPageByCondition = (condition, pageParam) => {
+  return axios.get('/api/blog/search/es', {
+    params: {
+      condition: condition,
+      page: pageParam.page,
+      count: pageParam.count
+    }
+  });
+};

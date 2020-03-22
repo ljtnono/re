@@ -33,9 +33,23 @@
       </div>
       <!-- 文章列表项 -->
       <div class="articles">
-        <Scroll :on-reach-edge="handleReachEdge" :height="articlesHeight">
-          <ArticleItem :article="article" v-for="article in articles" :key="article.id"></ArticleItem>
-        </Scroll>
+        <Loading :show="articlesDefaultFlag" style="top: 20px;"></Loading>
+        <ArticleItem :article="article" v-for="article in articles" :key="article.id"></ArticleItem>
+      </div>
+      <!-- 分页导航 -->
+      <div class="mt-3" v-if="articles.length !== 0">
+        <BPagination
+          :total-rows="totalCount"
+          :per-page="count"
+          :value="page"
+          first-text="首页"
+          prev-text="上一页"
+          next-text="下一页"
+          last-text="尾页"
+          limit="5"
+          @change="loadData"
+          align="center">
+        </BPagination>
       </div>
     </div>
     <ContentSide></ContentSide>
@@ -55,12 +69,14 @@
     data() {
       return {
         hotDefaultFlag: true,
+        articlesDefaultFlag: true,
         swiperOption: this.$config.swiperOption,
         hotArticles: [],
         count: 10,
         page: 1,
         articles: [],
-        articlesHeight: 1790,
+        totalPages: 1,
+        totalCount: 1,
         slides: [
           require("@a/image/bird.jpg"),
           require("@a/image/coffee.jpg"),
@@ -77,17 +93,24 @@
       Loading
     },
     methods: {
+      loadData(page) {
+        this.articles = [];
+        this.listBlogPage(page, this.count);
+      },
       listBlogPage(page, count) {
+        this.articlesDefaultFlag = true;
         listBlogPage(page, count).then(res => {
           if (res.data.request === "success" && res.status === 200) {
             let data = res.data.data;
-            for (let i = 0; i < data.length; i++) {
-              this.articles.push(data[i]);
-            }
-            this.page++;
+            this.articles = data;
+            this.page = page;
+            this.count = count;
+            this.totalPages = parseInt(res.data.fields.totalPages);
+            this.totalCount = parseInt(res.data.fields.totalCount);
           }
+          this.articlesDefaultFlag = false;
         }).catch(() => {
-          // console.log(e);
+          this.articlesDefaultFlag = false;
         });
       },
       listHotArticles() {
@@ -99,19 +122,6 @@
           this.hotDefaultFlag = false;
         }).catch(() => {
           this.hotDefaultFlag = false;
-        });
-      },
-      handleReachEdge() {
-        listBlogPage(this.page + 1, this.count).then(res => {
-          if (res.data.request === "success" && res.status === 200) {
-            let data = res.data.data;
-            if (data.length !== 0) {
-              this.articles = data;
-              this.page++;
-            }
-          }
-        }).catch(() => {
-          // console.log(e);
         });
       }
     },
