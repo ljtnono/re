@@ -100,7 +100,6 @@ public class ReBlogController {
     }
 
     @GetMapping("/{id:\\d+}")
-    @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id获取一个博客实体", notes = "id只能是数字类型", httpMethod = "GET")
     public JsonResultVO getEntityById(@PathVariable(value = "id") Serializable id) {
         return iReBlogService.getEntityById(id);
