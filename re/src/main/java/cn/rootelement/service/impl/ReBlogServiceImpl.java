@@ -5,6 +5,7 @@ import cn.rootelement.dto.ReBlogSearchDTO;
 import cn.rootelement.entity.ReBlog;
 import cn.rootelement.enumeration.HttpStatusEnum;
 import cn.rootelement.enumeration.ReEntityRedisKeyEnum;
+import cn.rootelement.es.service.IReBlogEsService;
 import cn.rootelement.exception.GlobalToJsonException;
 import cn.rootelement.mapper.ReBlogMapper;
 import cn.rootelement.vo.JsonResultVO;
@@ -37,9 +38,12 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
 
     private RedisUtil redisUtil;
 
+    private IReBlogEsService iReBlogEsService;
+
     @Autowired
-    public ReBlogServiceImpl(RedisUtil redisUtil) {
+    public ReBlogServiceImpl(RedisUtil redisUtil, IReBlogEsService iReBlogEsService) {
         this.redisUtil = redisUtil;
+        this.iReBlogEsService = iReBlogEsService;
     }
 
     @Override
@@ -172,6 +176,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     public JsonResultVO saveEntity(ReBlog entity) {
         boolean save = save(entity);
         if (save) {
+            iReBlogEsService.save(entity);
             // 删除所有的blog缓存相关
             deleteCacheAll();
             // 将实体类存储到缓存中去

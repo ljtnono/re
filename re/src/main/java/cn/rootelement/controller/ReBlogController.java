@@ -71,7 +71,6 @@ public class ReBlogController {
             String deleteHtml = HtmlUtil.delHtmlTagFromStr(entity.getContentHtml());
             entity.setSummary(deleteHtml.substring(0, 300));
         }
-        iReBlogEsService.save(entity);
         return iReBlogService.saveEntity(entity);
     }
 
@@ -96,7 +95,11 @@ public class ReBlogController {
     @PreAuthorize("hasRole('root')")
     @ApiOperation(value = "根据id删除一个博客实体", notes = "id只能是数字类型", httpMethod = "DELETE")
     public JsonResultVO deleteEntityById(@PathVariable(value = "id") Serializable id) {
-        return iReBlogService.deleteEntityById(id);
+        JsonResultVO resultVO = iReBlogService.deleteEntityById(id);
+        ReBlog reBlog = ((List<ReBlog>)resultVO.getData()).get(0);
+        iReBlogEsService.delete(reBlog);
+        iReBlogEsService.save(reBlog);
+        return resultVO;
     }
 
     @GetMapping("/{id:\\d+}")
@@ -134,7 +137,11 @@ public class ReBlogController {
     @ApiOperation(value = "根据id恢复博客", httpMethod = "PUT")
     @PreAuthorize("hasRole('root')")
     public JsonResultVO restore(@PathVariable(value = "id") Serializable id) {
-        return iReBlogService.restore(id);
+        JsonResultVO resultVO = iReBlogService.restore(id);
+        ReBlog reBlog = ((List<ReBlog>)resultVO.getData()).get(0);
+        iReBlogEsService.delete(reBlog);
+        iReBlogEsService.save(reBlog);
+        return resultVO;
     }
 
     @GetMapping("/listHotArticles")

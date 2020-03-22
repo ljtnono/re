@@ -5,7 +5,6 @@ import cn.rootelement.entity.ReBlog;
 import cn.rootelement.es.repository.IReBlogEsRepository;
 import cn.rootelement.es.service.IReBlogEsService;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
