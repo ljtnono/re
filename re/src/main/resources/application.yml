@@ -55,3 +55,10 @@ server:
 #  configuration:
 #    log-prefix: mybatis.sql
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# aliyun
+aliyun:
+  oss:
+    access-key-id: LTAI4FuKgt8nJFGotTBpi6qd
+    access-key-secret: BrSg1p2bAjgov5NUNxvqZ9EnFjTRhd
+    endpoint: oss-cn-beijing.aliyuncs.com
