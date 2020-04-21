@@ -57,7 +57,7 @@ server:
 #    log-prefix: mybatis.sql
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-# aliyun
+# aliyun相关配置
 aliyun:
   oss:
     access-key-id: LTAI4FuKgt8nJFGotTBpi6qd
