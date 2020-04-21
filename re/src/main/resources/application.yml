@@ -50,6 +50,7 @@ server:
     max-connections: 20000
     uri-encoding: UTF-8
 
+
 # 配置mybatis相关
 #mybatis-plus:
 #  configuration:
