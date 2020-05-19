@@ -1,7 +1,6 @@
 package cn.rootelement.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -10,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author ljt
- * @version 1.1.0
+ * @version 1.1.1
  * 基于spring和redis的redisTemplate工具类
  * 针对所有的hash 都是以h开头的方法
  * 针对所有的Set 都是以s开头的方法  不含通用方法
  * 针对所有的List 都是以l开头的方法
  * 为避免不必要的错误，key值都设置了不能为空串
- * @date 2019/12/19
+ * @date 2020/5/14
  */
 @Component
 @Slf4j
@@ -24,23 +23,38 @@ public class RedisUtil {
 
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
-
     /** 默认缓存时间30d */
     public static Integer EXPIRE_TIME_DEFAULT = 24 * 60 * 60 * 30;
 
     /** 分页查询缓存时间为2h */
     public static Integer EXPIRE_TIME_PAGE_QUERY = 60 * 60 * 2;
 
+    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisTemplate;
+    }
+
+    public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
     /**
-     * 指定缓存失效时间
+     * 随机生成过期时间
+     * @return 过期时间
+     */
+    private Integer generateExpire() {
+        return 0;
+    }
+
+    /**
+     * 指定缓存失效时间，以秒为单位
      *
      * @param key  键
      * @param time 时间(秒)
-     * @return true 成功 false 失败
+     * @return true 成功 false 失败或者key不存在
      */
     public boolean expire(final String key, final long time) {
         try {

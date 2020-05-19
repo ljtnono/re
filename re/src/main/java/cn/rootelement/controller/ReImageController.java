@@ -99,7 +99,6 @@ public class ReImageController {
             }
             boolean b = ftpClientUtil.uploadFile(multipartFile);
             if (b) {
-
                 jsonResultVO = iReImageService.saveEntity(reImage);
                 // 如果存储失败，那么删除
                 if (!jsonResultVO.getStatus().equals(HttpStatusEnum.OK.getCode())) {

@@ -1,7 +1,5 @@
 package cn.rootelement.util;
 
-import cn.rootelement.enumeration.HttpStatusEnum;
-import cn.rootelement.exception.GlobalToJsonException;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * JWT工具类
@@ -21,8 +18,8 @@ import java.util.Optional;
 @Slf4j
 public class JJWTUtil {
 
-    /** jwt过期时间 */
-    public final long EXPIRE_TIME = 10 * 60 * 60 * 1000;
+    /** jwt过期时间 1天 */
+    public final long EXPIRE_TIME = 60 * 60 * 1000;
 
     /** jwt秘钥 */
     public final String SECRET_KEY = "ROOT_ELEMENT";
@@ -52,14 +49,14 @@ public class JJWTUtil {
     /**
      * 根据UserDetails生成Claims
      * @param userDetails userDetails
-     * @return 生成Claims键值对,方便生成token
+     * @return 返回生成的Claims键值对，当userDetails为null时返回null
      */
     private Map<String, Object> userDetailsToClaims(UserDetails userDetails) {
         if (null == userDetails) {
             log.info("userDetails不能为null");
             return null;
         }
-        Map<String, Object> map = new HashMap<>(10);
+        Map<String, Object> map = new HashMap<>(8);
         map.put("username", userDetails.getUsername());
         map.put("password", userDetails.getPassword());
         map.put("authorities", userDetails.getAuthorities());
@@ -97,7 +94,7 @@ public class JJWTUtil {
     /**
      * 直接根据UserDetails对象生成token
      * @param userDetails UserDetails对象
-     * @return 生成的token
+     * @return 生成的token，当userDetails为null时返回null
      */
     public String generateToken(UserDetails userDetails) {
         if (null == userDetails) {
@@ -116,7 +113,7 @@ public class JJWTUtil {
     /**
      * 从token获取Claims
      * @param token token
-     * @return Claims
+     * @return token中的Claims键值对信息，当token不符合格式时返回null
      */
     public Claims getClaimsFromToken(String token) {
         if (StringUtil.isEmpty(token)) {
@@ -139,7 +136,7 @@ public class JJWTUtil {
     /**
      * 从token中获取jwt形式
      * @param token token
-     * @return token解析后的jwt
+     * @return token解析后的jwt，token不符合格式则返回null
      */
     public Jwt getJwtFromToken(String token) {
         if (StringUtil.isEmpty(token)) {
@@ -163,13 +160,9 @@ public class JJWTUtil {
      * @return 过期返回false, 未过期返回true
      */
     public boolean isTokenExpired(String token) {
-        try {
-            Claims claims = getClaimsFromToken(token);
-            Date expiration = claims.getExpiration();
-            return expiration.before(new Date());
-        } catch (Exception e) {
-            return false;
-        }
+        Claims claims = getClaimsFromToken(token);
+        Date expiration = claims.getExpiration();
+        return expiration.before(new Date());
     }
 
     /**
@@ -179,20 +172,25 @@ public class JJWTUtil {
      * @return 合法返回true,不合法返回false
      */
     public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        if (token == null || userDetails == null) {
+            return false;
+        }
+        String username = getUsernameFromToken(token);
+        return (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     /**
      * 根据token解析出token中的username
      * @param token 令牌
-     * @return username
+     * @return username, 如果解析失败那么返回null
      */
     public String getUsernameFromToken(String token) {
         Claims claimsFromToken = getClaimsFromToken(token);
-        Optional.ofNullable(claimsFromToken)
-                .orElseThrow(() ->new GlobalToJsonException(HttpStatusEnum.FORBIDDEN));
-        return claimsFromToken.get("username").toString();
+        try {
+            return claimsFromToken.get("username").toString();
+        } catch (Exception e) {
+            log.error("从token中解析username失败");
+            return null;
+        }
     }
-
 }

@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
@@ -40,7 +39,6 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
 
     private IReBlogEsService iReBlogEsService;
 
-    @Autowired
     public ReBlogServiceImpl(RedisUtil redisUtil, IReBlogEsService iReBlogEsService) {
         this.redisUtil = redisUtil;
         this.iReBlogEsService = iReBlogEsService;

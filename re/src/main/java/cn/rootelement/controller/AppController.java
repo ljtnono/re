@@ -51,4 +51,11 @@ public class AppController {
         jsonResultVO.addField("token", jwt);
         return jsonResultVO;
     }
+
+    @PostMapping("/refreshToken")
+    @ResponseBody
+    public JsonResultVO refreshToken() {
+
+        return null;
+    }
 }

@@ -25,7 +25,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("cn.ljtnono.re.controller"))
+                .apis(RequestHandlerSelectors.basePackage("cn.rootelement.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
