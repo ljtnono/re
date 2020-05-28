@@ -10,5 +10,4 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @version 1.0.1
  */
 public interface ReBlogTypeMapper extends BaseMapper<ReBlogType> {
-
 }

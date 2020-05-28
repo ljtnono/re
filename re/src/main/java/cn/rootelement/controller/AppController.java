@@ -2,17 +2,22 @@ package cn.rootelement.controller;
 
 import cn.rootelement.service.IReBlogService;
 import cn.rootelement.util.JJWTUtil;
+import cn.rootelement.util.RedisUtil;
 import cn.rootelement.vo.JsonResultVO;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * 处理页面路由的Controller
@@ -33,12 +38,15 @@ public class AppController {
 
     private AuthenticationManager authenticationManager;
 
+    private RedisUtil redisUtil;
+
     @Autowired
-    public AppController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    public AppController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager, RedisUtil redisUtil) {
         this.iReBlogService = iReBlogService;
         this.jjwtUtil = jjwtUtil;
         this.userDetailsService = userDetailsService;
         this.authenticationManager = authenticationManager;
+        this.redisUtil = redisUtil;
     }
 
     @PostMapping("/doLogin")
@@ -52,10 +60,26 @@ public class AppController {
         return jsonResultVO;
     }
 
-    @PostMapping("/refreshToken")
+    @PostMapping("/test")
     @ResponseBody
-    public JsonResultVO refreshToken() {
+    public JsonResultVO saveTest() {
+        return iReBlogService.saveTest();
+    }
 
-        return null;
+    @GetMapping("/adminIndexData")
+    @ResponseBody
+    public JsonResultVO adminIndexData() {
+        Integer comment = iReBlogService.countComment();
+        Integer view = iReBlogService.countView();
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("commentCount", comment);
+        data.put("viewCount", view);
+        return JsonResultVO.newBuilder()
+                .data(null)
+                .fields(data)
+                .request("success")
+                .message("请求成功")
+                .status(HttpStatus.OK.value())
+                .build();
     }
 }

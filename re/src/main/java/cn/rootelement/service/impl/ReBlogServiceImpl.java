@@ -58,6 +58,14 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
     }
 
     @Override
+    public JsonResultVO saveTest() {
+        redisUtil.set("test", "hello world");
+        redisUtil.set("test", "你好世界！");
+        int a = 2 / 0;
+        return JsonResultVO.success(null, 0);
+    }
+
+    @Override
     public Integer countView() {
         return baseMapper.countView();
     }

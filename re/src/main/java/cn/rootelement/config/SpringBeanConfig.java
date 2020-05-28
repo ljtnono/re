@@ -91,6 +91,7 @@ public class SpringBeanConfig {
         // Hash value序列化
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.afterPropertiesSet();
+        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 }
