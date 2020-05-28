@@ -33,6 +33,8 @@ import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
 import { ChartPie, ChartBar } from '_c/charts'
 import Example from './example.vue'
+import {adminIndexData} from "../../../api/app";
+
 export default {
   name: 'home',
   components: {
@@ -70,8 +72,21 @@ export default {
       }
     }
   },
-  mounted () {
+  methods: {
+    adminIndexData() {
+      adminIndexData().then(res => {
+        let data = res.data;
+        if (data.request === "success" && data.status === 200) {
 
+        }
+      }).catch(error => {
+        console.log(error);
+      });
+    }
+  },
+  mounted () {
+    // 获取用户信息
+    this.adminIndexData();
   }
 }
 </script>
