@@ -23,21 +23,17 @@ public class ReBookTypeController {
         return null;
     }
 
-
     public JsonResultVO saveEntity(ReBookType entity) {
         return null;
     }
-
 
     public JsonResultVO updateEntityById(Serializable id, ReBookType entity) {
         return null;
     }
 
-
     public JsonResultVO deleteEntityById(Serializable id) {
         return null;
     }
-
 
     public JsonResultVO getEntityById(Serializable id) {
         return null;

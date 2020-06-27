@@ -72,6 +72,4 @@ public interface IReBlogService extends IService<ReBlog>, IReEntityService<ReBlo
      * @return 热门文章列表
      */
     JsonResultVO listHotArticles();
-
-    JsonResultVO saveTest();
 }

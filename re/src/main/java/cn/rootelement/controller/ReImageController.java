@@ -40,9 +40,9 @@ import java.util.Optional;
 @Api(value = "ReImageController", tags = {"图片接口"})
 public class ReImageController {
 
-    private IReImageService iReImageService;
+    private final IReImageService iReImageService;
 
-    private FtpClientUtil ftpClientUtil;
+    private final FtpClientUtil ftpClientUtil;
 
     @Autowired
     public ReImageController(IReImageService iReImageService, FtpClientUtil ftpClientUtil) {
@@ -123,7 +123,6 @@ public class ReImageController {
         return iReImageService.listEntityAll();
     }
 
-
     @DeleteMapping("/{id:\\w+}")
     @PreAuthorize("hasRole('root')")
     public JsonResultVO deleteEntityById(@PathVariable("id") Serializable id) {
@@ -147,4 +146,10 @@ public class ReImageController {
     public JsonResultVO search(ReImageSearchDTO reImageSearchDTO, @Validated PageDTO pageDTO) {
         return iReImageService.search(reImageSearchDTO, pageDTO);
     }
+
+    /** TODO 1、点击下载图片功能
+     *       2、将所有的图片都换成阿里云的oss存储
+     *       3、编写一个爬虫程序，根据关键字爬取图片
+     *
+     */
 }

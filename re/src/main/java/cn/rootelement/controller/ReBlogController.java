@@ -35,9 +35,9 @@ import java.util.List;
 @Api(value = "ReBlogController", tags = {"博客接口"})
 public class ReBlogController {
 
-    private IReBlogService iReBlogService;
+    private final IReBlogService iReBlogService;
 
-    private IReBlogEsService iReBlogEsService;
+    private final IReBlogEsService iReBlogEsService;
 
     @Autowired
     public ReBlogController(IReBlogService iReBlogService, IReBlogEsService iReBlogEsService) {
@@ -51,6 +51,7 @@ public class ReBlogController {
         JsonResultVO resultVO = iReBlogService.listEntityAll();
         List<ReBlog> blogList = (List<ReBlog>) resultVO.getData();
         iReBlogEsService.deleteAll();
+        // 将所有的博客信息都存储在Es中
         blogList.forEach(iReBlogEsService::save);
         return resultVO;
     }
@@ -100,6 +101,22 @@ public class ReBlogController {
         iReBlogEsService.delete(reBlog);
         iReBlogEsService.save(reBlog);
         return resultVO;
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('root')")
+    @ApiOperation(value = "根据博客id数组批量删除博客", httpMethod = "DELETE")
+    public JsonResultVO deleteBlogsByArray(@RequestParam("idArray[]") int[] idArray) {
+        // TODO 还未完成
+        return null;
+    }
+
+    @GetMapping("/listBlogDeletedPage")
+    @PreAuthorize("hasRole('root')")
+    @ApiOperation(value = "分页获取所有已经删除的博客列表")
+    public JsonResultVO listBlogDeletedPage(@Validated PageDTO pageDTO) {
+        // TODO 还未完成
+        return null;
     }
 
     @GetMapping("/{id:\\d+}")
@@ -166,4 +183,13 @@ public class ReBlogController {
         success.addField("totalCount", query.getTotalElements());
         return success;
     }
+
+    /** TODO 1、查询所有已经删除的博客，在后端显示垃圾桶，后端不再显示博客状态
+     *       2、从垃圾桶中彻底删除清空一个博客的信息
+     *       3、根据id数组批量删除博客列表
+     *       4、根据所有
+     *
+     *
+     */
 }
+

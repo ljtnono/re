@@ -29,7 +29,7 @@ import java.util.Date;
 @Api(value = "ReTimelineController", tags = {"时间轴接口"})
 public class ReTimelineController {
 
-    private IReTimelineService iReTimelineService;
+    private final IReTimelineService iReTimelineService;
 
     @Autowired
     public ReTimelineController(IReTimelineService iReTimelineService) {

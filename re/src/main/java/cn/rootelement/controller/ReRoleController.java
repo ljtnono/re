@@ -29,7 +29,7 @@ import java.util.Date;
 @Api(value = "ReRoleController", tags = {"角色接口"})
 public class ReRoleController {
 
-    private IReRoleService iReRoleService;
+    private final IReRoleService iReRoleService;
 
     @Autowired
     public ReRoleController(IReRoleService iReRoleService) {

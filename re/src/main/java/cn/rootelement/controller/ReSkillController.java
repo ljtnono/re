@@ -29,7 +29,7 @@ import java.util.Date;
 @Api(value = "ReSkillController", tags = {"技能接口"})
 public class ReSkillController {
 
-    private IReSkillService iReSkillService;
+    private final IReSkillService iReSkillService;
 
     @Autowired
     public ReSkillController(IReSkillService iReSkillService) {

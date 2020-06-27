@@ -30,15 +30,15 @@ import java.util.Map;
 @Api(value = "AppController", tags = {"页面路由"})
 public class AppController {
 
-    private IReBlogService iReBlogService;
+    private final IReBlogService iReBlogService;
 
-    private JJWTUtil jjwtUtil;
+    private final JJWTUtil jjwtUtil;
 
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
     @Autowired
     public AppController(IReBlogService iReBlogService, JJWTUtil jjwtUtil, @Qualifier("reUserDetailService") UserDetailsService userDetailsService, AuthenticationManager authenticationManager, RedisUtil redisUtil) {
@@ -52,18 +52,13 @@ public class AppController {
     @PostMapping("/doLogin")
     @ResponseBody
     public JsonResultVO login(String username, String password) {
+        // TODO 首先可以从数据库中查询是否有这个用户名或者密码，然后根据结果返回错误
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         String jwt = jjwtUtil.generateToken(userDetails);
         JsonResultVO jsonResultVO = JsonResultVO.forMessage("登陆成功", 200);
         jsonResultVO.addField("token", jwt);
         return jsonResultVO;
-    }
-
-    @PostMapping("/test")
-    @ResponseBody
-    public JsonResultVO saveTest() {
-        return iReBlogService.saveTest();
     }
 
     @GetMapping("/adminIndexData")

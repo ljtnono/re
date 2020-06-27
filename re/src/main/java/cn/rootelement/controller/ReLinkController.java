@@ -29,7 +29,7 @@ import java.util.Date;
 @Api(value = "ReLinkController", tags = {"链接接口"})
 public class ReLinkController {
 
-    private IReLinkService iReLinkService;
+    private final IReLinkService iReLinkService;
 
     @Autowired
     public ReLinkController(IReLinkService iReLinkService) {

@@ -16,7 +16,11 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,11 +38,20 @@ import java.util.*;
 @Api(value = "ReUserController", tags = {"用户接口"})
 public class ReUserController {
 
-    private IReUserService iReUserService;
+    private final IReUserService iReUserService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsService userDetailsService;
+
+    private final JJWTUtil jjwtUtil;
 
     @Autowired
-    public ReUserController(IReUserService iReUserService) {
+    public ReUserController(IReUserService iReUserService, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JJWTUtil jjwtUtil) {
         this.iReUserService = iReUserService;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.jjwtUtil = jjwtUtil;
     }
 
     @GetMapping("/{id:\\d+}")
@@ -116,15 +129,23 @@ public class ReUserController {
             Map<String, Object> user = new HashMap<>(3);
             user.put("username", username);
             user.put("authorities", authorities);
-            resultVO = JsonResultVO.newBuilder()
-                    .data(null)
-                    .message("请求成功")
-                    .request("success")
-                    .status(HttpStatusEnum.OK.getCode())
-                    .totalCount(null)
-                    .fields(user)
+            resultVO = JsonResultVO.newBuilder().data(null).message("请求成功")
+                    .request("success").status(HttpStatusEnum.OK.getCode())
+                    .totalCount(null).fields(user)
                     .build();
         }
         return resultVO;
+    }
+
+    @PostMapping("/doLogin")
+    @ResponseBody
+    public JsonResultVO login(String username, String password) {
+        // TODO 首先可以从数据库中查询是否有这个用户名或者密码，然后根据结果返回错误
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String jwt = jjwtUtil.generateToken(userDetails);
+        JsonResultVO jsonResultVO = JsonResultVO.forMessage("登陆成功", 200);
+        jsonResultVO.addField("token", jwt);
+        return jsonResultVO;
     }
 }

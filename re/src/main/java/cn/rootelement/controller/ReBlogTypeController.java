@@ -32,7 +32,7 @@ import java.util.Optional;
 @Api(value = "ReBlogTypeController", tags = {"博客类型接口"})
 public class ReBlogTypeController {
 
-    private IReBlogTypeService iReBlogTypeService;
+    private final IReBlogTypeService iReBlogTypeService;
 
     @Autowired
     public ReBlogTypeController(IReBlogTypeService iReBlogTypeService) {

@@ -57,13 +57,6 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
         return JsonResultVO.success(list, list.size());
     }
 
-    @Override
-    public JsonResultVO saveTest() {
-        redisUtil.set("test", "hello world");
-        redisUtil.set("test", "你好世界！");
-        int a = 2 / 0;
-        return JsonResultVO.success(null, 0);
-    }
 
     @Override
     public Integer countView() {
@@ -170,7 +163,7 @@ public class ReBlogServiceImpl extends ServiceImpl<ReBlogMapper, ReBlog> impleme
             return JsonResultVO.success((Collection<?>) objects.get(0), ((Collection<?>) objects.get(0)).size()).addField("totalPages", getByPattern.split("_")[0]).addField("totalCount", getByPattern.split("_")[1]);
         } else {
             // 按照时间降序排列
-            IPage<ReBlog> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlog>().orderByDesc("modify_time", "view", "comment"));
+            IPage<ReBlog> pageResult = page(new Page<>(page, count), new QueryWrapper<ReBlog>().eq("status", 1).orderByDesc("modify_time", "view", "comment"));
             log.info("从数据库中获取" + page + "页博客数据，每页获取" + count + "条");
             redisUtil.lSet(redisKey, pageResult.getRecords(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);
             redisUtil.set(totalRedisKey, pageResult.getPages() + "_" + pageResult.getTotal(), RedisUtil.EXPIRE_TIME_PAGE_QUERY);

@@ -30,7 +30,7 @@ import java.util.Optional;
 @Api(value = "ReLinkTypeController", tags = {"链接类型接口"})
 public class ReLinkTypeController {
 
-    private IReLinkTypeService iReLinkTypeService;
+    private final IReLinkTypeService iReLinkTypeService;
 
     @Autowired
     public ReLinkTypeController(IReLinkTypeService iReLinkTypeService) {
