@@ -20,6 +20,16 @@
             <artifactId>re-security</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-service-system</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-service-blog</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
