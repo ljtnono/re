@@ -46,7 +46,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/api/system/user/login")
+                .antMatchers("/re/api/system/user/login")
                 .permitAll()
                 .and()
                 .exceptionHandling();
