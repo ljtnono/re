@@ -32,4 +32,26 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- 指定全局唯一入口 -->
+                    <mainClass>cn.ljtnono.re.api.ReApiApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- 依赖打入jar包 -->
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

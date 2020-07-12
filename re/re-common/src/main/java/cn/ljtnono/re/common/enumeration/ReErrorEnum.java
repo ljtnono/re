@@ -6,7 +6,7 @@ package cn.ljtnono.re.common.enumeration;
  * Date: 2020/7/11 23:44 下午
  * Description: 异常码枚举类
  */
-public enum ErrorEnum {
+public enum ReErrorEnum {
 
     /** 系统异常 */
     SYSTEM_ERROR(50000, "系统异常"),
@@ -20,7 +20,7 @@ public enum ErrorEnum {
     /** 异常消息 */
     private String message;
 
-    ErrorEnum(Integer code, String message) {
+    ReErrorEnum(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
