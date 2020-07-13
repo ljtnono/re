@@ -1,6 +1,6 @@
 package cn.ljtnono.re.security.util;
 
-import cn.ljtnono.re.entity.security.ReUserDetailsImpl;
+import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,9 +98,8 @@ public class ReJwtUtil {
     private Map<String, Object> userDetailsToClaims(UserDetails userDetails) {
         Optional.ofNullable(userDetails).orElseThrow(() -> new NullPointerException("userDetails参数不能为null"));
         Map<String, Object> map = new HashMap<>(8);
-        map.put("id", ((ReUserDetailsImpl) userDetails).getId());
+        map.put("id", ((ReUser) userDetails).getId());
         map.put("username", userDetails.getUsername());
-        map.put("password", userDetails.getPassword());
         map.put("isAccountNonExpired", userDetails.isAccountNonExpired());
         map.put("isAccountNonLocked", userDetails.isAccountNonLocked());
         map.put("isCredentialsNonExpired", userDetails.isCredentialsNonExpired());
@@ -186,18 +185,16 @@ public class ReJwtUtil {
     /**
      * 根据token解析出UserDetails对象
      * @param token token
-     * @return 此方法返回 {@link ReUserDetailsImpl} 对象
+     * @return 此方法返回 {@link ReUser} 对象
      */
     public UserDetails getUserDetailsFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        ReUserDetailsImpl reUserDetails = new ReUserDetailsImpl();
+        ReUser reUser = new ReUser();
         Integer id = claims.get("id", Integer.class);
         String username = claims.get("username", String.class);
-        String password = claims.get("password", String.class);
-        reUserDetails.setId(id);
-        reUserDetails.setUsername(username);
-        reUserDetails.setPassword(password);
-        return reUserDetails;
+        reUser.setId(id);
+        reUser.setUsername(username);
+        return reUser;
     }
 
 }

@@ -7,7 +7,3 @@ mybatis-plus:
     banner: false
   mapper-locations: classpath:/mapper/**/*Mapper.xml
   type-aliases-package: cn.ljtnono.re.mapper
-# 配置mybatis日志
-logging:
-  level:
-    cn.ljtnono.re.mapper: DEBUG

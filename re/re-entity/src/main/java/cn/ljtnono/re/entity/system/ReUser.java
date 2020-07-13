@@ -2,11 +2,18 @@ package cn.ljtnono.re.entity.system;
 
 import cn.ljtnono.re.entity.base.ReBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author ljt
@@ -17,7 +24,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_user")
-public class ReUser extends ReBaseEntity implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
 
     private static final long serialVersionUID = 4057606458753697276L;
 
@@ -36,4 +44,37 @@ public class ReUser extends ReBaseEntity implements Serializable {
     /** 用户邮箱 */
     private String email;
 
+    /** 用户权限列表 */
+    private List<RePermission> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // 根据Permission列表来构造
+        List<SimpleGrantedAuthority> au = new ArrayList<>();
+        if (authorities != null) {
+            // 根据 expression字段构造权限
+            authorities.forEach(a -> au.add(new SimpleGrantedAuthority(a.getExpression())));
+        }
+        return au;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

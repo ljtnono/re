@@ -10,8 +10,8 @@
         <module name="re-mapper" />
         <module name="re-service-blog" />
         <module name="re-security" />
-        <module name="re-common" />
         <module name="re-api" />
+        <module name="re-common" />
         <module name="re-entity" />
       </profile>
     </annotationProcessing>

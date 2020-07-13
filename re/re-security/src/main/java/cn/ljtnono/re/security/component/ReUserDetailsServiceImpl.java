@@ -1,15 +1,15 @@
 package cn.ljtnono.re.security.component;
 
-import cn.ljtnono.re.entity.security.ReUserDetailsImpl;
+import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReUser;
+import cn.ljtnono.re.mapper.system.ReUserMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -19,19 +19,17 @@ import java.util.List;
  */
 @Component
 public class ReUserDetailsServiceImpl implements UserDetailsService {
+
+    @Resource
+    private ReUserMapper reUserMapper;
+
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-
-        ReUser reUser = new ReUser();
-        reUser.setUsername("ljtnono");
-        reUser.setPassword("80cea81e681679a81634e2b1846e6cb8");
-        reUser.setQq("935188400");
-        reUser.setEmail("935188400@qq.com");
-        reUser.setId(1);
-        reUser.setCreateDate(new Date());
-        reUser.setModifyDate(new Date());
-        reUser.setTel("15337106753");
-        List<RePermission> rePermissions = new ArrayList<>();
-        return new ReUserDetailsImpl(rePermissions, reUser);
+        // 根据用户名查出用户所有权限
+        ReUserDTO reUserDTO = new ReUserDTO();
+        List<RePermission> permission = reUserMapper.getPermissionList(reUserDTO);
+        ReUser reUser = reUserMapper.getUser(reUserDTO);
+        reUser.setAuthorities(permission);
+        return reUser;
     }
 }

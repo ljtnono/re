@@ -4,4 +4,28 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ljtnono.re.mapper.system.ReUserMapper">
 
+    <!-- 根据用户名查出所有权限列表 -->
+    <select id="getPermissionList" parameterType="cn.ljtnono.re.dto.system.ReUserDTO">
+        SELECT
+    </select>
+
+    <!-- 获取用户信息  -->
+    <select id="getUser" parameterType="cn.ljtnono.re.dto.system.ReUserDTO" >
+        SELECT
+            su.id,
+            su.username,
+            su.password,
+            su.email,
+            su.tel,
+            su.qq,
+            su.create_date,
+            su.modify_date,
+            su.del
+        FROM sys_user su
+        <where>
+            <if test="reUserDTO != null and reUserDTO.id != null">
+                AND su.id = #{reUserDTO.id}
+            </if>
+        </where>
+    </select>
 </mapper>

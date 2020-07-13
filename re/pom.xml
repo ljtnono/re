@@ -39,6 +39,7 @@
         <lombok.version>1.18.12</lombok.version>
         <swagger.version>2.9.2</swagger.version>
         <javaee-api.version>7.0</javaee-api.version>
+        <jjwt.version>0.9.1</jjwt.version>
     </properties>
 
     <!-- 依赖统一管理 -->
@@ -83,6 +84,12 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>${javaee-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

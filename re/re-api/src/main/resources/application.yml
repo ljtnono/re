@@ -20,3 +20,5 @@ mybatis-plus:
     banner: false
   mapper-locations: classpath:/mapper/**/*Mapper.xml
   type-aliases-package: cn.ljtnono.re.mapper
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
