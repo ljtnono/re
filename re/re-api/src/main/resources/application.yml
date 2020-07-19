@@ -13,7 +13,7 @@ spring:
 
 jwt:
   expire: 7200000
-  secretKey: XMIRROR_PTE
+  secretKey: ROOTELEMENT
 
 mybatis-plus:
   global-config:

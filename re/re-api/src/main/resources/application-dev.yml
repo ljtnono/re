@@ -2,7 +2,7 @@ spring:
   # 配置数据源
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://139.9.73.191:3306/re?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/re?characterEncoding=utf8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     druid:
       validation-query: SELECT 1
@@ -18,5 +18,5 @@ spring:
       test-on-return: false
       pool-prepared-statements: true
       max-open-prepared-statements: 20
-      username: root_element
+      username: root
       password: ljtLJT715336
