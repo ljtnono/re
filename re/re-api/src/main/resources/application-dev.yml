@@ -19,4 +19,4 @@ spring:
       pool-prepared-statements: true
       max-open-prepared-statements: 20
       username: root
-      password: ljtLJT715336
+      password: you+me=love
