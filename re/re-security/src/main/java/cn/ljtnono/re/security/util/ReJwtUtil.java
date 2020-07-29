@@ -28,13 +28,11 @@ public class ReJwtUtil {
     /**
      * jwt过期时间 2小时
      */
-    @Value("${jwt.expire}")
     public long expire;
 
     /**
      * jwt秘钥
      */
-    @Value("${jwt.secretKey}")
     public String secretKey;
 
     /** 令牌前缀 */
@@ -182,19 +180,19 @@ public class ReJwtUtil {
         return claimsFromToken.get("username").toString();
     }
 
-    /**
-     * 根据token解析出UserDetails对象
-     * @param token token
-     * @return 此方法返回 {@link ReUser} 对象
-     */
-    public UserDetails getUserDetailsFromToken(String token) {
-        Claims claims = getClaimsFromToken(token);
-        ReUser reUser = new ReUser();
-        Integer id = claims.get("id", Integer.class);
-        String username = claims.get("username", String.class);
-        reUser.setId(id);
-        reUser.setUsername(username);
-        return reUser;
-    }
+//    /**
+//     * 根据token解析出UserDetails对象
+//     * @param token token
+//     * @return 此方法返回 {@link ReUser} 对象
+//     */
+//    public UserDetails getUserDetailsFromToken(String token) {
+//        Claims claims = getClaimsFromToken(token);
+//        ReUser reUser = new ReUser();
+//        Integer id = claims.get("id", Integer.class);
+//        String username = claims.get("username", String.class);
+//        reUser.setId(id);
+//        reUser.setUsername(username);
+//        return reUser;
+//    }
 
 }

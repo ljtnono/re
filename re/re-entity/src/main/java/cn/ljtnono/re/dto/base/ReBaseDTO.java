@@ -26,7 +26,4 @@ public class ReBaseDTO implements Serializable {
     /** 最后修改时间 */
     private Date modifyDate;
 
-    /** 是否删除 0 删除 1 正常 */
-    private Integer del;
-
 }

@@ -24,12 +24,10 @@ public class ReBaseEntity implements Serializable {
     private Integer id;
 
     /** 实体创建时间 */
-    private Date createDate;
+    private Date createTime;
 
     /** 实体最后修改时间 */
-    private Date modifyDate;
+    private Date modifyTime;
 
-    /** 是否删除 0 删除 1 正常 */
-    private Integer del;
 
 }

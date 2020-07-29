@@ -8,23 +8,29 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+
 /**
  * @author ljt
- * Date: 2020/7/12 22:23 下午
- * Description: 角色实体
+ * Date: 2020/7/30 0:56
+ * Desciription: 用户消息实体
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@TableName("sys_role")
-public class ReRole extends ReBaseEntity implements Serializable {
+@TableName("sys_user_message")
+public class ReUserMessage extends ReBaseEntity implements Serializable {
 
-    private static final long serialVersionUID = -152690006554286058L;
+    private static final long serialVersionUID = 6450065004950075220L;
 
-    /** 角色名 */
-    private String name;
+    /** 所属用户id */
+    private Integer userId;
 
-    /** 是否删除 1 删除 0 正常 */
+    /** 消息内容 */
+    private String message;
+
+    /** 消息状态 0 未读 1 已读 */
+    private Integer status;
+
     @TableField("is_deleted")
     private Integer deleted;
 

@@ -1,6 +1,7 @@
 package cn.ljtnono.re.entity.system;
 
 import cn.ljtnono.re.entity.base.ReBaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,4 +34,7 @@ public class RePermission extends ReBaseEntity implements Serializable {
     /** 权限表达式 */
     private String expression;
 
+    /** 是否删除 1 删除 0 正常 */
+    @TableField("is_deleted")
+    private Integer deleted;
 }

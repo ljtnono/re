@@ -1,6 +1,7 @@
 package cn.ljtnono.re.entity.system;
 
 import cn.ljtnono.re.entity.base.ReBaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -35,16 +36,18 @@ public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
     /** 用户密码 */
     private String password;
 
-    /** 用户qq */
-    private String qq;
-
     /** 手机号码 */
     private String tel;
 
     /** 用户邮箱 */
     private String email;
 
+    /** 是否删除 1 删除 0 正常 */
+    @TableField("is_deleted")
+    private Integer deleted;
+
     /** 用户权限列表 */
+    @TableField(exist = false)
     private List<RePermission> authorities;
 
     @Override

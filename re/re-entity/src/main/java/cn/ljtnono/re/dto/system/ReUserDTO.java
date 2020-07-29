@@ -30,4 +30,7 @@ public class ReUserDTO extends ReBaseDTO implements Serializable {
 
     private String email;
 
+    /** 是否删除 0 删除 1 正常 */
+    private Integer del;
+
 }

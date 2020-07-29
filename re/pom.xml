@@ -23,6 +23,7 @@
         <module>re-api</module>
         <module>re-security</module>
         <module>re-mapper</module>
+        <module>re-service/re-service-resource</module>
     </modules>
 
     <!-- 版本号管理 -->
@@ -37,6 +38,7 @@
         <mysql.version>8.0.20</mysql.version>
         <druid.version>1.1.22</druid.version>
         <lombok.version>1.18.12</lombok.version>
+        <guava.version>22.0</guava.version>
         <swagger.version>2.9.2</swagger.version>
         <javaee-api.version>7.0</javaee-api.version>
         <jjwt.version>0.9.1</jjwt.version>
@@ -50,6 +52,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <!-- mysql -->
             <dependency>

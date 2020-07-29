@@ -6,7 +6,7 @@
 
     <!-- 根据用户名查出所有权限列表 -->
     <select id="getPermissionList" parameterType="cn.ljtnono.re.dto.system.ReUserDTO">
-        SELECT
+
     </select>
 
     <!-- 获取用户信息  -->

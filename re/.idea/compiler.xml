@@ -11,6 +11,7 @@
         <module name="re-mapper" />
         <module name="re-service-blog" />
         <module name="re-security" />
+        <module name="re-service-resource" />
         <module name="re-api" />
         <module name="re-common" />
         <module name="re-entity" />
@@ -26,6 +27,7 @@
       <module name="re-mapper" options="-parameters" />
       <module name="re-security" options="-parameters" />
       <module name="re-service-blog" options="-parameters" />
+      <module name="re-service-resource" options="-parameters" />
       <module name="re-service-system" options="-parameters" />
     </option>
   </component>
