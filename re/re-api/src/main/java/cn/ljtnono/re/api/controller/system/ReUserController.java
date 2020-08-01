@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.*;
 /**
  * @author ljt
  * Date 2020/7/16 1:19 上午
- * Description:
+ * Description: 用户接口
  */
 @RestController
-@RequestMapping("/api/system/user")
+@RequestMapping("/api/v1/system/user")
 @Slf4j
 @Api(description = "用户接口")
 public class ReUserController {
@@ -49,6 +49,7 @@ public class ReUserController {
             @ApiResponse(code = 200, message = "success")
     })
     public ReJsonResultVO<?> login(@RequestBody ReUser reUser) {
+        log.info("[re -> ReUserController] 用户登录，请求参数：{}", reUser);
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(reUser.getUsername(), reUser.getPassword());
         Authentication authenticate = authenticationManager.authenticate(upToken);
         UserDetails userDetails = reUserDetailsServiceImpl.loadUserByUsername(reUser.getUsername());

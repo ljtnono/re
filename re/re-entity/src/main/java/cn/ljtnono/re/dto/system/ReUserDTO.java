@@ -26,11 +26,9 @@ public class ReUserDTO extends ReBaseDTO implements Serializable {
 
     private String tel;
 
-    private String qq;
-
     private String email;
 
-    /** 是否删除 0 删除 1 正常 */
-    private Integer del;
+    /** 是否删除 1 删除 0 正常 */
+    private Integer deleted;
 
 }

@@ -1,4 +1,10 @@
 package cn.ljtnono.re.common.exception;
 
-public class SystemException {
+/**
+ * @author ljt
+ * Date: 2020/8/2 1:11
+ * Description: 系统异常
+ */
+public class SystemException extends GlobalException{
+
 }

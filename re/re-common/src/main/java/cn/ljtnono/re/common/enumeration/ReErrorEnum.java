@@ -1,6 +1,5 @@
 package cn.ljtnono.re.common.enumeration;
 
-
 /**
  * @author ljt
  * Date: 2020/7/11 23:44 下午

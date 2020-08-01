@@ -32,7 +32,7 @@ public class ReTransactionAdvice {
     private static final int AOP_TIME_OUT = 60 * 2;
 
     /** aspect表达式 */
-    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.ljtnono.re.service.*.impl.*.*(..)))";
+    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.ljtnono.re.service.*.*.*(..)))";
 
     private final PlatformTransactionManager transactionManager;
 

@@ -4,6 +4,7 @@ import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @author ljt
@@ -11,7 +12,8 @@ import lombok.Data;
  * Description: HTTP Restful Api 统一返回值封装
  */
 @Data
-public class ReJsonResultVO<T> {
+@ToString
+final public class ReJsonResultVO<T> {
 
     public static final Integer CODE_SUCCESS = 0;
 
