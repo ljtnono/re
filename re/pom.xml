@@ -12,18 +12,18 @@
     <groupId>cn.ljtnono</groupId>
     <artifactId>re</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>${project.version}</version>
     <name>re</name>
     <description>根元素-后端</description>
     <modules>
         <module>re-common</module>
         <module>re-entity</module>
-        <module>/re-service/re-service-system</module>
-        <module>/re-service/re-service-blog</module>
+        <module>re-service/re-service-system</module>
+        <module>re-service/re-service-blog</module>
+        <module>re-service/re-service-resource</module>
         <module>re-api</module>
         <module>re-security</module>
         <module>re-mapper</module>
-        <module>re-service/re-service-resource</module>
     </modules>
 
     <!-- 版本号管理 -->

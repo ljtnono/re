@@ -1,5 +1,6 @@
 package cn.ljtnono.re.api.controller.system;
 
+import cn.ljtnono.re.common.util.rest.RestTemplateUtil;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.security.component.ReUserDetailsServiceImpl;
 import cn.ljtnono.re.security.util.ReJwtUtil;
@@ -14,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author ljt
@@ -32,15 +35,25 @@ public class ReUserController {
 
     private final ReUserDetailsServiceImpl reUserDetailsServiceImpl;
 
-    public ReUserController(AuthenticationManager authenticationManager, ReJwtUtil reJwtUtil, ReUserDetailsServiceImpl reUserDetailsServiceImpl) {
+    private final RestTemplateUtil restTemplateUtil;
+
+    public ReUserController(AuthenticationManager authenticationManager, ReJwtUtil reJwtUtil, ReUserDetailsServiceImpl reUserDetailsServiceImpl, RestTemplateUtil restTemplateUtil) {
         this.authenticationManager = authenticationManager;
         this.reJwtUtil = reJwtUtil;
         this.reUserDetailsServiceImpl = reUserDetailsServiceImpl;
+        this.restTemplateUtil = restTemplateUtil;
     }
 
     @GetMapping("/test")
     public void test() {
-        log.info("ReUserController执行了");
+        RestTemplateUtil.Builder build = new RestTemplateUtil.Builder()
+                .url("https://rootelement.cn/api/blog/{blogId}")
+                .enablePathVariable(true)
+                .addParam("blogId", 10043)
+                .build();
+        Map<String, Object> map = restTemplateUtil.getForObject(build, Map.class);
+        System.out.println(map);
+
     }
 
     @PostMapping("/login")
@@ -56,4 +69,10 @@ public class ReUserController {
         String token = reJwtUtil.generateToken(userDetails);
         return ReJsonResultVO.success(token);
     }
+
+    @GetMapping("/testRest")
+    public ReJsonResultVO<?> testRest() {
+        return ReJsonResultVO.success(null);
+    }
+
 }
