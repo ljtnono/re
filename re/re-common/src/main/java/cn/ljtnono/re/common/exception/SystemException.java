@@ -7,7 +7,7 @@ import cn.ljtnono.re.common.enumeration.ReErrorEnum;
  * Date: 2020/8/2 1:11
  * Description: 系统异常
  */
-public class SystemException extends GlobalException{
+public class SystemException extends GlobalException {
 
     public SystemException(ReErrorEnum reErrorEnum) {
         super(reErrorEnum);

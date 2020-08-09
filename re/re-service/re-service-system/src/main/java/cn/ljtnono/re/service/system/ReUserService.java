@@ -2,8 +2,10 @@ package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.common.constant.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
 import cn.ljtnono.re.common.exception.UserValidateException;
+import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReRole;
@@ -13,6 +15,7 @@ import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -38,29 +41,36 @@ public class ReUserService implements UserDetailsService {
     @Resource
     private ReUserMapper reUserMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
 
     /**
-     * 用户注册
+     * 新增用户接口
      * @param reUserDTO 用户参数封装
      * @return ReJsonResultVO<?>
      */
-    public ReJsonResultVO<?> register(ReUserDTO reUserDTO) {
+    public ReJsonResultVO<?> addUser(ReUserDTO reUserDTO) {
         Optional.ofNullable(reUserDTO)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
         userDtoBaseValidate(reUserDTO);
         // 用户名重复校验
         usernameDuplicateValidate(reUserDTO);
-        // TODO 验证码校验
+        // 验证码校验
         verifyCodeValidate(reUserDTO);
-
-        // TODO 构建用户实体和角色实体，插入到相应的表中去
+        // 构建用户实体和角色实体，插入到相应的表中去
         ReUser reUser = new ReUser();
         BeanUtils.copyProperties(reUserDTO, reUser);
-        reUser.setDeleted(0);
+        reUser.setDeleted(ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         setCreateTimeAndModifyTime(reUser);
         int insert = reUserMapper.insert(reUser);
         if (insert <= 0) {
+            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+        }
+        reUserDTO.setId(reUser.getId());
+        Integer result = reUserMapper.insertUserRole(reUserDTO);
+        if (result == null || result <= 0) {
             throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
         }
         return ReJsonResultVO.success(null);
@@ -71,7 +81,15 @@ public class ReUserService implements UserDetailsService {
      * @param reUserDTO 参数封装
      */
     public void verifyCodeValidate(ReUserDTO reUserDTO) {
-
+        Optional.ofNullable(reUserDTO.getVerifyCodeId())
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        Optional.ofNullable(reUserDTO.getVerifyCodeId())
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        // 获取code
+        String code = (String) redisUtil.get(reUserDTO.getVerifyCodeId());
+        if (code == null || !code.equalsIgnoreCase(reUserDTO.getVerifyCode())) {
+            throw new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR);
+        }
     }
 
     /**
@@ -105,35 +123,34 @@ public class ReUserService implements UserDetailsService {
     public void userDtoBaseValidate(ReUserDTO reUserDTO) {
         // 用户名校验
         if (!UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
-
+            throw new UserValidateException(ReErrorEnum.USERNAME_FORMAT_ERROR);
         }
         // 密码校验
         if (!UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
-
+            throw new UserValidateException(ReErrorEnum.PASSWORD_FORMAT_ERROR);
         }
         // 邮箱校验
         if (!UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
-
+            throw new UserValidateException(ReErrorEnum.EMAIL_FORMAT_ERROR);
         }
         // 手机校验
         if (!UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
-
+            throw new UserValidateException(ReErrorEnum.PHONE_FORMAT_ERROR);
         }
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws GlobalException {
         // 根据用户名查出用户所有权限
-        ReUserDTO reUserDTO = new ReUserDTO();
-        reUserDTO.setUsername(s);
         ReUser reUser = reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()
                 // 获取全部字段
                 .select(ReUser.class, tableFieldInfo -> true)
-                .eq(ReUser::getDeleted, 0));
+                .eq(ReUser::getUsername, s)
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
         // 用户不存在
         Optional.ofNullable(reUser)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_NOT_EXIST));
-        List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUserDTO.getId());
+        List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;
     }

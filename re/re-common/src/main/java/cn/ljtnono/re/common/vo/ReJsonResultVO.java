@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 /**
  * @author ljt
  * Date: 2020/7/12 23:53 下午
@@ -13,7 +15,9 @@ import lombok.ToString;
  */
 @Data
 @ToString
-final public class ReJsonResultVO<T> {
+public class ReJsonResultVO<T> implements Serializable {
+
+    private static final long serialVersionUID = 7266682980444049698L;
 
     public static final Integer CODE_SUCCESS = 0;
 

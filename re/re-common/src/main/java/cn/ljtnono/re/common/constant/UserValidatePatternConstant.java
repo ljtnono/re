@@ -9,11 +9,11 @@ import java.util.regex.Pattern;
  */
 public class UserValidatePatternConstant {
 
-    /** 用户名校验 */
+    /** 用户名校验 TODO 正则表达式待完成 */
     public static final Pattern USERNAME_VALIDATE_PATTERN = Pattern.compile("^\\w{4,20}$");
 
-    /** 密码校验 */
-    public static final Pattern PASSWORD_VALIDATE_PATTERN = Pattern.compile("");
+    /** 密码校验 TODO 正则表达式待完成 */
+    public static final Pattern PASSWORD_VALIDATE_PATTERN = Pattern.compile("^\\w{4,20}$");
 
     /** 邮箱校验 */
     public static final Pattern EMAIL_VALIDATE_PATTERN = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");

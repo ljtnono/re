@@ -1,8 +1,10 @@
 package cn.ljtnono.re.mapper.system;
 
+import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +21,11 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      * @return List<RePermission> 权限表达式列表
      */
     List<RePermission> getPermissionExpressionListByUserId(Integer userId);
+
+    /**
+     * 插入用户角色表
+     * @param reUserDTO 参数封装
+     * @return 影响的行数
+     */
+    Integer insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
 }

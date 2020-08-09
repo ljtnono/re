@@ -63,7 +63,7 @@ public class ReJwtUtil {
      * @return 过期时间
      */
     private Date generateExpiration() {
-        return new Date(System.currentTimeMillis() + expire);
+        return new Date(System.currentTimeMillis() + expire * 3600);
     }
 
     /**
@@ -131,6 +131,7 @@ public class ReJwtUtil {
      * 判断token是否过期
      * @param token token
      * @throws NullPointerException 当token为null或空串时抛出
+     * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
      * @return 过期返回false, 未过期返回true
      */
     public boolean isTokenExpired(String token) {
@@ -160,7 +161,7 @@ public class ReJwtUtil {
      * 验证token是否合法
      * @param token token
      * @param userDetails userDetails
-     * @throws NullPointerException 当token为null或空串、userDetails为null时抛出
+     * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
      * @return 合法返回true,不合法返回false
      */
     public boolean validateToken(String token, UserDetails userDetails) {

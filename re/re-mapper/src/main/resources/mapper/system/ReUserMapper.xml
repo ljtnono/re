@@ -24,4 +24,10 @@
         </where>
     </select>
 
+    <!-- 插入用户角色表 -->
+    <insert id="insertUserRole">
+        INSERT INTO sys_user_role(user_id, role_id)
+        VALUES(#{reUserDTO.id}, #{reUserDTO.roleId})
+    </insert>
+
 </mapper>

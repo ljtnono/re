@@ -7,7 +7,7 @@ import cn.ljtnono.re.common.enumeration.ReErrorEnum;
  * Date: 2020/8/2 0:55
  * Description: 通用业务异常
  */
-public class BusinessException extends GlobalException{
+public class BusinessException extends GlobalException {
 
     public BusinessException(ReErrorEnum reErrorEnum) {
         super(reErrorEnum);

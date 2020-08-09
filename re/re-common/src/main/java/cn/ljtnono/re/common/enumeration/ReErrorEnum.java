@@ -15,11 +15,26 @@ public enum ReErrorEnum {
 
     //**************************用户相关**************************//
     /** 用户名格式错误 */
-    USERNAME_FORMAT_ERROR(50002, "用户名格式错误"),
+    USERNAME_FORMAT_ERROR(50002, "用户名是4-15位字符串（不包括特殊字符和中文）"),
+    /** 密码格式错误 */
+    PASSWORD_FORMAT_ERROR(50003, "密码是4-20位字符串"),
     /** 用户不存在 */
     USER_NOT_EXIST(50003, "用户不存在"),
     /** 用户名重复 */
     USERNAME_ALREADY_EXIST(50004, "用户名重复"),
+    /** 验证码错误 */
+    VERIFY_CODE_ERROR(50005, "验证码错误"),
+    /** 邮箱格式错误 */
+    EMAIL_FORMAT_ERROR(50006, "邮箱格式错误"),
+    /** 手机号码格式错误 */
+    PHONE_FORMAT_ERROR(50007, "手机号码格式错误"),
+
+
+    //**************************token**************************//
+    /** token过期 */
+    TOKEN_EXPIRED_ERROR(60001, "token过期"),
+    TOKEN_FORMAT_ERROR(60002, "token格式错误"),
+    TOKEN_SIGNATURE_ERROR(60003, "token签名错误"),
     ;
 
     /** 异常码 */

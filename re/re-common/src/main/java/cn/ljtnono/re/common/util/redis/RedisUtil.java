@@ -36,17 +36,10 @@ public class RedisUtil {
     /**
      * 获取string类型的值
      * @param key 键
-     * @param type 类型
-     * @param <T> 泛型
-     * @return T
+     * @return Object
      */
-    public <T> T get(String key, Class<T> type) {
-        Object o = redisTemplate.boundValueOps(key).get();
-        if (o == null) {
-            return null;
-        } else {
-            return (T) o;
-        }
+    public Object get(String key) {
+        return redisTemplate.boundValueOps(key).get();
     }
 
 }

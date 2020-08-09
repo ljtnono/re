@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author ljt
@@ -31,13 +28,10 @@ public class ReUserController {
 
     private final ReUserService reUserService;
 
-    private final RestTemplateUtil restTemplateUtil;
-
     public ReUserController(AuthenticationManager authenticationManager, ReJwtUtil reJwtUtil, ReUserService reUserService, RestTemplateUtil restTemplateUtil) {
         this.authenticationManager = authenticationManager;
         this.reJwtUtil = reJwtUtil;
         this.reUserService = reUserService;
-        this.restTemplateUtil = restTemplateUtil;
     }
 
     @PostMapping("/login")
@@ -51,14 +45,24 @@ public class ReUserController {
     }
 
     /**
-     * 用户注册接口
+     * 新增用户接口
      * @param reUserDTO 前端参数封装
      * @return ReJsonResultVO<?>
      */
-    @PostMapping("/register")
-    public ReJsonResultVO<?> register(@RequestBody ReUserDTO reUserDTO) {
+    @PostMapping
+    public ReJsonResultVO<?> addUser(@RequestBody ReUserDTO reUserDTO) {
         log.info("[re -> ReUserController] 用户注册，请求参数：{}", reUserDTO);
-        return reUserService.register(reUserDTO);
+        return reUserService.addUser(reUserDTO);
     }
 
+    /**
+     * 根据用户id获取用户信息
+     * @param userId 用户id
+     * @return ReJsonResultVO<ReUser>
+     */
+    @GetMapping("/{userId:\\d+}")
+    public ReJsonResultVO<ReUser> getUserById(@PathVariable String userId) {
+        log.info("[re -> ReUserController] 获取用户信息，请求参数：{}", userId);
+        return null;
+    }
 }
