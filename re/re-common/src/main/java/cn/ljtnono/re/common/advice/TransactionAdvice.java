@@ -25,18 +25,17 @@ import java.util.Map;
 @Aspect
 @Slf4j
 @Component
-public class ReTransactionAdvice {
-
+public class TransactionAdvice {
 
     /** 事务超时时间 秒为单位 这里为2分钟 -1 为永不过期*/
     private static final int AOP_TIME_OUT = 60 * 2;
 
     /** aspect表达式 */
-    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.ljtnono.re.service.*.*.*(..)))";
+    private static final String AOP_POINTCUT_EXPRESSION = "execution(public * cn.xmirror.pte.service.impl.*.*(..)))";
 
     private final PlatformTransactionManager transactionManager;
 
-    public ReTransactionAdvice(PlatformTransactionManager transactionManager) {
+    public TransactionAdvice(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -71,7 +70,10 @@ public class ReTransactionAdvice {
         methodMap.put("repair*", requiredTx);
         methodMap.put("binding*", requiredTx);
         methodMap.put("change*", requiredTx);
-
+        methodMap.put("initialize*", requiredTx);
+        methodMap.put("login*", requiredTx);
+        methodMap.put("register*", requiredTx);
+        methodMap.put("audit*", requiredTx);
         //其他方法无事务，只读
         methodMap.put("*", readOnlyTx);
         source.setNameMap(methodMap);

@@ -4,11 +4,9 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ljt
- * Date: 2020/8/2 0:54
- * Description: redis工具类
+ * Date: 2020/8/9 16:04
+ * Description:
  */
 @Component
 public class RedisUtil {
-
-
 }

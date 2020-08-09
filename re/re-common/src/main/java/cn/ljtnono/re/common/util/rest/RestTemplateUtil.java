@@ -3,6 +3,7 @@ package cn.ljtnono.re.common.util.rest;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,12 +35,12 @@ public class RestTemplateUtil {
     private final RestTemplate template;
 
     public RestTemplateUtil() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(connectTimeout * 1000);
-        factory.setReadTimeout(readTimeout * 1000);
-        template = new RestTemplate();
+        template= new RestTemplateBuilder()
+                .setConnectTimeout(Duration.ofMillis(connectTimeout * 1000))
+                .setReadTimeout(Duration.ofMillis(readTimeout * 1000))
+                .requestFactory(SimpleClientHttpRequestFactory.class)
+                .build();
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        template.setRequestFactory(factory);
         // json 消息转换
         template.getMessageConverters().add(messageConverter);
         // html消息转换，解决中文乱码问题
@@ -264,6 +266,9 @@ public class RestTemplateUtil {
     public <T> T postForObject(Builder builder, Class<T> type) {
         baseCheckParam(builder, type);
         // TODO 待完成
+        if (builder.enablePathVariable) {
+            return template.postForObject(builder.getUrl(), null, type, builder.getParams());
+        }
         return template.postForObject(builder.getUrl(), builder.getParams(), type);
     }
 

@@ -12,7 +12,7 @@
     <groupId>cn.ljtnono</groupId>
     <artifactId>re</artifactId>
     <packaging>pom</packaging>
-    <version>${project.version}</version>
+    <version>${re-version}</version>
     <name>re</name>
     <description>根元素-后端</description>
     <modules>
@@ -33,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <project.version>0.0.1</project.version>
+        <re-version>0.0.1</re-version>
         <mybatis-plus.version>3.3.2</mybatis-plus.version>
         <mysql.version>8.0.20</mysql.version>
         <druid.version>1.1.22</druid.version>
@@ -43,6 +43,7 @@
         <javaee-api.version>7.0</javaee-api.version>
         <jjwt.version>0.9.1</jjwt.version>
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
     </properties>
 
     <!-- 依赖统一管理 -->
@@ -98,6 +99,12 @@
                 <groupId>com.aliyun.oss</groupId>
                 <artifactId>aliyun-sdk-oss</artifactId>
                 <version>${aliyun-oss.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

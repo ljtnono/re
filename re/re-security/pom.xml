@@ -5,7 +5,7 @@
     <parent>
         <artifactId>re</artifactId>
         <groupId>cn.ljtnono</groupId>
-        <version>${project.version}</version>
+        <version>${re-version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>re-security</artifactId>
@@ -14,12 +14,12 @@
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-common</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-entity</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-mapper</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
         <!-- jwt -->
         <dependency>

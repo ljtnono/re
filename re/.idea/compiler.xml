@@ -7,14 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="re-security" />
+        <module name="re-common" />
+        <module name="re-service-resource" />
+        <module name="re-entity" />
+        <module name="re-api" />
         <module name="re-service-system" />
         <module name="re-mapper" />
         <module name="re-service-blog" />
-        <module name="re-service-resource" />
-        <module name="re-security" />
-        <module name="re-common" />
-        <module name="re-api" />
-        <module name="re-entity" />
       </profile>
     </annotationProcessing>
   </component>

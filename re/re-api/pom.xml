@@ -5,7 +5,7 @@
     <parent>
         <artifactId>re</artifactId>
         <groupId>cn.ljtnono</groupId>
-        <version>${project.version}</version>
+        <version>${re-version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>re-api</artifactId>
@@ -18,17 +18,17 @@
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-security</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-service-system</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-service-blog</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
     </dependencies>
 

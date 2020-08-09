@@ -5,7 +5,7 @@
     <parent>
         <artifactId>re</artifactId>
         <groupId>cn.ljtnono</groupId>
-        <version>${project.version}</version>
+        <version>${re-version}</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-mapper</artifactId>
-            <version>${project.version}</version>
+            <version>${re-version}</version>
         </dependency>
     </dependencies>
 
