@@ -3,6 +3,7 @@ package cn.ljtnono.re.security.util;
 import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -27,11 +28,13 @@ public class ReJwtUtil {
     /**
      * jwt过期时间 2小时
      */
+    @Value("${jwt.expire}")
     public long expire;
 
     /**
      * jwt秘钥
      */
+    @Value("${jwt.expire}")
     public String secretKey;
 
     /** 令牌前缀 */

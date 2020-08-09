@@ -104,19 +104,19 @@ public class ReUserService implements UserDetailsService {
      */
     public void userDtoBaseValidate(ReUserDTO reUserDTO) {
         // 用户名校验
-        if (UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
+        if (!UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
 
         }
         // 密码校验
-        if (UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
+        if (!UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
 
         }
         // 邮箱校验
-        if (UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
+        if (!UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
 
         }
         // 手机校验
-        if (UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
+        if (!UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
 
         }
     }

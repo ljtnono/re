@@ -1,15 +1,11 @@
 package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.util.rest.RestTemplateUtil;
+import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import cn.ljtnono.re.service.system.ReUserService;
-import cn.ljtnono.re.common.vo.ReJsonResultVO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/system/user")
 @Slf4j
-@Api(description = "用户接口")
 public class ReUserController {
 
     private final AuthenticationManager authenticationManager;
@@ -46,10 +41,6 @@ public class ReUserController {
     }
 
     @PostMapping("/login")
-    @ApiOperation(value = "用户")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "success")
-    })
     public ReJsonResultVO<?> login(@RequestBody ReUser reUser) {
         log.info("[re -> ReUserController] 用户登录，请求参数：{}", reUser);
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(reUser.getUsername(), reUser.getPassword());
