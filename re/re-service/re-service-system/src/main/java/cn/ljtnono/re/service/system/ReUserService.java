@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -122,19 +123,23 @@ public class ReUserService implements UserDetailsService {
      */
     public void userDtoBaseValidate(ReUserDTO reUserDTO) {
         // 用户名校验
-        if (!UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
+        if (StringUtils.isEmpty(reUserDTO.getUsername())
+                || !UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
             throw new UserValidateException(ReErrorEnum.USERNAME_FORMAT_ERROR);
         }
         // 密码校验
-        if (!UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
+        if (StringUtils.isEmpty(reUserDTO.getPassword())
+                || !UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
             throw new UserValidateException(ReErrorEnum.PASSWORD_FORMAT_ERROR);
         }
         // 邮箱校验
-        if (!UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
+        if (StringUtils.isEmpty(reUserDTO.getEmail())
+                || !UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
             throw new UserValidateException(ReErrorEnum.EMAIL_FORMAT_ERROR);
         }
         // 手机校验
-        if (!UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
+        if (StringUtils.isEmpty(reUserDTO.getPhone())
+                || !UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
             throw new UserValidateException(ReErrorEnum.PHONE_FORMAT_ERROR);
         }
     }

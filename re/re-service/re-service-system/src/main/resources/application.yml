@@ -10,9 +10,17 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
 
 jwt:
-  expire: 7200000
+  # 配置jwt过期时间 单位 小时
+  expire: 2
+  # 配置jwt秘钥
   secretKey: ROOTELEMENT
 
 rest:
