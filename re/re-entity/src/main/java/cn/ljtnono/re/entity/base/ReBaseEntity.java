@@ -29,5 +29,4 @@ public class ReBaseEntity implements Serializable {
     /** 实体最后修改时间 */
     private Date modifyTime;
 
-
 }

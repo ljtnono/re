@@ -37,7 +37,7 @@ public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
     private String password;
 
     /** 手机号码 */
-    private String tel;
+    private String phone;
 
     /** 用户邮箱 */
     private String email;

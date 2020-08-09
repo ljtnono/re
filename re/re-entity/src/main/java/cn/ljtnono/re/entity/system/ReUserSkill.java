@@ -31,5 +31,4 @@ public class ReUserSkill extends ReBaseEntity implements Serializable {
     /** 技能百分比 */
     private BigDecimal percentage;
 
-
 }

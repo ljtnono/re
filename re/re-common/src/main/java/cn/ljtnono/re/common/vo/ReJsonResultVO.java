@@ -1,4 +1,4 @@
-package cn.ljtnono.re.vo;
+package cn.ljtnono.re.common.vo;
 
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;

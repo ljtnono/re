@@ -20,3 +20,16 @@ spring:
       max-open-prepared-statements: 20
       username: root_element
       password: ljtLJT715336
+
+  # 配置redis
+  redis:
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: 10000
+        max-idle: 8
+        min-idle: 0
+      shutdown-timeout: 100
+    port: 6379
+    host: 127.0.0.1
+    password: ljtLJT715336

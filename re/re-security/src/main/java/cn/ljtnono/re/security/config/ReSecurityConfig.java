@@ -1,7 +1,7 @@
 package cn.ljtnono.re.security.config;
 
 import cn.ljtnono.re.security.component.ReTokenFilter;
-import cn.ljtnono.re.security.component.ReUserDetailsServiceImpl;
+import cn.ljtnono.re.service.system.ReUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,13 +24,13 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ReTokenFilter reTokenFilter;
 
-    private final ReUserDetailsServiceImpl reUserDetailsService;
+    private final ReUserService reUserService;
 
     private final PasswordEncoder passwordEncoder;
 
-    public ReSecurityConfig(ReTokenFilter reTokenFilter, ReUserDetailsServiceImpl reUserDetailsService, PasswordEncoder passwordEncoder) {
+    public ReSecurityConfig(ReTokenFilter reTokenFilter, ReUserService reUserService, PasswordEncoder passwordEncoder) {
         this.reTokenFilter = reTokenFilter;
-        this.reUserDetailsService = reUserDetailsService;
+        this.reUserService = reUserService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -62,7 +62,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(reUserDetailsService)
+        auth.userDetailsService(reUserService)
                 .passwordEncoder(passwordEncoder);
     }
 }

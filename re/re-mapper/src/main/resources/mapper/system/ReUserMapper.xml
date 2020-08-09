@@ -5,27 +5,23 @@
 <mapper namespace="cn.ljtnono.re.mapper.system.ReUserMapper">
 
     <!-- 根据用户名查出所有权限列表 -->
-    <select id="getPermissionList" parameterType="cn.ljtnono.re.dto.system.ReUserDTO">
-
-    </select>
-
-    <!-- 获取用户信息  -->
-    <select id="getUser" parameterType="cn.ljtnono.re.dto.system.ReUserDTO" >
+    <select id="getPermissionExpressionListByUserId" resultType="cn.ljtnono.re.entity.system.RePermission">
         SELECT
-            su.id,
-            su.username,
-            su.password,
-            su.email,
-            su.tel,
-            su.qq,
-            su.create_date,
-            su.modify_date,
-            su.del
-        FROM sys_user su
+            p.expression
+        FROM sys_permission p
+        LEFT JOIN sys_role_permission rp
+        ON rp.permission_id = p.id
+        LEFT JOIN sys_user_role ur
+        ON ur.role_id = rp.role_id
+        LEFT JOIN sys_user u
+        ON u.id = ur.user_id
         <where>
-            <if test="reUserDTO != null and reUserDTO.id != null">
-                AND su.id = #{reUserDTO.id}
+            <if test="userId != null">
+                AND u.id = #{userId}
+                AND p.is_deleted = 0
+                AND u.is_deleted = 0
             </if>
         </where>
     </select>
+
 </mapper>

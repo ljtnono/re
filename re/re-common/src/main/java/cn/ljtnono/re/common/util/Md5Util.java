@@ -13,11 +13,11 @@ public class Md5Util {
     private Md5Util() {}
 
     public static Md5Util getInstance() {
-        return Holder.instance;
+        return Holder.INSTANCE;
     }
 
     public static class Holder {
-        private final static Md5Util instance = new Md5Util();
+        private final static Md5Util INSTANCE = new Md5Util();
     }
 
     /**

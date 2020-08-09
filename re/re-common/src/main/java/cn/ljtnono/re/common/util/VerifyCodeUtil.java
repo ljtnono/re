@@ -4,9 +4,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author ljt
- * Date: 2020/8/9 16:04
- * Description:
+ * Date: 2020/8/9 18:24
+ * Description: 验证码工具类
  */
 @Component
-public class RedisUtil {
+public class VerifyCodeUtil {
+
 }
