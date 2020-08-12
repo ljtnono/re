@@ -13,6 +13,9 @@ import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.mapper.system.ReUserMapper;
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,7 @@ public class ReUserService implements UserDetailsService {
     @Autowired
     private RedisUtil redisUtil;
 
+    //*********************************** 增删改查 ***********************************//
 
     /**
      * 新增用户接口
@@ -57,9 +61,9 @@ public class ReUserService implements UserDetailsService {
         // 基础校验
         userDtoBaseValidate(reUserDTO);
         // 用户名重复校验
-        usernameDuplicateValidate(reUserDTO);
+        usernameDuplicateValidate(reUserDTO.getUsername());
         // 验证码校验
-        verifyCodeValidate(reUserDTO);
+        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
         // 构建用户实体和角色实体，插入到相应的表中去
         ReUser reUser = new ReUser();
         BeanUtils.copyProperties(reUserDTO, reUser);
@@ -78,20 +82,72 @@ public class ReUserService implements UserDetailsService {
     }
 
     /**
-     * 验证码校验
-     * @param reUserDTO 参数封装
+     * 根据id删除一个用户
+     * @param id 用户id
      */
-    public void verifyCodeValidate(ReUserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO.getVerifyCodeId())
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
-        Optional.ofNullable(reUserDTO.getVerifyCodeId())
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
-        // 获取code
-        String code = (String) redisUtil.get(reUserDTO.getVerifyCodeId());
-        if (code == null || !code.equalsIgnoreCase(reUserDTO.getVerifyCode())) {
-            throw new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR);
+    public void deleteUser(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
+        int update = reUserMapper.update(null, new UpdateWrapper<ReUser>().lambda()
+                .set(ReUser::getDeleted, 1)
+                .eq(ReUser::getId, id));
+        if (update <= 0) {
+            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
         }
     }
+
+    /**
+     * 修改用户信息
+     * @param reUserDTO
+     */
+    public void updateUser(ReUserDTO reUserDTO) {
+        Optional.ofNullable(reUserDTO)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        Optional.ofNullable(reUserDTO.getId())
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
+        // 基础校验
+        userDtoBaseValidate(reUserDTO);
+        // 是否存在此用户
+        ReUser user = getUserById(reUserDTO.getId());
+        Optional.ofNullable(user)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_NOT_EXIST));
+        BeanUtils.copyProperties(reUserDTO, user);
+        user.setModifyTime(new Date());
+        int update = reUserMapper.updateById(user);
+        if (update <= 0) {
+            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+        }
+    }
+
+    /**
+     * 根据id获取用户信息
+     * @param id 用户id
+     * @return ReUser 用户实体, 如果该用户不存在则返回NULL
+     */
+    @Transactional(readOnly = true)
+    public ReUser getUserById(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
+        return reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()
+                // 除去密码
+                .select(ReUser.class, i -> !i.getProperty().startsWith("password"))
+                .eq(ReUser::getId, id));
+    }
+
+    /**
+     * 分页获取用户信息
+     * @return IPage<ReUser>
+     */
+    @Transactional(readOnly = true)
+    public IPage<ReUser> getUserListPage(ReUserDTO reUserDTO) {
+        Optional.ofNullable(reUserDTO)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        Page<ReUser> page = new Page<>(reUserDTO.getPageNum(), reUserDTO.getPageSize());
+        IPage<ReUser> result = reUserMapper.getUserListPage(page, reUserDTO);
+        return result;
+    }
+
+    //*********************************** 业务方法 ***********************************//
 
     /**
      * 设置创建时间和最后修改时间
@@ -101,20 +157,6 @@ public class ReUserService implements UserDetailsService {
         Date now = new Date();
         reUser.setCreateTime(now);
         reUser.setModifyTime(now);
-    }
-
-    /**
-     * 用户名重复校验
-     * @param reUserDTO 参数封装
-     */
-    public void usernameDuplicateValidate(ReUserDTO reUserDTO) {
-        // 这里选择的是未删除的用户中不会重名的
-        ReUser reUser = reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()
-                .select(ReUser.class, i -> true)
-                .eq(ReUser::getUsername, reUserDTO.getUsername()));
-        if (reUser != null && reUser.getUsername().equals(reUserDTO.getUsername())) {
-            throw new UserValidateException(ReErrorEnum.USERNAME_ALREADY_EXIST);
-        }
     }
 
     /**
@@ -144,7 +186,45 @@ public class ReUserService implements UserDetailsService {
         }
     }
 
+    /**
+     * 用户名重复校验
+     * @throws UserValidateException 当用户名重复时抛出此异常
+     * @param reUserDTO 参数封装
+     */
+    @Transactional(readOnly = true)
+    public void usernameDuplicateValidate(String username) {
+        // 这里选择的是未删除的用户中不会重名的
+        ReUser reUser = reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()
+                .eq(ReUser::getUsername, username));
+        if (reUser != null && reUser.getUsername().equals(username)) {
+            throw new UserValidateException(ReErrorEnum.USERNAME_ALREADY_EXIST);
+        }
+    }
+
+    //*********************************** 公共方法 ***********************************//
+
+    /**
+     * 验证码校验
+     * @param verifyCodeId 验证码在redis中的键
+     * @param verifyCode 验证码的值
+     */
+    public void verifyCodeValidate(String verifyCodeId, String verifyCode) {
+        Optional.ofNullable(verifyCodeId)
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        Optional.ofNullable(verifyCode)
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        // 获取code
+        Object o = redisUtil.get(verifyCodeId);
+        Optional.ofNullable(o)
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.VERIFY_CODE_EXPIRED));
+        String code = (String) o;
+        if (StringUtils.isEmpty(code) || !code.equalsIgnoreCase(verifyCode)) {
+            throw new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR);
+        }
+    }
+
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String s) throws GlobalException {
         // 根据用户名查出用户所有权限
         ReUser reUser = reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()

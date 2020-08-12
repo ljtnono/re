@@ -19,5 +19,5 @@ public class UserValidatePatternConstant {
     public static final Pattern EMAIL_VALIDATE_PATTERN = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
 
     /** 手机校验 */
-    public static final Pattern PHONE_VALIDATE_PATTERN = Pattern.compile("^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[013678])|(18[0,5-9]))\\\\d{8}$");
+    public static final Pattern PHONE_VALIDATE_PATTERN = Pattern.compile("^1[3456789]\\d{9}$");
 }

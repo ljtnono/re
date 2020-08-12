@@ -30,4 +30,27 @@
         VALUES(#{reUserDTO.id}, #{reUserDTO.roleId})
     </insert>
 
+    <!-- 分页获取用户列表 -->
+    <select id="getUserListPage" resultType="cn.ljtnono.re.entity.system.ReUser">
+        SELECT
+            su.id,
+            su.username,
+            su.phone,
+            su.email,
+            su.create_time,
+            su.modify_time
+        FROM sys_user su
+        <where>
+            <if test="reUserDTO != null and reUserDTO.username != null and reUserDTO.username != ''">
+                AND su.username like concat('%', #{reUserDTO.username}, '%')
+            </if>
+            <if test="reUserDTO != null and reUserDTO.email != null and reUserDTO.email != ''">
+                AND su.email like concat('%', #{reUserDTO.email}, '%')
+            </if>
+            <if test="reUserDTO != null and reUserDTO.phone != null and reUserDTO.phone != ''">
+                AND su.phone like concat('%', #{reUserDTO.phone}, '%')
+            </if>
+            AND su.is_deleted = 0
+        </where>
+    </select>
 </mapper>

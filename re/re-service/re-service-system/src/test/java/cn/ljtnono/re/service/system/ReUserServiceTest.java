@@ -59,12 +59,12 @@ public class ReUserServiceTest {
         UserValidateException passwordException = assertThrows(UserValidateException.class, () -> {
             ReUserDTO reUserDTO = new ReUserDTO();
             String[] errorPassword = new String[]{
-//                    "ljt", "ljtnono@##",
-//                    null, "addeafgegeageadsfdafewafwf",
-//                    "dafewAAAAAAwWWWW999999",
-//                    null, "l",
-//                    "j", "a",
-//                    "b", null
+                    "ljt", "ljtnono@##",
+                    null, "addeafgegeageadsfdafewafwf",
+                    "dafewAAAAAAwWWWW999999",
+                    null, "l",
+                    "j", "a",
+                    "b", null
             };
             String password = errorPassword[new Random().nextInt(errorPassword.length)];
             reUserDTO.setUsername("testUsername");
@@ -73,5 +73,7 @@ public class ReUserServiceTest {
         });
         assertEquals(ReErrorEnum.PASSWORD_FORMAT_ERROR.getCode(), passwordException.getCode());
         assertEquals(ReErrorEnum.PASSWORD_FORMAT_ERROR.getMessage(), passwordException.getMessage());
+
+
     }
 }

@@ -4,6 +4,8 @@ import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      * @param userId 用户id
      * @return List<RePermission> 权限表达式列表
      */
-    List<RePermission> getPermissionExpressionListByUserId(Integer userId);
+    List<RePermission> getPermissionExpressionListByUserId(@Param("userId") Integer userId);
 
     /**
      * 插入用户角色表
@@ -28,4 +30,12 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      * @return 影响的行数
      */
     Integer insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
+
+    /**
+     * 分页获取用户列表
+     * @param page 分页对象
+     * @param reUserDTO 分页条件封装
+     * @return IPage<ReUser>
+     */
+    IPage<ReUser> getUserListPage(Page<ReUser> page, @Param("reUserDTO") ReUserDTO reUserDTO);
 }

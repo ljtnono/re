@@ -1,5 +1,7 @@
 package cn.ljtnono.re.dto.base;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.ToString;
 
@@ -18,6 +20,7 @@ public class ReBaseDTO implements Serializable {
     private static final long serialVersionUID = -212253609435316598L;
 
     /** id */
+    @TableId(type = IdType.AUTO)
     private Integer id;
 
     /** 创建时间 */
@@ -26,4 +29,9 @@ public class ReBaseDTO implements Serializable {
     /** 最后修改时间 */
     private Date modifyDate;
 
+    /** 分页页数 默认为1 */
+    private Integer pageNum = 1;
+
+    /** 每页条数 默认为10 */
+    private Integer pageSize = 10;
 }
