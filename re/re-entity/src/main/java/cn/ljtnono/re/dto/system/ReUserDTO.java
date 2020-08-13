@@ -20,9 +20,6 @@ public class ReUserDTO extends ReBaseDTO implements Serializable {
 
     private static final long serialVersionUID = 3301630533495460518L;
 
-    /** 用户id */
-    private Integer id;
-
     /** 用户名 */
     private String username;
 
