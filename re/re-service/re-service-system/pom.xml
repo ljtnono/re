@@ -21,6 +21,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-security</artifactId>
+            <version>${re-version}</version>
+        </dependency>
     </dependencies>
 
 </project>

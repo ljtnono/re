@@ -2,7 +2,6 @@ package cn.ljtnono.re.security.config;
 
 import cn.ljtnono.re.security.component.AccessDeniedHandlerImpl;
 import cn.ljtnono.re.security.component.ReTokenFilter;
-import cn.ljtnono.re.service.system.ReUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,8 +10,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.annotation.Resource;
 
 /**
  * @author ljt
@@ -25,15 +27,15 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ReTokenFilter reTokenFilter;
 
-    private final ReUserService reUserService;
+    @Resource
+    private UserDetailsService userDetailsService;
 
     private final PasswordEncoder passwordEncoder;
 
     private final AccessDeniedHandlerImpl accessDeniedHandler;
 
-    public ReSecurityConfig(ReTokenFilter reTokenFilter, ReUserService reUserService, PasswordEncoder passwordEncoder, AccessDeniedHandlerImpl accessDeniedHandler) {
+    public ReSecurityConfig(ReTokenFilter reTokenFilter, PasswordEncoder passwordEncoder, AccessDeniedHandlerImpl accessDeniedHandler) {
         this.reTokenFilter = reTokenFilter;
-        this.reUserService = reUserService;
         this.passwordEncoder = passwordEncoder;
         this.accessDeniedHandler = accessDeniedHandler;
     }
@@ -72,7 +74,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(reUserService)
+        auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder);
     }
 }

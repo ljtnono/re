@@ -21,12 +21,14 @@ jwt:
   # 配置jwt过期时间 单位 小时
   expire: 2
   # 配置jwt秘钥
-  secretKey: ROOTELEMENT
+  secret-key: ROOTELEMENT
 
+# r
 rest:
-  readTimeout: 100
-  connectTimeout: 100
+  read-timeout: 100
+  connect-timeout: 100
 
+# mybatis-plus 配置
 mybatis-plus:
   global-config:
     banner: false

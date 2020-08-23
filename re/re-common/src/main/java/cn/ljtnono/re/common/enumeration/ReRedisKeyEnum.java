@@ -7,4 +7,24 @@ package cn.ljtnono.re.common.enumeration;
  */
 public enum ReRedisKeyEnum {
 
+    /**
+     * 用户存储在redis中的键
+     */
+    USER_KEY("system:user:id:username")
+
+
+    ;
+    private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    ReRedisKeyEnum(String key) {
+        this.key = key;
+    }
 }

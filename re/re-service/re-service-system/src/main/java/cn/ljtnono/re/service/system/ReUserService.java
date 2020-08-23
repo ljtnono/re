@@ -154,7 +154,13 @@ public class ReUserService implements UserDetailsService {
      * @return ReUserLoginVO
      */
     public ReUserLoginVO login(ReUserDTO reUserDTO) {
-        // 单点登陆
+        Optional.ofNullable(reUserDTO)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
+
+        if (StringUtils.isEmpty(reUserDTO.getUsername())) {
+
+        }
+
         ReUserLoginVO vo = new ReUserLoginVO();
         return vo;
     }
