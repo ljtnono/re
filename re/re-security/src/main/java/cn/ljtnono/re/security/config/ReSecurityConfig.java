@@ -1,5 +1,6 @@
 package cn.ljtnono.re.security.config;
 
+import cn.ljtnono.re.security.component.AccessDeniedHandlerImpl;
 import cn.ljtnono.re.security.component.ReTokenFilter;
 import cn.ljtnono.re.service.system.ReUserService;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +29,13 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
 
-    public ReSecurityConfig(ReTokenFilter reTokenFilter, ReUserService reUserService, PasswordEncoder passwordEncoder) {
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
+
+    public ReSecurityConfig(ReTokenFilter reTokenFilter, ReUserService reUserService, PasswordEncoder passwordEncoder, AccessDeniedHandlerImpl accessDeniedHandler) {
         this.reTokenFilter = reTokenFilter;
         this.reUserService = reUserService;
         this.passwordEncoder = passwordEncoder;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -49,7 +53,13 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/re/api/v1/system/user/login")
                 .permitAll()
                 .and()
-                .exceptionHandling();
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(accessDeniedHandler);
 
         http.addFilterBefore(reTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

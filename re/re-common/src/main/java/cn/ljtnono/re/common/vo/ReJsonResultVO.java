@@ -62,7 +62,6 @@ public class ReJsonResultVO<T> implements Serializable {
     public static <T> ReJsonResultVO<T> success(T data) {
         return new ReJsonResultVO<T>(data);
     }
-
     /**
      * 失败响应 传入code和message
      *

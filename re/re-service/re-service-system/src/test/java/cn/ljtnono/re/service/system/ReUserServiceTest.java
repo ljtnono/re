@@ -76,4 +76,9 @@ public class ReUserServiceTest {
 
 
     }
+
+    @Test
+    public void updateUser() {
+
+    }
 }

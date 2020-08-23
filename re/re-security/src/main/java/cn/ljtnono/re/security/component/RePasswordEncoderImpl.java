@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RePasswordEncoderImpl implements PasswordEncoder {
+
     @Override
     public String encode(CharSequence charSequence) {
         return Md5Util.getInstance().getMd5LowerCase((String) charSequence);

@@ -12,6 +12,7 @@ import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.mapper.system.ReUserMapper;
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
+import cn.ljtnono.re.vo.system.ReUserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -147,6 +148,19 @@ public class ReUserService implements UserDetailsService {
         return result;
     }
 
+    /**
+     * 登录
+     * @param reUserDTO 参数封装
+     * @return ReUserLoginVO
+     */
+    public ReUserLoginVO login(ReUserDTO reUserDTO) {
+        // 单点登陆
+        ReUserLoginVO vo = new ReUserLoginVO();
+        return vo;
+    }
+
+
+
     //*********************************** 业务方法 ***********************************//
 
     /**
@@ -238,5 +252,14 @@ public class ReUserService implements UserDetailsService {
         List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;
+    }
+
+    /**
+     * 根据用户对象生成token
+     * @param reUser 用户对象
+     * @return token字符串
+     */
+    public String generateToken(ReUser reUser) {
+        return null;
     }
 }
