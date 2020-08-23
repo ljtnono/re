@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * @author ljt
  * Date: 2020/8/9 16:36
- * Description:
+ * Description: 异常处理器
  */
 @RestControllerAdvice
 @Slf4j

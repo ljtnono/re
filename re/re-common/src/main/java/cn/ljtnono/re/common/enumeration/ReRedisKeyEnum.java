@@ -7,5 +7,4 @@ package cn.ljtnono.re.common.enumeration;
  */
 public enum ReRedisKeyEnum {
 
-
 }

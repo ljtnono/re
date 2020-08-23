@@ -1,14 +1,11 @@
 package cn.ljtnono.re.api.controller.system;
 
-import cn.ljtnono.re.common.util.rest.RestTemplateUtil;
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.ReUser;
-import cn.ljtnono.re.security.util.ReJwtUtil;
 import cn.ljtnono.re.service.system.ReUserService;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -21,15 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ReUserController {
 
-    private final AuthenticationManager authenticationManager;
-
-    private final ReJwtUtil reJwtUtil;
-
     private final ReUserService reUserService;
 
-    public ReUserController(AuthenticationManager authenticationManager, ReJwtUtil reJwtUtil, ReUserService reUserService, RestTemplateUtil restTemplateUtil) {
-        this.authenticationManager = authenticationManager;
-        this.reJwtUtil = reJwtUtil;
+    public ReUserController(ReUserService reUserService) {
         this.reUserService = reUserService;
     }
 
