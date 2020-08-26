@@ -31,11 +31,4 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      */
     Integer insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
 
-    /**
-     * 分页获取用户列表
-     * @param page 分页对象
-     * @param reUserDTO 分页条件封装
-     * @return IPage<ReUser>
-     */
-    IPage<ReUser> getUserListPage(Page<ReUser> page, @Param("reUserDTO") ReUserDTO reUserDTO);
 }

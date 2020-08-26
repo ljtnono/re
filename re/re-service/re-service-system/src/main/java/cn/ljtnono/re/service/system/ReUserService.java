@@ -12,7 +12,9 @@ import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.mapper.system.ReUserMapper;
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
+import cn.ljtnono.re.security.util.ReJwtUtil;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,6 +22,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import sun.plugin.liveconnect.SecurityContextHelper;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -48,6 +54,9 @@ public class ReUserService implements UserDetailsService {
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private ReJwtUtil reJwtUtil;
 
     //*********************************** 增删改查 ***********************************//
 
@@ -86,7 +95,7 @@ public class ReUserService implements UserDetailsService {
      * 根据id删除一个用户
      * @param id 用户id
      */
-    public void deleteUser(Integer id) {
+    public void deleteUserById(Integer id) {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
         int update = reUserMapper.update(null, new UpdateWrapper<ReUser>().lambda()
@@ -144,7 +153,27 @@ public class ReUserService implements UserDetailsService {
         Optional.ofNullable(reUserDTO)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
         Page<ReUser> page = new Page<>(reUserDTO.getPageNum(), reUserDTO.getPageSize());
-        IPage<ReUser> result = reUserMapper.getUserListPage(page, reUserDTO);
+        LambdaQueryWrapper<ReUser> wrapper = new LambdaQueryWrapper<>();
+        // 除了password字段
+        wrapper.select(ReUser::getId,
+                ReUser::getUsername,
+                ReUser::getPhone,
+                ReUser::getEmail,
+                ReUser::getCreateTime,
+                ReUser::getModifyTime,
+                ReUser::getDeleted)
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
+        // TODO 此处如果多个条件都存在，可能会出现问题，需要详细测试
+        if (!StringUtils.isEmpty(reUserDTO.getUsername())) {
+            wrapper.like(ReUser::getUsername, reUserDTO.getUsername());
+        }
+        if (!StringUtils.isEmpty(reUserDTO.getEmail())) {
+            wrapper.like(ReUser::getEmail, reUserDTO.getEmail());
+        }
+        if (!StringUtils.isEmpty(reUserDTO.getPhone())) {
+            wrapper.like(ReUser::getPhone, reUserDTO.getPhone());
+        }
+        IPage<ReUser> result = reUserMapper.selectPage(page, wrapper);
         return result;
     }
 
@@ -156,16 +185,41 @@ public class ReUserService implements UserDetailsService {
     public ReUserLoginVO login(ReUserDTO reUserDTO) {
         Optional.ofNullable(reUserDTO)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
-
-        if (StringUtils.isEmpty(reUserDTO.getUsername())) {
-
-        }
-
+        // 校验用户名和密码
+        dtoUsernameAndPasswordCheck(reUserDTO);
+        // 校验验证码
+        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
+        // 生成登陆凭证
+        ReUser user = authenticate(reUserDTO.getUsername());
+        // 生成token
+        String token = generateToken(user);
+        // TODO 权限树、角色Id、角色名
         ReUserLoginVO vo = new ReUserLoginVO();
+        BeanUtils.copyProperties(user, vo);
+        vo.setToken(token);
         return vo;
     }
 
+    /**
+     * 登陆认证
+     * @param username
+     * @return ReUser
+     */
+    private ReUser authenticate(String username) {
+        ReUser user = (ReUser) loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(token);
+        return user;
+    }
 
+    /**
+     * 根据用户对象生成token
+     * @param reUser 用户对象, 不能为null，id 和 username字段也不能为null
+     * @return token字符串
+     */
+    private String generateToken(ReUser reUser) {
+        return reJwtUtil.generateToken(reUser);
+    }
 
     //*********************************** 业务方法 ***********************************//
 
@@ -184,16 +238,7 @@ public class ReUserService implements UserDetailsService {
      * @param reUserDTO 参数封装
      */
     public void userDtoBaseValidate(ReUserDTO reUserDTO) {
-        // 用户名校验
-        if (StringUtils.isEmpty(reUserDTO.getUsername())
-                || !UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
-            throw new UserValidateException(ReErrorEnum.USERNAME_FORMAT_ERROR);
-        }
-        // 密码校验
-        if (StringUtils.isEmpty(reUserDTO.getPassword())
-                || !UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
-            throw new UserValidateException(ReErrorEnum.PASSWORD_FORMAT_ERROR);
-        }
+        dtoUsernameAndPasswordCheck(reUserDTO);
         // 邮箱校验
         if (StringUtils.isEmpty(reUserDTO.getEmail())
                 || !UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
@@ -203,6 +248,23 @@ public class ReUserService implements UserDetailsService {
         if (StringUtils.isEmpty(reUserDTO.getPhone())
                 || !UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
             throw new UserValidateException(ReErrorEnum.PHONE_FORMAT_ERROR);
+        }
+    }
+
+    /**
+     * 检验dto的用户名和密码
+     * @param reUserDTO
+     */
+    private void dtoUsernameAndPasswordCheck(ReUserDTO reUserDTO) {
+        // 用户名校验
+        if (StringUtils.isEmpty(reUserDTO.getUsername())
+                || !UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
+            throw new UserValidateException(ReErrorEnum.USERNAME_FORMAT_ERROR);
+        }
+        // 密码校验
+        if (StringUtils.isEmpty(reUserDTO.getPassword())
+                || !UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
+            throw new UserValidateException(ReErrorEnum.PASSWORD_FORMAT_ERROR);
         }
     }
 
@@ -230,9 +292,9 @@ public class ReUserService implements UserDetailsService {
      */
     public void verifyCodeValidate(String verifyCodeId, String verifyCode) {
         Optional.ofNullable(verifyCodeId)
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR));
         Optional.ofNullable(verifyCode)
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.REQUEST_PARAM_ERROR));
+                .orElseThrow(() -> new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR));
         // 获取code
         Object o = redisUtil.get(verifyCodeId);
         Optional.ofNullable(o)
@@ -258,14 +320,5 @@ public class ReUserService implements UserDetailsService {
         List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;
-    }
-
-    /**
-     * 根据用户对象生成token
-     * @param reUser 用户对象
-     * @return token字符串
-     */
-    public String generateToken(ReUser reUser) {
-        return null;
     }
 }

@@ -40,6 +40,13 @@ public class ReJsonResultVO<T> implements Serializable {
         this.data = data;
     }
 
+    /**
+     *
+     * @return ReJsonResultVO<T>
+     */
+    public static <T> ReJsonResultVO<T> success() {
+        return ReJsonResultVO.success(null);
+    }
 
     /**
      * 私有构造方法 供失败响应调用

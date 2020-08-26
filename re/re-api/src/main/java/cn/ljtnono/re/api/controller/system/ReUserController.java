@@ -5,6 +5,7 @@ import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.service.system.ReUserService;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,6 @@ public class ReUserController {
      */
     @PostMapping("/login")
     public ReJsonResultVO<ReUserLoginVO> login(@RequestBody ReUserDTO reUserDTO) {
-        log.info("[re -> ReUserController] 用户登录，请求参数：{}", reUserDTO);
         return ReJsonResultVO.success(reUserService.login(reUserDTO));
 
     }
@@ -43,7 +43,6 @@ public class ReUserController {
      */
     @PostMapping
     public ReJsonResultVO<?> addUser(@RequestBody ReUserDTO reUserDTO) {
-        log.info("[re -> ReUserController] 用户新增，请求参数：{}", reUserDTO);
         return reUserService.addUser(reUserDTO);
     }
 
@@ -54,7 +53,38 @@ public class ReUserController {
      */
     @GetMapping("/{userId:\\d+}")
     public ReJsonResultVO<ReUser> getUserById(@PathVariable Integer userId) {
-        log.info("[re -> ReUserController] 获取用户信息，请求参数：{}", userId);
         return ReJsonResultVO.success(reUserService.getUserById(userId));
     }
+
+    /**
+     * 根据用户id删除用户
+     * @param userId 用户id
+     * @return ReJsonResultVO<?>
+     */
+    @DeleteMapping("/{userId:\\d+}")
+    public ReJsonResultVO<?> deleteUserById(@PathVariable Integer userId) {
+        reUserService.deleteUserById(userId);
+        return ReJsonResultVO.success();
+    }
+
+    /**
+     * 更新用户
+     * @return ReJsonResultVO<?>
+     */
+    @PutMapping
+    public ReJsonResultVO<?> updateUser(@RequestBody ReUserDTO reUserDTO) {
+        reUserService.updateUser(reUserDTO);
+        return ReJsonResultVO.success();
+    }
+
+    /**
+     * 分页获取用户信息
+     * @param reUserDTO 参数封装
+     * @return ReJsonResultVO<IPage<ReUser>>
+     */
+    @GetMapping("/page")
+    public ReJsonResultVO<IPage<ReUser>> page(ReUserDTO reUserDTO) {
+        return ReJsonResultVO.success(reUserService.getUserListPage(reUserDTO));
+    }
+
 }
