@@ -10,4 +10,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ReRoleMapper extends BaseMapper<ReRole> {
 
+
 }

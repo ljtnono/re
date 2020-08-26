@@ -24,8 +24,19 @@ public class ReRoleService {
     private ReRoleMapper reRoleMapper;
 
 
+
+
+    //*********************************** 增删改查 ***********************************//
+
+
     public void addRole(ReRoleDTO reRoleDTO) {
 
     }
+
+
+
+    //*********************************** 公共方法 ***********************************//
+
+
 
 }

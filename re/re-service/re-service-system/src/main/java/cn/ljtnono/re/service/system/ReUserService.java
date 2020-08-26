@@ -5,6 +5,7 @@ import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
 import cn.ljtnono.re.common.exception.UserValidateException;
+import cn.ljtnono.re.common.util.Md5Util;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
@@ -24,6 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,9 +37,11 @@ import org.springframework.util.StringUtils;
 import sun.plugin.liveconnect.SecurityContextHelper;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author ljt
@@ -185,25 +189,71 @@ public class ReUserService implements UserDetailsService {
     public ReUserLoginVO login(ReUserDTO reUserDTO) {
         Optional.ofNullable(reUserDTO)
                 .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
-        // 校验用户名和密码
-        dtoUsernameAndPasswordCheck(reUserDTO);
+        // 登陆校验用户名密码
+        loginCheckUsernameAndPassword(reUserDTO.getUsername(), reUserDTO.getPassword());
         // 校验验证码
         verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
         // 生成登陆凭证
         ReUser user = authenticate(reUserDTO.getUsername());
-        // 生成token
-        String token = generateToken(user);
-        // TODO 权限树、角色Id、角色名
-        ReUserLoginVO vo = new ReUserLoginVO();
-        BeanUtils.copyProperties(user, vo);
-        vo.setToken(token);
+        // 生成vo对象
+        ReUserLoginVO vo = generateReUserLoginVOByReUser(user);
         return vo;
     }
 
     /**
+     * 根据用户对象，生成返回页面的vo对象
+     * @param user 用户对象
+     * @return ReUserLoginVO
+     */
+    private ReUserLoginVO generateReUserLoginVOByReUser(ReUser user) {
+        // 生成token
+        String token = generateToken(user);
+        ReUserLoginVO vo = new ReUserLoginVO();
+        BeanUtils.copyProperties(user, vo);
+        vo.setToken(token);
+        // 获取角色信息
+        ReRole role = getRoleById(user.getId());
+        vo.setRoleId(role.getId());
+        vo.setRoleName(role.getName());
+        // 设置权限列表
+        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        List<String> auth = authorities.parallelStream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList());
+        vo.setAuth(auth);
+        return vo;
+    }
+
+    /**
+     * 登陆校验用户名和密码
+     * @param username 用户名
+     * @param password 密码
+     */
+    private void loginCheckUsernameAndPassword(String username, String password) {
+        // 校验用户名和密码
+        if (StringUtils.isEmpty(username)) {
+            throw new GlobalException(ReErrorEnum.INPUT_USERNAME);
+        }
+        if (StringUtils.isEmpty(password)) {
+            throw new GlobalException(ReErrorEnum.INPUT_PASSWORD);
+        }
+        ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
+                .select(ReUser::getPassword)
+                .eq(ReUser::getUsername, username)
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+        if (reUser == null) {
+            throw new UserValidateException(ReErrorEnum.USER_NOT_EXIST);
+        }
+        // 密码错误
+        if (!reUser.getPassword().equalsIgnoreCase(Md5Util.getInstance().getMd5LowerCase(password))) {
+            throw new UserValidateException(ReErrorEnum.PASSWORD_ERROR);
+        }
+    }
+
+    /**
      * 登陆认证
-     * @param username
-     * @return ReUser
+     * @param username 用户名
+     * @return ReUser 用户对象
      */
     private ReUser authenticate(String username) {
         ReUser user = (ReUser) loadUserByUsername(username);
@@ -309,7 +359,7 @@ public class ReUserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String s) throws GlobalException {
         // 根据用户名查出用户所有权限
-        ReUser reUser = reUserMapper.selectOne(new QueryWrapper<ReUser>().lambda()
+        ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
                 // 获取全部字段
                 .select(ReUser.class, tableFieldInfo -> true)
                 .eq(ReUser::getUsername, s)
@@ -320,5 +370,17 @@ public class ReUserService implements UserDetailsService {
         List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;
+    }
+
+
+    /**
+     * 根据用户id获取角色信息
+     * @param id 用户id
+     * @return ReRole 用户所拥有的角色，如果没有返回null
+     */
+    public ReRole getRoleById(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
+        return reUserMapper.getRoleById(id);
     }
 }

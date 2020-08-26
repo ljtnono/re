@@ -2,6 +2,7 @@ package cn.ljtnono.re.mapper.system;
 
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
+import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.entity.system.ReUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -31,4 +32,10 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      */
     Integer insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
 
+    /**
+     * 根据用户id获取角色
+     * @param id 用户id
+     * @return ReRole
+     */
+    ReRole getRoleById(@Param("id") Integer id);
 }

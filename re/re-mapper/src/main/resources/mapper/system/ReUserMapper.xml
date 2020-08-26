@@ -30,4 +30,21 @@
         VALUES(#{reUserDTO.id}, #{reUserDTO.roleId})
     </insert>
 
+    <!-- 根据用户id获取角色id和用户名 -->
+    <select id="getRoleById" resultType="cn.ljtnono.re.entity.system.ReRole">
+        SELECT
+            sr.id,
+            sr.name
+        FROM sys_role sr
+        LEFT JOIN sys_user_role sur
+        ON sr.id = sur.role_id
+        LEFT JOIN sys_user su
+        ON su.id = sur.user_id
+        <where>
+            <if test="id != null">
+                AND su.id = #{id}
+                AND su.is_deleted = 0
+            </if>
+        </where>
+    </select>
 </mapper>

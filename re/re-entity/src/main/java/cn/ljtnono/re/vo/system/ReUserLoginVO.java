@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author ljt
@@ -39,7 +40,7 @@ public class ReUserLoginVO extends BaseVO implements Serializable {
     /**
      * 角色名
      */
-    private Integer roleName;
+    private String roleName;
 
     /**
      * 用户邮箱
@@ -51,5 +52,8 @@ public class ReUserLoginVO extends BaseVO implements Serializable {
      */
     private String phone;
 
-    // TODO 权限树
+    /**
+     * 用户权限表达式列表
+     */
+    private List<String> auth;
 }

@@ -32,6 +32,9 @@ public enum ReErrorEnum {
     PHONE_FORMAT_ERROR(40009, "手机号码格式错误"),
     /** 用户id不能为NULL */
     USER_ID_NULL_ERROR(40010, "用户id为NULL"),
+    INPUT_USERNAME(40011, "请输入用户名"),
+    INPUT_PASSWORD(40012, "请输入密码"),
+    PASSWORD_ERROR(40013, "密码错误"),
 
 
     //**************************token**************************//
