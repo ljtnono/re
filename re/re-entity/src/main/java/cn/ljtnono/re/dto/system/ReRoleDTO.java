@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author ljt
@@ -19,5 +20,14 @@ public class ReRoleDTO extends ReBaseDTO implements Serializable {
 
     private static final long serialVersionUID = 4505176109063156696L;
 
+    /**
+     * 角色名
+     */
+    private String name;
+
+    /**
+     * 角色权限表达式列表
+     */
+    private List<String> auth;
 
 }
