@@ -1,7 +1,6 @@
 package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
-import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.service.system.ReRoleService;
 import cn.ljtnono.re.vo.system.ReRoleVO;
 import lombok.extern.slf4j.Slf4j;
