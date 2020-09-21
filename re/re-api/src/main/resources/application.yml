@@ -8,14 +8,14 @@ spring:
   # 配置文件上传
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 300MB
+      max-request-size: 300MB
+
   http:
     encoding:
       charset: UTF-8
       enabled: true
       force: true
-
 
 jwt:
   # 配置jwt过期时间 单位 小时
@@ -23,7 +23,7 @@ jwt:
   # 配置jwt秘钥
   secret-key: ROOTELEMENT
 
-# r
+# rest
 rest:
   read-timeout: 100
   connect-timeout: 100

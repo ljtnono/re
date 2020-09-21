@@ -1,6 +1,7 @@
-package cn.ljtnono.re.common.exception;
+package cn.ljtnono.re.common.exception.businese;
 
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.exception.GlobalException;
 
 /**
  * @author ljt

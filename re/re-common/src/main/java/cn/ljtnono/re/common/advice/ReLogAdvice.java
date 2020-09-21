@@ -33,7 +33,7 @@ public class ReLogAdvice {
     /**
      * 定义请求日志切入点，其切入点表达式有多种匹配方式,这里是指定路径
      */
-    @Pointcut("execution(public * cn.ljtnono.re.api.controller.*.*.*(..))")
+    @Pointcut("execution(public * cn.ljtnono.re.api.controller..*.*.*(..))")
     public void webLogPointcut() {}
 
     /**
@@ -45,12 +45,12 @@ public class ReLogAdvice {
      */
     @Before("webLogPointcut()")
     public void doBefore(JoinPoint joinPoint) {
+        //打印请求的内容
+        startTime = System.currentTimeMillis();
         // 接收到请求，记录请求内容
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         assert attributes != null;
         HttpServletRequest request = attributes.getRequest();
-        //打印请求的内容
-        startTime = System.currentTimeMillis();
         log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求Url : {}", request.getRequestURL().toString());
         log.info("请求方式 : {}", request.getMethod());
@@ -71,8 +71,6 @@ public class ReLogAdvice {
         endTime = System.currentTimeMillis();
         log.info("请求结束时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
         log.info("请求耗时：{}", (endTime - startTime));
-        // 处理完请求，返回内容
-//        log.info("请求返回 : {}", ret);
     }
 
     /**

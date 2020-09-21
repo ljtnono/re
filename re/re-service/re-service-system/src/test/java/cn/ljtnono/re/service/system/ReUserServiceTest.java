@@ -3,7 +3,7 @@ package cn.ljtnono.re.service.system;
 import cn.ljtnono.re.ReServiceSystemApplication;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
-import cn.ljtnono.re.common.exception.UserValidateException;
+import cn.ljtnono.re.common.exception.businese.UserValidateException;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

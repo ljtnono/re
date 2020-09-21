@@ -12,7 +12,6 @@ public enum ReRedisKeyEnum {
      */
     USER_KEY("system:user:id:username")
 
-
     ;
     private String key;
 

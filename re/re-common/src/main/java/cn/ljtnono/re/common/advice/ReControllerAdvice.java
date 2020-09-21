@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ReControllerAdvice {
 
-
     /**
      * 全局异常捕获
      * @param exception 全局异常

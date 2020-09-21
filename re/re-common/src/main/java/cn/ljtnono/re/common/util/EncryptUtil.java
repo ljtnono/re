@@ -3,21 +3,21 @@ package cn.ljtnono.re.common.util;
 /**
  * @author ljt
  * Date: 2020/7/8 9:49 上午
- * Description: md5加密工具
+ * Description: 加密工具
  */
-public class Md5Util {
+public class EncryptUtil {
 
     /**
      * 工具类不允许实例化
      */
-    private Md5Util() {}
+    private EncryptUtil() {}
 
-    public static Md5Util getInstance() {
+    public static EncryptUtil getInstance() {
         return Holder.INSTANCE;
     }
 
     public static class Holder {
-        private final static Md5Util INSTANCE = new Md5Util();
+        private final static EncryptUtil INSTANCE = new EncryptUtil();
     }
 
     /**
@@ -39,7 +39,7 @@ public class Md5Util {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             byte[] tmp;
-            synchronized (Md5Util.class) {
+            synchronized (EncryptUtil.class) {
                 md.update(source);
                 tmp = md.digest();
             }

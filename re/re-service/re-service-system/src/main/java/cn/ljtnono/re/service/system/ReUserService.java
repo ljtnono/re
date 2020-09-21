@@ -4,8 +4,8 @@ import cn.ljtnono.re.common.constant.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
-import cn.ljtnono.re.common.exception.UserValidateException;
-import cn.ljtnono.re.common.util.Md5Util;
+import cn.ljtnono.re.common.exception.businese.UserValidateException;
+import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +33,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import sun.plugin.liveconnect.SecurityContextHelper;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -245,7 +243,7 @@ public class ReUserService implements UserDetailsService {
             throw new UserValidateException(ReErrorEnum.USER_NOT_EXIST);
         }
         // 密码错误
-        if (!reUser.getPassword().equalsIgnoreCase(Md5Util.getInstance().getMd5LowerCase(password))) {
+        if (!reUser.getPassword().equalsIgnoreCase(EncryptUtil.getInstance().getMd5LowerCase(password))) {
             throw new UserValidateException(ReErrorEnum.PASSWORD_ERROR);
         }
     }

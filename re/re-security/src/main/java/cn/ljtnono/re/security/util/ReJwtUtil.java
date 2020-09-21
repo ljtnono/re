@@ -179,20 +179,4 @@ public class ReJwtUtil {
         Claims claimsFromToken = getClaimsFromToken(token);
         return claimsFromToken.get("username").toString();
     }
-
-//    /**
-//     * 根据token解析出UserDetails对象
-//     * @param token token
-//     * @return 此方法返回 {@link ReUser} 对象
-//     */
-//    public UserDetails getUserDetailsFromToken(String token) {
-//        Claims claims = getClaimsFromToken(token);
-//        ReUser reUser = new ReUser();
-//        Integer id = claims.get("id", Integer.class);
-//        String username = claims.get("username", String.class);
-//        reUser.setId(id);
-//        reUser.setUsername(username);
-//        return reUser;
-//    }
-
 }
