@@ -48,7 +48,7 @@ public class RedisUtil {
      * @author Ling, Jiatong
      *
      */
-    public void delete(String key) {
+    public void delete(final String key) {
         redisTemplate.delete(key);
     }
 

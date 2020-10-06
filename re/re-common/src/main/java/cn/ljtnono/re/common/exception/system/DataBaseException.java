@@ -12,4 +12,5 @@ public class DataBaseException extends SystemException{
     public DataBaseException(ReErrorEnum reErrorEnum) {
         super(reErrorEnum);
     }
+
 }

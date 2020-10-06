@@ -2,6 +2,7 @@ package cn.ljtnono.re.security.component;
 
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,18 +24,14 @@ import java.io.IOException;
  * Date: 2020/7/11 23:23 下午
  * Description: token过滤器
  */
-@Component
 @Slf4j
+@Component
 public class ReTokenFilter extends OncePerRequestFilter {
 
     @Resource
     private UserDetailsService userDetailsService;
-
-    private final ReJwtUtil reJwtUtil;
-
-    public ReTokenFilter(ReJwtUtil reJwtUtil) {
-        this.reJwtUtil = reJwtUtil;
-    }
+    @Autowired
+    private ReJwtUtil reJwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {

@@ -9,7 +9,9 @@ import cn.ljtnono.re.common.exception.businese.BusinessException;
  * Description: 资源不存在异常
  */
 public class ResourceNotExistException extends BusinessException {
+
     public ResourceNotExistException(ReErrorEnum reErrorEnum) {
         super(reErrorEnum);
     }
+
 }

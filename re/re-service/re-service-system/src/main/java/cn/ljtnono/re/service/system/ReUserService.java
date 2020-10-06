@@ -7,8 +7,10 @@ import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
 import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
 import cn.ljtnono.re.common.exception.ParamException;
+import cn.ljtnono.re.common.exception.ResourceNotExistException;
 import cn.ljtnono.re.common.exception.businese.UserValidateException;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
+import cn.ljtnono.re.common.exception.system.DataBaseException;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.common.vo.ReJsonResultVO;
@@ -21,7 +23,7 @@ import cn.ljtnono.re.security.util.ReJwtUtil;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.common.collect.Maps;
@@ -96,7 +98,7 @@ public class ReUserService implements UserDetailsService {
         ReRole reRoleDB = reRoleService.getRoleIdAndNameByUserId(reUserDB.getId());
         // 用户权限异常
         Optional.ofNullable(reRoleDB)
-                .orElseThrow(() -> new UserPermissionException(ReErrorEnum.USER_PERMISSION));
+                .orElseThrow(() -> new UserPermissionException(ReErrorEnum.USER_PERMISSION_ERROR));
         reUserDB.setRoleId(reRoleDB.getId());
         reUserDB.setRoleName(reRoleDB.getName());
         // 用户登录状态校验
@@ -149,28 +151,28 @@ public class ReUserService implements UserDetailsService {
         setCreateTimeAndModifyTime(reUser);
         int insert = reUserMapper.insert(reUser);
         if (insert <= 0) {
-            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+            throw new DataBaseException(ReErrorEnum.DATABASE_OPERATION_ERROR);
         }
         reUserDTO.setId(reUser.getId());
-        Integer result = reUserMapper.insertUserRole(reUserDTO);
-        if (result == null || result <= 0) {
-            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+        int result = reUserMapper.insertUserRole(reUserDTO);
+        if (result <= 0) {
+            throw new DataBaseException(ReErrorEnum.DATABASE_OPERATION_ERROR);
         }
-        return ReJsonResultVO.success(null);
+        return ReJsonResultVO.success();
     }
 
     /**
-     * 根据id删除一个用户
+     * 根据id删除一个用户, 逻辑删除
      * @param id 用户id
      */
     public void deleteUserById(Integer id) {
         Optional.ofNullable(id)
-                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
-        int update = reUserMapper.update(null, new UpdateWrapper<ReUser>().lambda()
-                .set(ReUser::getDeleted, 1)
+                .orElseThrow(() -> new ParamException(ReErrorEnum.USER_ID_NULL_ERROR));
+        int update = reUserMapper.update(null, new LambdaUpdateWrapper<ReUser>()
+                .set(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
                 .eq(ReUser::getId, id));
         if (update <= 0) {
-            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+            throw new DataBaseException(ReErrorEnum.DATABASE_OPERATION_ERROR);
         }
     }
 
@@ -193,7 +195,7 @@ public class ReUserService implements UserDetailsService {
         user.setModifyTime(new Date());
         int update = reUserMapper.updateById(user);
         if (update <= 0) {
-            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+            throw new DataBaseException(ReErrorEnum.DATABASE_OPERATION_ERROR);
         }
     }
 
@@ -241,8 +243,7 @@ public class ReUserService implements UserDetailsService {
         if (!StringUtils.isEmpty(reUserDTO.getPhone())) {
             wrapper.like(ReUser::getPhone, reUserDTO.getPhone());
         }
-        IPage<ReUser> result = reUserMapper.selectPage(page, wrapper);
-        return result;
+        return reUserMapper.selectPage(page, wrapper);
     }
 
 
@@ -326,7 +327,8 @@ public class ReUserService implements UserDetailsService {
      * @param reUserDTO 用户登录参数封装
      */
     private void authenticate(ReUserDTO reUserDTO) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(reUserDTO.getUsername(), reUserDTO.getPassword());
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(reUserDTO.getUsername(), reUserDTO.getPassword());
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
@@ -440,16 +442,16 @@ public class ReUserService implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String s) throws GlobalException {
+    public UserDetails loadUserByUsername(String s) {
         // 根据用户名查出用户所有权限
         ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
                 // 获取全部字段
                 .select(ReUser.class, tableFieldInfo -> true)
                 .eq(ReUser::getUsername, s)
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         // 用户不存在
         Optional.ofNullable(reUser)
-                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_NOT_EXIST));
+                .orElseThrow(() -> new ResourceNotExistException(ReErrorEnum.USER_NOT_EXIST));
         List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;

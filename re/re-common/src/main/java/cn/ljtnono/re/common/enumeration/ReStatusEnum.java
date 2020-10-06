@@ -9,20 +9,15 @@ public enum ReStatusEnum {
 
     /** 实体类是否删除   未删除 */
     ENTITY_IS_DELETED_NOT_DELETED(0),
-
     /** 实体类是否删除   已删除 */
     ENTITY_IS_DELETED_DELETED(1),
-
     ;
 
+    /** 状态值 */
     private Integer value;
 
     public Integer getValue() {
         return value;
-    }
-
-    public void setValue(Integer value) {
-        this.value = value;
     }
 
     ReStatusEnum(Integer value) {

@@ -16,10 +16,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-security</artifactId>
             <version>${re-version}</version>

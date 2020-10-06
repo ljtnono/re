@@ -47,16 +47,16 @@ public class ReLogAdvice {
     public void doBefore(JoinPoint joinPoint) {
         //打印请求的内容
         startTime = System.currentTimeMillis();
-        // 接收到请求，记录请求内容
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        assert attributes != null;
-        HttpServletRequest request = attributes.getRequest();
-        log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
-        log.info("请求Url : {}", request.getRequestURL().toString());
-        log.info("请求方式 : {}", request.getMethod());
-        log.info("请求ip : {}", request.getRemoteAddr());
-        log.info("请求方法 : {}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-        log.info("请求参数 : {}", Arrays.toString(joinPoint.getArgs()));
+//        // 接收到请求，记录请求内容
+//        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+//        assert attributes != null;
+//        HttpServletRequest request = attributes.getRequest();
+//        log.info("请求开始时间：{}", DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyy_MM_dd_HH_mm_ss));
+//        log.info("请求Url : {}", request.getRequestURL().toString());
+//        log.info("请求方式 : {}", request.getMethod());
+//        log.info("请求ip : {}", request.getRemoteAddr());
+//        log.info("请求方法 : {}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+//        log.info("请求参数 : {}", Arrays.toString(joinPoint.getArgs()));
     }
 
     /**

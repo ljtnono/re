@@ -7,23 +7,21 @@ import cn.ljtnono.re.service.system.ReUserService;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * @author ljt
  * Date 2020/7/16 1:19 上午
- * Description: 用户接口
+ * Description: 用户Controller
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/system/user")
-@Slf4j
 public class ReUserController {
 
-    private final ReUserService reUserService;
-
-    public ReUserController(ReUserService reUserService) {
-        this.reUserService = reUserService;
-    }
+    @Autowired
+    private ReUserService reUserService;
 
     /**
      * 用户登录接口
@@ -34,6 +32,19 @@ public class ReUserController {
     public ReJsonResultVO<ReUserLoginVO> login(@RequestBody ReUserDTO reUserDTO) {
         log.info("[re-system -> ReUserController -> login()] 用户登录，登录参数：{}", reUserDTO);
         return ReJsonResultVO.success(reUserService.login(reUserDTO));
+    }
+
+    /**
+     * 用户登出
+     * @param reUser 要登出的用户
+     * @author Ling, Jiatong
+     *
+     */
+    @GetMapping("/logout")
+    public ReJsonResultVO<?> logout(@RequestBody ReUser reUser) {
+        log.info("[re-system -> ReUserController -> logout()] 用户登出");
+        reUserService.logout(reUser);
+        return ReJsonResultVO.success();
     }
 
     /**
@@ -82,7 +93,7 @@ public class ReUserController {
      * @param reUserDTO 参数封装
      * @return ReJsonResultVO<IPage<ReUser>>
      */
-    @GetMapping("/page")
+    @GetMapping("/list")
     public ReJsonResultVO<IPage<ReUser>> page(ReUserDTO reUserDTO) {
         return ReJsonResultVO.success(reUserService.getUserListPage(reUserDTO));
     }

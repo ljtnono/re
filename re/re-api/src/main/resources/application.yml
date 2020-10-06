@@ -1,11 +1,12 @@
+# 服务器相关设置
 server:
   port: 8001
   servlet:
     context-path: /re
+# spring 相关设置
 spring:
   profiles:
     active: @profiles.active@
-
   # 配置utf-8编码
   http:
     encoding:
@@ -13,11 +14,13 @@ spring:
       enabled: true
       force: true
 
-jwt:
-  # 配置jwt过期时间 单位 小时
-  expire: 12
-  # 配置jwt秘钥
-  secret-key: ROOTELEMENT
+# 本项目相关配置
+re:
+  security:
+    # 配置jwt过期时间 单位 小时
+    token-expire: 12
+    # 配置jwt秘钥
+    token-secret-key: ROOTELEMENT
 
 # rest
 rest:

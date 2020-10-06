@@ -5,8 +5,6 @@ import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.entity.system.ReUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public interface ReUserMapper extends BaseMapper<ReUser> {
      * @param reUserDTO 参数封装
      * @return 影响的行数
      */
-    Integer insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
+    int insertUserRole(@Param("reUserDTO") ReUserDTO reUserDTO);
 
     /**
      * 根据用户id获取角色

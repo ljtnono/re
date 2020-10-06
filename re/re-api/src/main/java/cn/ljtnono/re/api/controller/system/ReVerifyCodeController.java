@@ -2,10 +2,12 @@ package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
+import cn.ljtnono.re.common.exception.system.SystemException;
 import cn.ljtnono.re.common.util.UUIDUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,21 +22,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author ljt
  * Date: 2020/8/9 18:56
- * Description: 验证码
+ * Description: 验证码Controller
  */
 @RestController
 @Slf4j
 @RequestMapping("/api/v1/system/verifyCode")
 public class ReVerifyCodeController {
 
-    private final Producer captchaProducer;
-
-    private final RedisUtil redisUtil;
-
-    public ReVerifyCodeController(Producer captchaProducer, RedisUtil redisUtil) {
-        this.captchaProducer = captchaProducer;
-        this.redisUtil = redisUtil;
-    }
+    @Autowired
+    private Producer captchaProducer;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 获取验证码
@@ -55,8 +53,8 @@ public class ReVerifyCodeController {
             ImageIO.write(bi, "jpg", response.getOutputStream());
             redisUtil.set(codeId, capText, 5, TimeUnit.MINUTES);
         } catch (IOException e) {
-            log.error("[pte-system->VerifyCodeController] 生成验证码图片失败, 错误信息: {}", e.getMessage());
-            throw new GlobalException(ReErrorEnum.SYSTEM_ERROR);
+            log.error("[re-system -> ReVerifyCodeController -> getVerifyCode()] 生成验证码图片失败, 错误信息: {}", e.getMessage());
+            throw new SystemException(ReErrorEnum.SYSTEM_ERROR);
         }
     }
 }

@@ -1,9 +1,10 @@
 package cn.ljtnono.re.security.util;
 
+import cn.ljtnono.re.common.config.ReSecurityProperties;
 import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
@@ -17,22 +18,14 @@ import java.util.Optional;
 /**
  * @author ljt
  * Date: 2020/7/8 8:43 上午
- * Description:
+ * Description: jwt工具类
  */
-@Component
 @Slf4j
-@ConfigurationProperties(prefix = "jwt")
+@Component
 public class ReJwtUtil {
 
-    /**
-     * jwt过期时间 2小时
-     */
-    public long expire;
-
-    /**
-     * jwt秘钥
-     */
-    public String secretKey;
+    @Autowired
+    private ReSecurityProperties reSecurityProperties;
 
     /** 令牌前缀 */
     public static final String TOKEN_PREFIX = "Bearer ";
@@ -51,7 +44,7 @@ public class ReJwtUtil {
      * @return base64后的秘钥
      */
     private String generateSecret() {
-        return Base64Utils.encodeToString(secretKey.getBytes());
+        return Base64Utils.encodeToString(reSecurityProperties.getTokenSecretKey().getBytes());
     }
 
     /**
@@ -60,7 +53,7 @@ public class ReJwtUtil {
      * @return 过期时间
      */
     private Date generateExpiration() {
-        return new Date(System.currentTimeMillis() + expire * 3600);
+        return new Date(System.currentTimeMillis() + reSecurityProperties.getTokenExpire() * 3600);
     }
 
     /**

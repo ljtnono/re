@@ -1,6 +1,7 @@
 package cn.ljtnono.re.security.config;
 
 import cn.ljtnono.re.security.component.ReTokenFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,17 +25,12 @@ import javax.annotation.Resource;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, proxyTargetClass = true)
 public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final ReTokenFilter reTokenFilter;
-
+    @Autowired
+    private ReTokenFilter reTokenFilter;
     @Resource
     private UserDetailsService userDetailsService;
-
-    private final PasswordEncoder passwordEncoder;
-
-    public ReSecurityConfig(ReTokenFilter reTokenFilter, PasswordEncoder passwordEncoder) {
-        this.reTokenFilter = reTokenFilter;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
