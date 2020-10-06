@@ -42,6 +42,14 @@ public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
     /** 用户邮箱 */
     private String email;
 
+    /** 角色id */
+    @TableField(exist = false)
+    private Integer roleId;
+
+    /** 角色名 */
+    @TableField(exist = false)
+    private String roleName;
+
     /** 是否删除 1 删除 0 正常 */
     @TableField("is_deleted")
     private Integer deleted;

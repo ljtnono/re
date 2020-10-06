@@ -32,8 +32,8 @@ public class ReUserController {
      */
     @PostMapping("/login")
     public ReJsonResultVO<ReUserLoginVO> login(@RequestBody ReUserDTO reUserDTO) {
+        log.info("[re-system -> ReUserController -> login()] 用户登录，登录参数：{}", reUserDTO);
         return ReJsonResultVO.success(reUserService.login(reUserDTO));
-
     }
 
     /**

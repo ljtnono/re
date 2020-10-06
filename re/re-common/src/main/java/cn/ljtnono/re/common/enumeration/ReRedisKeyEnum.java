@@ -10,7 +10,7 @@ public enum ReRedisKeyEnum {
     /**
      * 用户存储在redis中的键
      */
-    USER_KEY("system:user:id:username")
+    USER_INFO_KEY("system:user:id:username")
 
     ;
     private String key;

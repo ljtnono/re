@@ -1,6 +1,5 @@
 package cn.ljtnono.re.security.config;
 
-import cn.ljtnono.re.security.component.AccessDeniedHandlerImpl;
 import cn.ljtnono.re.security.component.ReTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,36 +31,29 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AccessDeniedHandlerImpl accessDeniedHandler;
-
-    public ReSecurityConfig(ReTokenFilter reTokenFilter, PasswordEncoder passwordEncoder, AccessDeniedHandlerImpl accessDeniedHandler) {
+    public ReSecurityConfig(ReTokenFilter reTokenFilter, PasswordEncoder passwordEncoder) {
         this.reTokenFilter = reTokenFilter;
         this.passwordEncoder = passwordEncoder;
-        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.csrf().disable();
         http.headers().frameOptions().disable();
         // 禁用缓存
         http.headers().cacheControl();
         // 设置不使用session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         http
                 .authorizeRequests()
-                .antMatchers("/re/api/v1/system/user/login")
+                .antMatchers("/api/v1/system/user/login")
                 .permitAll()
                 .and()
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(accessDeniedHandler);
+                .exceptionHandling();
 
         http.addFilterBefore(reTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

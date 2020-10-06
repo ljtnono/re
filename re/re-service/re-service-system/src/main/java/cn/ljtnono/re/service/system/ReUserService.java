@@ -1,18 +1,22 @@
 package cn.ljtnono.re.service.system;
 
+import cn.ljtnono.re.cache.ReUserInfoCache;
 import cn.ljtnono.re.common.constant.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
 import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
+import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.businese.UserValidateException;
+import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
+import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import cn.ljtnono.re.dto.system.ReUserDTO;
 import cn.ljtnono.re.entity.system.RePermission;
 import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.mapper.system.ReUserMapper;
-import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import cn.ljtnono.re.vo.system.ReUserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -20,11 +24,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,16 +39,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author ljt
  * Date: 2020/8/2 0:50
- * Description: 用户服务类
+ * Description: 用户Service类
  */
 @Service
 @Slf4j
@@ -53,14 +57,76 @@ public class ReUserService implements UserDetailsService {
 
     @Resource
     private ReUserMapper reUserMapper;
-
     @Autowired
     private RedisUtil redisUtil;
-
     @Autowired
     private ReJwtUtil reJwtUtil;
+    @Autowired
+    private ReRoleService reRoleService;
+    @Autowired
+    private ReRolePermissionService reRolePermissionService;
 
-    //*********************************** 增删改查 ***********************************//
+    //*********************************** 接口方法 ***********************************//
+
+    /**
+     * 获取用户下拉列表
+     *
+     * @return List<User>
+     */
+    @Transactional(readOnly = true)
+    public List<ReUser> select() {
+        return reUserMapper.selectList(new LambdaQueryWrapper<ReUser>()
+                .select(ReUser::getId, ReUser::getUsername));
+    }
+
+    /**
+     * 用户登录
+     * @param reUserDTO 参数封装
+     * @return ReUserLoginVO
+     * @author Ling, Jiatong
+     */
+    public ReUserLoginVO login(ReUserDTO reUserDTO) {
+        Optional.ofNullable(reUserDTO)
+                .orElseThrow(() -> new ParamException(ReErrorEnum.REQUEST_PARAM_ERROR));
+        // 登陆校验用户名密码
+        ReUser reUserDB = loginCheckUsernameAndPassword(reUserDTO.getUsername(), reUserDTO.getPassword());
+        // 校验验证码
+        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
+        // 用户角色校验
+        ReRole reRoleDB = reRoleService.getRoleIdAndNameByUserId(reUserDB.getId());
+        // 用户权限异常
+        Optional.ofNullable(reRoleDB)
+                .orElseThrow(() -> new UserPermissionException(ReErrorEnum.USER_PERMISSION));
+        reUserDB.setRoleId(reRoleDB.getId());
+        reUserDB.setRoleName(reRoleDB.getName());
+        // 用户登录状态校验
+        loginStatusCheck(reUserDTO, reUserDB);
+        // 登录认证
+        authenticate(reUserDTO);
+        // 生成token
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("userId", reUserDB.getId());
+        map.put("username", reUserDB.getUsername());
+        map.put("roleId", reUserDB.getId());
+        String token = reJwtUtil.generateToken(map);
+        // 缓存用户信息
+        setReUserInfoCache(reUserDB, token);
+        // 获取权限信息
+        List<Integer> permission = reRolePermissionService.getRePermissionIdListByReUserId(reUserDB.getId());
+        // 生成vo对象
+        return generateReUserLoginVO(reUserDB, token, permission);
+    }
+
+    /**
+     * 用户登出
+     * @param reUser 用户实体
+     */
+    public void logout(ReUser reUser) {
+        // 删除用户信息缓存
+        redisUtil.delete(ReRedisKeyEnum.USER_INFO_KEY.getKey()
+                .replace("id", reUser.getId() + "")
+                .replace("username", reUser.getUsername()));
+    }
 
     /**
      * 新增用户接口
@@ -69,7 +135,7 @@ public class ReUserService implements UserDetailsService {
      */
     public ReJsonResultVO<?> addUser(ReUserDTO reUserDTO) {
         Optional.ofNullable(reUserDTO)
-                .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
+                .orElseThrow(() -> new ParamException(ReErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
         userDtoBaseValidate(reUserDTO);
         // 用户名重复校验
@@ -179,46 +245,50 @@ public class ReUserService implements UserDetailsService {
         return result;
     }
 
+
+
     /**
-     * 登录
-     * @param reUserDTO 参数封装
-     * @return ReUserLoginVO
+     * 缓存用户信息
+     * @param reUserDB 用户对象
+     * @param token 用户token
+     * @author Ling, Jiatong
+     *
      */
-    public ReUserLoginVO login(ReUserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO)
-                .orElseThrow(() -> new GlobalException(ReErrorEnum.REQUEST_PARAM_ERROR));
-        // 登陆校验用户名密码
-        loginCheckUsernameAndPassword(reUserDTO.getUsername(), reUserDTO.getPassword());
-        // 校验验证码
-        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
-        // 生成登陆凭证
-        ReUser user = authenticate(reUserDTO.getUsername());
-        // 生成vo对象
-        ReUserLoginVO vo = generateReUserLoginVOByReUser(user);
-        return vo;
+    private void setReUserInfoCache(ReUser reUserDB, final String token) {
+        ReUserInfoCache reUserInfoCache = new ReUserInfoCache();
+        reUserInfoCache.setUserId(reUserDB.getId());
+        reUserInfoCache.setUsername(reUserDB.getUsername());
+        reUserInfoCache.setRoleId(reUserDB.getRoleId());
+        reUserInfoCache.setToken(token);
+        reUserInfoCache.setLoginDate(new Date());
+        // 缓存12小时
+        redisUtil.set(ReRedisKeyEnum.USER_INFO_KEY.getKey()
+                .replace("id", reUserDB.getId() + "")
+                .replace("username", reUserDB.getUsername()),
+                reUserInfoCache, 12L, TimeUnit.HOURS);
+    }
+
+    /**
+     * 用户登录状态校验
+     *
+     * @param reUserDTO 用户登录数据传输对象
+     * @param reUserDB  用户实体
+     */
+    private void loginStatusCheck(ReUserDTO reUserDTO, ReUser reUserDB) {
+        // TODO 用户是否已经登录校验
     }
 
     /**
      * 根据用户对象，生成返回页面的vo对象
-     * @param user 用户对象
+     * @param reUser 用户对象
+     * @param token token
      * @return ReUserLoginVO
      */
-    private ReUserLoginVO generateReUserLoginVOByReUser(ReUser user) {
-        // 生成token
-        String token = generateToken(user);
+    private ReUserLoginVO generateReUserLoginVO(ReUser reUser, String token, List<Integer> permission) {
         ReUserLoginVO vo = new ReUserLoginVO();
-        BeanUtils.copyProperties(user, vo);
+        BeanUtils.copyProperties(reUser, vo);
+        vo.setPermissionIdList(permission);
         vo.setToken(token);
-        // 获取角色信息
-        ReRole role = getRoleById(user.getId());
-        vo.setRoleId(role.getId());
-        vo.setRoleName(role.getName());
-        // 设置权限列表
-        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-        List<String> auth = authorities.parallelStream()
-                .map(grantedAuthority -> grantedAuthority.getAuthority())
-                .collect(Collectors.toList());
-        vo.setAuth(auth);
         return vo;
     }
 
@@ -226,19 +296,21 @@ public class ReUserService implements UserDetailsService {
      * 登陆校验用户名和密码
      * @param username 用户名
      * @param password 密码
+     * @return ReUser 返回查询出来的用户名和免密
      */
-    private void loginCheckUsernameAndPassword(String username, String password) {
+    private ReUser loginCheckUsernameAndPassword(final String username, final String password) {
         // 校验用户名和密码
         if (StringUtils.isEmpty(username)) {
-            throw new GlobalException(ReErrorEnum.INPUT_USERNAME);
+            throw new UserValidateException(ReErrorEnum.INPUT_USERNAME);
         }
         if (StringUtils.isEmpty(password)) {
-            throw new GlobalException(ReErrorEnum.INPUT_PASSWORD);
+            throw new UserValidateException(ReErrorEnum.INPUT_PASSWORD);
         }
+        // 检验是否存在该用户名和密码
         ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
-                .select(ReUser::getPassword)
                 .eq(ReUser::getUsername, username)
                 .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+        // 用户不存在
         if (reUser == null) {
             throw new UserValidateException(ReErrorEnum.USER_NOT_EXIST);
         }
@@ -246,18 +318,16 @@ public class ReUserService implements UserDetailsService {
         if (!reUser.getPassword().equalsIgnoreCase(EncryptUtil.getInstance().getMd5LowerCase(password))) {
             throw new UserValidateException(ReErrorEnum.PASSWORD_ERROR);
         }
+        return reUser;
     }
 
     /**
      * 登陆认证
-     * @param username 用户名
-     * @return ReUser 用户对象
+     * @param reUserDTO 用户登录参数封装
      */
-    private ReUser authenticate(String username) {
-        ReUser user = (ReUser) loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
+    private void authenticate(ReUserDTO reUserDTO) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(reUserDTO.getUsername(), reUserDTO.getPassword());
         SecurityContextHolder.getContext().setAuthentication(token);
-        return user;
     }
 
     /**
@@ -269,11 +339,11 @@ public class ReUserService implements UserDetailsService {
         return reJwtUtil.generateToken(reUser);
     }
 
-    //*********************************** 业务方法 ***********************************//
+    //*********************************** 私有方法 ***********************************//
 
     /**
      * 设置创建时间和最后修改时间
-     * @param reUserDTO
+     * @param reUser 设置创建时间和最后修改时间为现在时间
      */
     private void setCreateTimeAndModifyTime(ReUser reUser) {
         Date now = new Date();
@@ -289,29 +359,29 @@ public class ReUserService implements UserDetailsService {
         dtoUsernameAndPasswordCheck(reUserDTO);
         // 邮箱校验
         if (StringUtils.isEmpty(reUserDTO.getEmail())
-                || !UserValidatePatternConstant.EMAIL_VALIDATE_PATTERN.matcher(reUserDTO.getEmail()).matches()) {
+                || !UserValidatePatternConstant.REGEX_EMAIL.matcher(reUserDTO.getEmail()).matches()) {
             throw new UserValidateException(ReErrorEnum.EMAIL_FORMAT_ERROR);
         }
         // 手机校验
         if (StringUtils.isEmpty(reUserDTO.getPhone())
-                || !UserValidatePatternConstant.PHONE_VALIDATE_PATTERN.matcher(reUserDTO.getPhone()).matches()) {
+                || !UserValidatePatternConstant.REGEX_PHONE.matcher(reUserDTO.getPhone()).matches()) {
             throw new UserValidateException(ReErrorEnum.PHONE_FORMAT_ERROR);
         }
     }
 
     /**
      * 检验dto的用户名和密码
-     * @param reUserDTO
+     * @param reUserDTO dto
      */
     private void dtoUsernameAndPasswordCheck(ReUserDTO reUserDTO) {
         // 用户名校验
         if (StringUtils.isEmpty(reUserDTO.getUsername())
-                || !UserValidatePatternConstant.USERNAME_VALIDATE_PATTERN.matcher(reUserDTO.getUsername()).matches()) {
+                || !UserValidatePatternConstant.checkUsername(reUserDTO.getUsername())) {
             throw new UserValidateException(ReErrorEnum.USERNAME_FORMAT_ERROR);
         }
         // 密码校验
         if (StringUtils.isEmpty(reUserDTO.getPassword())
-                || !UserValidatePatternConstant.PASSWORD_VALIDATE_PATTERN.matcher(reUserDTO.getPassword()).matches()) {
+                || !UserValidatePatternConstant.checkPassword(reUserDTO.getPassword())) {
             throw new UserValidateException(ReErrorEnum.PASSWORD_FORMAT_ERROR);
         }
     }
@@ -319,7 +389,7 @@ public class ReUserService implements UserDetailsService {
     /**
      * 用户名重复校验
      * @throws UserValidateException 当用户名重复时抛出此异常
-     * @param reUserDTO 参数封装
+     * @param username 用户名
      */
     @Transactional(readOnly = true)
     public void usernameDuplicateValidate(String username) {
@@ -331,18 +401,20 @@ public class ReUserService implements UserDetailsService {
         }
     }
 
-    //*********************************** 公共方法 ***********************************//
+    //*********************************** 公有方法 ***********************************//
 
     /**
      * 验证码校验
      * @param verifyCodeId 验证码在redis中的键
      * @param verifyCode 验证码的值
      */
-    public void verifyCodeValidate(String verifyCodeId, String verifyCode) {
-        Optional.ofNullable(verifyCodeId)
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR));
-        Optional.ofNullable(verifyCode)
-                .orElseThrow(() -> new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR));
+    public void verifyCodeValidate(final String verifyCodeId, final String verifyCode) {
+        if (!StringUtils.isEmpty(verifyCodeId)) {
+            throw new ParamException(ReErrorEnum.REQUEST_PARAM_ERROR);
+        }
+        if (!StringUtils.isEmpty(verifyCode)) {
+            throw new ParamException(ReErrorEnum.VERIFY_CODE_NULL_ERROR);
+        }
         // 获取code
         Object o = redisUtil.get(verifyCodeId);
         Optional.ofNullable(o)
@@ -352,6 +424,19 @@ public class ReUserService implements UserDetailsService {
             throw new UserValidateException(ReErrorEnum.VERIFY_CODE_ERROR);
         }
     }
+
+    /**
+     * 根据用户id获取角色信息
+     * @param id 用户id
+     * @return ReRole 用户所拥有的角色，如果没有返回null
+     */
+    public ReRole getRoleById(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
+        return reUserMapper.getRoleById(id);
+    }
+
+    //*********************************** 其他方法 ***********************************//
 
     @Override
     @Transactional(readOnly = true)
@@ -368,17 +453,5 @@ public class ReUserService implements UserDetailsService {
         List<RePermission> permission = reUserMapper.getPermissionExpressionListByUserId(reUser.getId());
         reUser.setAuthorities(permission);
         return reUser;
-    }
-
-
-    /**
-     * 根据用户id获取角色信息
-     * @param id 用户id
-     * @return ReRole 用户所拥有的角色，如果没有返回null
-     */
-    public ReRole getRoleById(Integer id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new GlobalException(ReErrorEnum.USER_ID_NULL_ERROR));
-        return reUserMapper.getRoleById(id);
     }
 }

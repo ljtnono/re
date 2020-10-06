@@ -42,4 +42,14 @@ public class RedisUtil {
         return redisTemplate.boundValueOps(key).get();
     }
 
+    /**
+     * 删除一个键
+     * @param key 要删除的键
+     * @author Ling, Jiatong
+     *
+     */
+    public void delete(String key) {
+        redisTemplate.delete(key);
+    }
+
 }

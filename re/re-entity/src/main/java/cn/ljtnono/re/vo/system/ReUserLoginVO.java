@@ -53,7 +53,7 @@ public class ReUserLoginVO extends BaseVO implements Serializable {
     private String phone;
 
     /**
-     * 用户权限表达式列表
+     * 用户权限id列表
      */
-    private List<String> auth;
+    private List<Integer> permissionIdList;
 }

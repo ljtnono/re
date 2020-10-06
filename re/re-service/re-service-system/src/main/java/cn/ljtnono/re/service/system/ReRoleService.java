@@ -3,6 +3,7 @@ package cn.ljtnono.re.service.system;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.enumeration.ReStatusEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
+import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.dto.system.ReRoleDTO;
 import cn.ljtnono.re.entity.system.ReRole;
 import cn.ljtnono.re.mapper.system.ReRoleMapper;
@@ -22,7 +23,7 @@ import java.util.Optional;
 /**
  * @author ljt
  * Date: 2020/8/9 16:30
- * Description:
+ * Description: 角色Service类
  */
 @Service
 @Slf4j
@@ -33,7 +34,7 @@ public class ReRoleService {
     private ReRoleMapper reRoleMapper;
 
 
-    //*********************************** 增删改查 ***********************************//
+    //*********************************** 接口方法 ***********************************//
 
     /**
      * 新增角色
@@ -77,6 +78,12 @@ public class ReRoleService {
 
     //*********************************** 公共方法 ***********************************//
 
+    @Transactional(readOnly = true)
+    public ReRole getRoleIdAndNameByUserId(Integer userId) {
+        Optional.ofNullable(userId)
+                .orElseThrow(() -> new ParamException(ReErrorEnum.USER_ID_NULL_ERROR));
+        return reRoleMapper.getRoleIdAndNameByUserId(userId);
+    }
 
 
 }

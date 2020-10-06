@@ -29,13 +29,15 @@ public enum ReErrorEnum {
     /** 手机号码格式错误 */
     PHONE_FORMAT_ERROR(400108, "手机号码格式错误"),
     /** 用户id不能为NULL */
-    USER_ID_NULL_ERROR(400109, "用户id为NULL"),
+    USER_ID_NULL_ERROR(400109, "用户id不能为NULL"),
     /** 请输入用户名 */
     INPUT_USERNAME(400110, "请输入用户名"),
     /** 请输入密码 */
     INPUT_PASSWORD(400111, "请输入密码"),
     /** 密码错误 */
     PASSWORD_ERROR(400112, "密码错误"),
+    /** 验证码ID为空 */
+    VERIFY_CODE_NULL_ERROR(400113, "验证码不能为空"),
     //**************************角色相关**************************//
     /** 角色id不能为空 */
     ROLE_ID_NULL_ERROR(400210, "角色id不能为空"),
@@ -47,14 +49,21 @@ public enum ReErrorEnum {
     //**************************token**************************//
     /** token过期 */
     TOKEN_EXPIRED_ERROR(403001, "token过期"),
+    /** token格式错误 */
     TOKEN_FORMAT_ERROR(403002, "token格式错误"),
+    /** token签名错误 */
     TOKEN_SIGNATURE_ERROR(403003, "token签名错误"),
-
+    /** 用户权限异常 */
+    USER_PERMISSION(4003004, "用户权限异常"),
     //**************************系统异常相关**************************//
     /** 系统异常 */
     SYSTEM_ERROR(500000, "系统异常"),
 
+
+
     ;
+
+
 
     /** 异常码 */
     private final Integer code;

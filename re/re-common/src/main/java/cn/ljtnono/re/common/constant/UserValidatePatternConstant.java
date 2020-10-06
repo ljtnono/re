@@ -9,15 +9,69 @@ import java.util.regex.Pattern;
  */
 public class UserValidatePatternConstant {
 
-    /** 用户名校验 4到16位（字母，数字，下划线，减号） */
-    public static final Pattern USERNAME_VALIDATE_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]{4,16}$");
+    /** 匹配中文或者数字或者字母 */
+    public static final Pattern REGEX_CHINESE_OR_NUMBER_LETTER = Pattern.compile("^[a-z0-9A-Z\\u4e00-\\u9fa5]+$");
 
-    /** 密码校验  6-20位字符，必须包括字母和数字与特殊字符（!@#$%^&*?）的其中一种*/
-    public static final Pattern PASSWORD_VALIDATE_PATTERN = Pattern.compile("^.*(?=.{6,20})(?=.*[a-zA-Z])(?=.*[0-9!@#$%^&*?]).*$");
+    /** 匹配用户名，4-20位非空白字符 */
+    public static final Pattern REGEX_USERNAME = Pattern.compile("^\\w{4,20}$");
+
+    /** 匹配大写字母 */
+    public static final Pattern REGEX_UPPER_LETTER = Pattern.compile("[A-Z]");
+
+    /** 匹配小写字母 */
+    public static final Pattern REGEX_LOWER_LETTER = Pattern.compile("[a-z]");
+
+    /** 匹配数字 */
+    public static final Pattern REGEX_NUMBER = Pattern.compile("[0-9]");
+
+    /** 密码特殊字符 */
+    public static final Pattern REGEX_PASSWORD_SPECIAL_PATTERN = Pattern.compile("[!@#\\-]+");
 
     /** 邮箱校验 */
-    public static final Pattern EMAIL_VALIDATE_PATTERN = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
+    public static final Pattern REGEX_EMAIL = Pattern.compile("^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
 
     /** 手机校验 */
-    public static final Pattern PHONE_VALIDATE_PATTERN = Pattern.compile("^1[3456789]\\d{9}$");
+    public static final Pattern REGEX_PHONE = Pattern.compile("^1[3456789]\\d{9}$");
+
+    /**
+     * 用户名校验
+     * @param username 用户名
+     * @return true: 校验通过 false: 校验失败
+     * @author Ling, Jiatong
+     */
+    public static boolean checkUsername(final String username) {
+        return REGEX_USERNAME.matcher(username).matches();
+    }
+
+    /**
+     * 校验密码 8-16位，
+     * @param password 密码
+     * @return 成功返回true 失败返回false
+     * @author Ling, Jiatong
+     *
+     */
+    public static boolean checkPassword(final String password) {
+        if (password.length() < 8 || password.length() > 16) {
+            return false;
+        }
+        int ls = 0;
+        if (REGEX_UPPER_LETTER.matcher(password).find()) {
+            ls++;
+        }
+        if (REGEX_NUMBER.matcher(password).find()) {
+            ls++;
+        }
+        if (REGEX_LOWER_LETTER.matcher(password).find()) {
+            ls++;
+        }
+        if (REGEX_PASSWORD_SPECIAL_PATTERN.matcher(password).find()) {
+            ls++;
+        }
+        // 满足其中两种就行
+        if (ls < 2) {
+            return false;
+        }
+        return true;
+    }
+
 }

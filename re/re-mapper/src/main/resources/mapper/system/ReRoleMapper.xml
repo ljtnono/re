@@ -4,5 +4,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ljtnono.re.mapper.system.ReRoleMapper">
 
-
+    <!-- 根据用户id获取角色id和角色名 -->
+    <select id="getRoleIdAndNameByUserId" resultType="cn.ljtnono.re.entity.system.ReRole">
+        SELECT sr.id, sr.name
+        FROM sys_role sr
+            LEFT JOIN sys_user_role sur ON sr.id = sur.role_id
+            LEFT JOIN sys_user su ON su.id = sur.user_id
+        WHERE
+            su.id = #{userId}
+    </select>
 </mapper>

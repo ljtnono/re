@@ -67,17 +67,11 @@ public class ReJwtUtil {
      * 根据claims 和 subject生成token
      *
      * @param claims  claims键值对
-     * @param subject 用户名
-     * @return token
+     * @return token 生成的token信息
      */
-    public String generateToken(Map<String, Object> claims, String subject) {
-        Optional.ofNullable(claims).orElseThrow(() -> new NullPointerException("claims参数不能为null"));
-        if (StringUtils.isEmpty(subject)) {
-            throw new NullPointerException("subject参数不能为null或者空串");
-        }
+    public String generateToken(Map<String, Object> claims) {
         JwtBuilder builder = Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpiration())
                 .signWith(DEFAULT_SIGNATURE_ALGORITHM, generateSecret());

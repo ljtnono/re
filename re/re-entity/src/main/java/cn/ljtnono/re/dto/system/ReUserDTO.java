@@ -16,9 +16,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ReUserDTO extends ReBaseDTO implements Serializable {
-
-    private static final long serialVersionUID = 3301630533495460518L;
+public class ReUserDTO extends ReBaseDTO {
 
     /** 用户名 */
     private String username;

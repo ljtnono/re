@@ -1,16 +1,12 @@
 server:
-  port: 8080
+  port: 8001
   servlet:
     context-path: /re
 spring:
   profiles:
-    active: dev
-  # 配置文件上传
-  servlet:
-    multipart:
-      max-file-size: 300MB
-      max-request-size: 300MB
+    active: @profiles.active@
 
+  # 配置utf-8编码
   http:
     encoding:
       charset: UTF-8
@@ -19,7 +15,7 @@ spring:
 
 jwt:
   # 配置jwt过期时间 单位 小时
-  expire: 2
+  expire: 12
   # 配置jwt秘钥
   secret-key: ROOTELEMENT
 

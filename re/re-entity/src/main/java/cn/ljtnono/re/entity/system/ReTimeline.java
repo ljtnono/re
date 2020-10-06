@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * @author ljt
  * Date: 2020/7/30 1:01
- * Description:
+ * Description: 时间轴实体
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
