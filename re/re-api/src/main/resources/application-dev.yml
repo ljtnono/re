@@ -19,3 +19,9 @@ spring:
     host: 127.0.0.1
     password: ljtLJT715336
     timeout: 12000
+
+logging:
+  level:
+    root: info
+    cn.ljtnono.re.api: info
+# 配置logging等级

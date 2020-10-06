@@ -1,6 +1,6 @@
 package cn.ljtnono.re.security.util;
 
-import cn.ljtnono.re.common.config.ReSecurityProperties;
+import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,10 @@
-package cn.ljtnono.re.common.config;
+package cn.ljtnono.re.common.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /**
  * @author ljt
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 @Data
 @Component
-@ConfigurationProperties("re.security")
+@ConfigurationProperties(prefix = "re.security")
 public class ReSecurityProperties {
 
     /** token过期时间 */
@@ -19,6 +21,9 @@ public class ReSecurityProperties {
 
     /** token生成秘钥 */
     private String tokenSecretKey;
+
+    /** url白名单（不需要登录） */
+    private Set<String> whiteUrl;
 }
 
 

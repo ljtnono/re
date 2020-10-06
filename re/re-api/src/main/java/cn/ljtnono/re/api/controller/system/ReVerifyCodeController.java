@@ -1,7 +1,6 @@
 package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
-import cn.ljtnono.re.common.exception.GlobalException;
 import cn.ljtnono.re.common.exception.system.SystemException;
 import cn.ljtnono.re.common.util.UUIDUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
@@ -24,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Date: 2020/8/9 18:56
  * Description: 验证码Controller
  */
-@RestController
 @Slf4j
+@RestController
 @RequestMapping("/api/v1/system/verifyCode")
 public class ReVerifyCodeController {
 
@@ -38,7 +37,7 @@ public class ReVerifyCodeController {
      * 获取验证码
      * @param response 响应对象
      */
-    @GetMapping("/getVerifyCode")
+    @GetMapping
     public void getVerifyCode(HttpServletResponse response) {
         response.setDateHeader("Expires", 0);
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");

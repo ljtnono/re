@@ -1,5 +1,6 @@
 package cn.ljtnono.re.security.config;
 
+import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.security.component.ReTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,18 +32,20 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ReSecurityProperties reSecurityProperties;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        http.headers().frameOptions().disable();
+        http.headers().frameOptions().sameOrigin();
         // 禁用缓存
         http.headers().cacheControl();
         // 设置不使用session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeRequests()
-                .antMatchers("/api/v1/system/user/login")
+                .antMatchers(reSecurityProperties.getWhiteUrl().toArray(new String[]{}))
                 .permitAll()
                 .and()
                 .authorizeRequests()
