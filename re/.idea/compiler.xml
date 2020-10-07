@@ -12,6 +12,7 @@
         <module name="re-service-resource" />
         <module name="re-entity" />
         <module name="re-api" />
+        <module name="re-schedule" />
         <module name="re-service-system" />
         <module name="re-mapper" />
         <module name="re-service-blog" />
@@ -25,6 +26,7 @@
       <module name="re-common" options="-parameters" />
       <module name="re-entity" options="-parameters" />
       <module name="re-mapper" options="-parameters" />
+      <module name="re-schedule" options="-parameters" />
       <module name="re-security" options="-parameters" />
       <module name="re-service-blog" options="-parameters" />
       <module name="re-service-resource" options="-parameters" />
