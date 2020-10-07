@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/2 1:10
  * Description: 日期工具类
  */
@@ -18,10 +18,15 @@ public class DateUtil {
      * @return 时间字符串
      */
     public static String formatDate(Date date, DateStyleEnum dateStyleEnum) {
-        SimpleDateFormat format = new SimpleDateFormat(dateStyleEnum.getStyle());
+        SimpleDateFormat format = new SimpleDateFormat(dateStyleEnum.getValue());
         return format.format(date);
     }
 
+    /**
+     * 日期格式化风格
+     * @author Ling, Jiatong
+     *
+     */
     public enum DateStyleEnum {
 
         /**
@@ -29,19 +34,17 @@ public class DateUtil {
          */
         yyyy_MM_dd_HH_mm_ss("yyyy-MM-dd HH:mm:ss");
 
-        private String style;
+        /** 格式化风格的值 */
+        private final String value;
 
-        DateStyleEnum(String style) {
-            this.style = style;
+        DateStyleEnum(String value) {
+            this.value = value;
         }
 
-        public String getStyle() {
-            return style;
+        public String getValue() {
+            return value;
         }
 
-        public void setStyle(String style) {
-            this.style = style;
-        }
     }
 
 }
