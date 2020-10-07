@@ -3,7 +3,7 @@ package cn.ljtnono.re.common.constant;
 import java.util.regex.Pattern;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 17:26
  * Description: 用户校验正则常量
  */
@@ -74,4 +74,25 @@ public class UserValidatePatternConstant {
         return true;
     }
 
+    /**
+     * 校验用户邮箱
+     * @param email 用户邮箱
+     * @return 校验成功返回true，校验失败返回false
+     * @author Ling, Jiatong
+     *
+     */
+    public static boolean checkEmail(final String email) {
+        return REGEX_EMAIL.matcher(email).matches();
+    }
+
+    /**
+     * 校验用户手机号
+     * @param phone 用户手机号
+     * @return 校验成功返回true，校验失败返回false
+     * @author Ling, Jiatong
+     *
+     */
+    public static boolean checkPhone(final String phone) {
+        return REGEX_PHONE.matcher(phone).matches();
+    }
 }
