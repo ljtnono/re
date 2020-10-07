@@ -9,12 +9,11 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.6.RELEASE</version>
     </parent>
+
     <groupId>cn.ljtnono</groupId>
     <artifactId>re</artifactId>
     <packaging>pom</packaging>
     <version>${re-version}</version>
-    <name>re</name>
-    <description>根元素-后端</description>
     <modules>
         <module>re-common</module>
         <module>re-entity</module>
@@ -24,6 +23,7 @@
         <module>re-api</module>
         <module>re-security</module>
         <module>re-mapper</module>
+        <module>re-schedule</module>
     </modules>
 
     <!-- 版本号管理 -->
