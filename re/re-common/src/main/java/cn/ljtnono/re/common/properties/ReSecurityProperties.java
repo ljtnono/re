@@ -24,6 +24,13 @@ public class ReSecurityProperties {
 
     /** url白名单（不需要登录） */
     private Set<String> whiteUrl;
+
+    /** 令牌前缀 */
+    private String tokenPrefix = "Bearer ";
+
+    /** Header头名称 */
+    private String tokenHeader = "Authorization";
+
 }
 
 
