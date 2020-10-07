@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/11 23:56 下午
  * Description:
  */

@@ -14,12 +14,12 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 17:06
  * Description: 权限Service类
  */
-@Service
 @Slf4j
+@Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class RePermissionService {
 

@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Optional;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 16:30
  * Description: 角色Service类
  */
@@ -78,6 +78,11 @@ public class ReRoleService {
 
     //*********************************** 公共方法 ***********************************//
 
+    /**
+     * 根据用户id获取角色id和角色名
+     * @author Ling, Jiatong
+     *
+     */
     @Transactional(readOnly = true)
     public ReRole getRoleIdAndNameByUserId(Integer userId) {
         Optional.ofNullable(userId)
@@ -85,5 +90,17 @@ public class ReRoleService {
         return reRoleMapper.getRoleIdAndNameByUserId(userId);
     }
 
-
+    /**
+     * 根据id检查该角色是否存在
+     * @param id 角色id
+     * @author Ling, Jiatong
+     *
+     */
+    public boolean isExistById(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ParamException(ReErrorEnum.ROLE_ID_NULL_ERROR));
+        ReRole reRole = reRoleMapper.selectOne(new LambdaQueryWrapper<ReRole>()
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+        return reRole != null;
+    }
 }

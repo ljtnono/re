@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/14 0:28 上午
  * Description: 用户Mapper
  */

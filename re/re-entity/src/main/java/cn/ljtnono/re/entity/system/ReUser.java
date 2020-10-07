@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/12 22:23 下午
  * Description: 用户实体
  */

@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date 2020/7/16 1:19 上午
  * Description: 角色接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/system/role")
-@Slf4j
 public class ReRoleController {
 
     private final ReRoleService reRoleService;

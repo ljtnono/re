@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 18:56
  * Description: 验证码Controller
  */

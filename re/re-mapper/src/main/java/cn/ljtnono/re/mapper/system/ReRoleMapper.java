@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/13 23:16
  * Description:
  */

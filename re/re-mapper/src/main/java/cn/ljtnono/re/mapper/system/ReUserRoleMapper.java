@@ -1,10 +1,10 @@
-package cn.ljtnono.re.mapper;
+package cn.ljtnono.re.mapper.system;
 
 import cn.ljtnono.re.entity.system.ReUserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/10/6 21:54
  * Description:
  */

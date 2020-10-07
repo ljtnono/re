@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.entity.system.ReRolePermission;
-import cn.ljtnono.re.mapper.ReRolePermissionMapper;
+import cn.ljtnono.re.mapper.system.ReRolePermissionMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/10/6 21:47
  * Description: 角色权限Service类
  */
@@ -33,7 +33,7 @@ public class ReRolePermissionService {
      * 根据用户id获取权限id列表
      *
      * @param userId 用户id
-     * @return 用户权限id列表
+     * @return List<Integer> 用户权限id列表
      */
     @Transactional(readOnly = true)
     public List<Integer> getRePermissionIdListByReUserId(Integer userId) {
@@ -43,6 +43,7 @@ public class ReRolePermissionService {
                 .eq(ReRolePermission::getRoleId, roleId))
                 .parallelStream()
                 .map(ReRolePermission::getPermissionId)
+                .distinct()
                 .collect(Collectors.toList());
     }
     //*********************************** 私有方法 ***********************************//

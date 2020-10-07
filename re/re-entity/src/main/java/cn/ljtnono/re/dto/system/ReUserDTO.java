@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/13 23:26 下午
  * Description: 用户前端传输对象封装
  *
@@ -41,4 +41,7 @@ public class ReUserDTO extends ReBaseDTO {
 
     /** 验证码 */
     private String verifyCode;
+
+    /** 列表查询条件 */
+    private String searchCondition;
 }

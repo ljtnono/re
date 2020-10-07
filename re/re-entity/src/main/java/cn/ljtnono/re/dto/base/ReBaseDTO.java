@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/13 23:27 下午
  * Description: DTO基类
  */

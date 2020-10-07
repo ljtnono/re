@@ -1,4 +1,4 @@
-package cn.ljtnono.re.mapper;
+package cn.ljtnono.re.mapper.system;
 
 import cn.ljtnono.re.entity.system.ReRolePermission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

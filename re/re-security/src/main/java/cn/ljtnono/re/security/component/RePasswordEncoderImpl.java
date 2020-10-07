@@ -5,7 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/7 20:36 下午
  * Description: 加密器
  */

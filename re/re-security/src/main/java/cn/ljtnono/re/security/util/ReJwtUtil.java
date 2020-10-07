@@ -1,42 +1,31 @@
 package cn.ljtnono.re.security.util;
 
+import cn.ljtnono.re.cache.ReUserInfoCache;
+import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
+import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/8 8:43 上午
  * Description: jwt工具类
  */
-@Slf4j
 @Component
 public class ReJwtUtil {
 
     @Autowired
     private ReSecurityProperties reSecurityProperties;
-
-    /** 令牌前缀 */
-    public static final String TOKEN_PREFIX = "Bearer ";
-
-    /** Header头名称 */
-    public static final String HEADER_NAME = "Authorization";
-
-    /**
-     * 默认加密算法是HS256
-     */
-    private final SignatureAlgorithm DEFAULT_SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 对秘钥进行base64
@@ -57,58 +46,23 @@ public class ReJwtUtil {
     }
 
     /**
-     * 根据claims 和 subject生成token
+     * 根据userId、username生成token
      *
-     * @param claims  claims键值对
-     * @return token 生成的token信息
+     * @param userId   用户id
+     * @param username 用户名
+     * @param roleId   角色id
+     * @return 生成的token
      */
-    public String generateToken(Map<String, Object> claims) {
-        JwtBuilder builder = Jwts.builder()
+    public String generateToken(Integer userId, String username, Integer roleId) {
+        Map<String, Object> claims = new HashMap<>(3);
+        claims.put("userId", userId);
+        claims.put("username", username);
+        claims.put("roleId", roleId);
+        return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpiration())
-                .signWith(DEFAULT_SIGNATURE_ALGORITHM, generateSecret());
-        return builder.compact();
-    }
-
-
-    /**
-     * 根据UserDetails生成Claims
-     *
-     * @param userDetails userDetails
-     * @throws NullPointerException 当userDetails参数为null时抛出
-     * @return 返回生成的Claims键值对，当userDetails为null时返回null
-     */
-    private Map<String, Object> userDetailsToClaims(UserDetails userDetails) {
-        Optional.ofNullable(userDetails).orElseThrow(() -> new NullPointerException("userDetails参数不能为null"));
-        Map<String, Object> map = new HashMap<>(8);
-        map.put("id", ((ReUser) userDetails).getId());
-        map.put("username", userDetails.getUsername());
-        map.put("isAccountNonExpired", userDetails.isAccountNonExpired());
-        map.put("isAccountNonLocked", userDetails.isAccountNonLocked());
-        map.put("isCredentialsNonExpired", userDetails.isCredentialsNonExpired());
-        map.put("isEnabled", userDetails.isEnabled());
-        return map;
-    }
-
-
-    /**
-     * 直接根据UserDetails对象生成token
-     *
-     * @param userDetails UserDetails对象
-     * @throws NullPointerException 当userDetails参数为null时抛出
-     * @return 生成的token
-     */
-    public String generateToken(UserDetails userDetails) {
-        Optional.ofNullable(userDetails)
-                .orElseThrow(() -> new NullPointerException("userDetails参数不能为null"));
-        JwtBuilder builder = Jwts.builder()
-                .setClaims(userDetailsToClaims(userDetails))
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(generateExpiration())
-                .signWith(DEFAULT_SIGNATURE_ALGORITHM, generateSecret());
-        return builder.compact();
+                .signWith(SignatureAlgorithm.HS256, generateSecret()).compact();
     }
 
     /**
@@ -132,9 +86,6 @@ public class ReJwtUtil {
      * @return token中的Claims键值对信息，当token不符合格式时返回null
      */
     public Claims getClaimsFromToken(String token) {
-        if (StringUtils.isEmpty(token)) {
-            throw new NullPointerException("token参数不能为null");
-        }
         JwtParser parser = Jwts.parser();
         return parser.setSigningKey(generateSecret())
                 .parseClaimsJws(token)
@@ -144,16 +95,28 @@ public class ReJwtUtil {
     /**
      * 验证token是否合法
      * @param token token
-     * @param userDetails userDetails
+     * @param reUser 用户对象
      * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
      * @return 合法返回true,不合法返回false
      */
-    public boolean validateToken(String token, UserDetails userDetails) {
-        Optional.ofNullable(userDetails)
-                .orElseThrow(() -> new NullPointerException("userDetails参数不能为null"));
-        // token校验方式  这里只校验了用户名
+    public boolean validateToken(String token, ReUser reUser) {
+        // 缓存校验, 如果存在缓存说明已经登录
+        Object cache = redisUtil.get(ReRedisKeyEnum.USER_INFO_KEY.getValue()
+                .replace("id", String.valueOf(reUser.getId()))
+                .replace("username", reUser.getUsername()));
+        if (cache == null) {
+            return false;
+        }
+        ReUserInfoCache reUserInfoCache = (ReUserInfoCache) cache;
+        if (!reUserInfoCache.getToken().equals(token)) {
+            return false;
+        }
+        // 校验用户名
         String username = getUsernameFromToken(token);
-        return (username != null && username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        if (username != null && username.equals(reUser.getUsername())) {
+            isTokenExpired(token);
+        }
+        return true;
     }
 
     /**
