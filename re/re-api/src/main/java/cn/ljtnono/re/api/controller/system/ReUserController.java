@@ -115,6 +115,7 @@ public class ReUserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/list")
+//    @PassToken
     @PreAuthorize("hasAnyAuthority('system:user:view')")
     public ReJsonResultVO<IPage<ReUser>> list(ReUserDTO reUserDTO) {
         log.info("[re-system -> ReUserController -> list()] 分页获取用户信息，参数：{}", reUserDTO);

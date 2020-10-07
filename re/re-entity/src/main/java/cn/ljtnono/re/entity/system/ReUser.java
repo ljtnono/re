@@ -3,6 +3,7 @@ package cn.ljtnono.re.entity.system;
 import cn.ljtnono.re.entity.base.ReBaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -59,6 +60,7 @@ public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
     private List<RePermission> authorities;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 根据Permission列表来构造
         List<SimpleGrantedAuthority> au = new ArrayList<>();
@@ -70,21 +72,25 @@ public class ReUser extends ReBaseEntity implements Serializable, UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

@@ -45,12 +45,12 @@ public class ReVerifyCodeController {
         response.setHeader("Pragma", "no-cache");
         response.setContentType("image/jpeg");
         String capText = captchaProducer.createText();
-        String codeId = "verifyCode:" + UUIDUtil.generateUUID();
+        String codeId = "verifyCodeId:" + UUIDUtil.generateUUID();
         response.addCookie(new Cookie("VerifyCodeId", codeId));
         BufferedImage bi = captchaProducer.createImage(capText);
         try {
-            ImageIO.write(bi, "jpg", response.getOutputStream());
             redisUtil.set(codeId, capText, 5, TimeUnit.MINUTES);
+            ImageIO.write(bi, "jpg", response.getOutputStream());
         } catch (IOException e) {
             log.error("[re-system -> ReVerifyCodeController -> getVerifyCode()] 生成验证码图片失败, 错误信息: {}", e.getMessage());
             throw new SystemException(ReErrorEnum.SYSTEM_ERROR);

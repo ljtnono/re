@@ -42,7 +42,7 @@ public class ReJwtUtil {
      * @return 过期时间
      */
     private Date generateExpiration() {
-        return new Date(System.currentTimeMillis() + reSecurityProperties.getTokenExpire() * 3600);
+        return new Date(System.currentTimeMillis() + reSecurityProperties.getTokenExpire() * 3600 * 1000);
     }
 
     /**
