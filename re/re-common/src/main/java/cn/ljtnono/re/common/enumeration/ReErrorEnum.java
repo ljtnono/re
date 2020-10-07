@@ -1,7 +1,7 @@
 package cn.ljtnono.re.common.enumeration;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/11 23:44 下午
  * Description: 异常码枚举类
  */
@@ -42,6 +42,8 @@ public enum ReErrorEnum {
     PASSWORD_ERROR(400112, "密码错误"),
     /** 验证码ID为空 */
     VERIFY_CODE_NULL_ERROR(400113, "验证码不能为空"),
+    /** 用户已经登录 */
+    USER_ALREADY_LOGIN_ERROR(400114, "用户已经登录"),
     //**************************角色相关**************************//
     /** 角色id不能为空 */
     ROLE_ID_NULL_ERROR(400210, "角色id不能为空"),
@@ -49,8 +51,10 @@ public enum ReErrorEnum {
     ROLE_NAME_EMPTY_ERROR(400211, "角色名不能为空"),
     /** 角色已经存在 */
     ROLE_ALREADY_EXIST(400212, "角色已存在"),
+    /** 角色不存在 */
+    ROLE_NOT_EXIST(400213, "角色不存在"),
 
-    //**************************token**************************//
+    //**************************权限相关**************************//
     /** token过期 */
     TOKEN_EXPIRED_ERROR(403001, "token过期"),
     /** token格式错误 */
@@ -59,6 +63,8 @@ public enum ReErrorEnum {
     TOKEN_SIGNATURE_ERROR(403003, "token签名错误"),
     /** 用户权限异常 */
     USER_PERMISSION_ERROR(4003004, "用户权限异常"),
+    /** 用户未认证 */
+    USER_NOT_AUTHENTICATION(4003005, "用户未认证"),
 
     //**************************系统异常相关**************************//
     /** 系统异常 */
