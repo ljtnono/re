@@ -22,7 +22,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import java.util.Properties;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 18:25
  * Description: bean配置类
  */
