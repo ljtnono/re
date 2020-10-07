@@ -1,7 +1,7 @@
 package cn.ljtnono.re.common.enumeration;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 22:22
  * Description: 各种状态值枚举
  */
@@ -14,7 +14,7 @@ public enum ReStatusEnum {
     ;
 
     /** 状态值 */
-    private Integer value;
+    private final Integer value;
 
     public Integer getValue() {
         return value;
