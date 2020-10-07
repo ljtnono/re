@@ -6,7 +6,6 @@ import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
-import cn.ljtnono.re.common.exception.businese.UserValidateException;
 import cn.ljtnono.re.common.exception.security.TokenExpiredException;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.exception.system.DataBaseException;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 16:36
  * Description: 异常处理器
  */
@@ -170,24 +169,6 @@ public class ReControllerAdvice {
         }
         return ReJsonResultVO.error(ReErrorEnum.BUSINESS_ERROR.getCode(), ReErrorEnum.BUSINESS_ERROR.getMessage());
     }
-
-
-    /**
-     * 用户校验异常
-     *
-     * @param exception 用户校验异常
-     * @return ReJsonResultVO<?> 自定义异常消息
-     */
-    @ExceptionHandler(UserValidateException.class)
-    @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> userValidateException(UserValidateException exception) {
-        if (exception != null) {
-            log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getReErrorEnum().getCode(), exception.getReErrorEnum().getMessage());
-        }
-        return ReJsonResultVO.error(ReErrorEnum.USER_VALIDATE_ERROR.getCode(), ReErrorEnum.USER_VALIDATE_ERROR.getMessage());
-    }
-
 
     /**
      * token过期异常
