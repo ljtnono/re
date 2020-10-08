@@ -169,12 +169,15 @@ public class ReUserService implements UserDetailsService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(ReErrorEnum.USER_ID_NULL_ERROR));
         // 查看是否存在此用户
-        ReUser reUser = reUserMapper.selectById(id);
-        if (reUser != null) {
-            reUserMapper.update(null, new LambdaUpdateWrapper<ReUser>()
+        boolean exist = isExistById(id);
+        if (exist) {
+            int update = reUserMapper.update(null, new LambdaUpdateWrapper<ReUser>()
                     .set(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED)
                     .set(ReUser::getModifyTime, new Date())
                     .eq(ReUser::getId, id));
+            if (update <= 0) {
+                throw new DataBaseException(ReErrorEnum.DATABASE_OPERATION_ERROR);
+            }
         }
     }
 

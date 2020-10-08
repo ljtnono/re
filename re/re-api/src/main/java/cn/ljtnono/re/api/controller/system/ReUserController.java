@@ -89,8 +89,8 @@ public class ReUserController {
      */
     @DeleteMapping("/{id:\\d+}")
     @PreAuthorize("hasAnyAuthority('system:user:delete')")
-    public ReJsonResultVO<?> logicDeleteUser(@PathVariable Integer id) {
-        log.info("[re-system -> ReUserController -> logicDeleteUser()] 逻辑删除用户，用户id：{}", id);
+    public ReJsonResultVO<?> logicDeleteById(@PathVariable Integer id) {
+        log.info("[re-system -> ReUserController -> logicDeleteById()] 逻辑删除用户，用户id：{}", id);
         reUserService.logicDeleteById(id);
         return ReJsonResultVO.success();
     }

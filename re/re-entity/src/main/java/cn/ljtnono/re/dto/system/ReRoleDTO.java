@@ -28,6 +28,6 @@ public class ReRoleDTO extends ReBaseDTO implements Serializable {
     /**
      * 角色权限表达式列表
      */
-    private List<String> auth;
+    private List<Integer> permissionIdList;
 
 }

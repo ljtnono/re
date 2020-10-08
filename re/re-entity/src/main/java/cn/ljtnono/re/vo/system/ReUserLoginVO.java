@@ -56,4 +56,31 @@ public class ReUserLoginVO extends BaseVO implements Serializable {
      * 用户权限id列表
      */
     private List<Integer> permissionIdList;
+
+    /**
+     * menu菜单的结构
+     */
+    @Data
+    @ToString
+    public static class MenuItem {
+
+        /** 菜单项的id，对应permission的id */
+        private Integer id;
+
+        /** 菜单项的标题，对应permission的标题 */
+        private String title;
+
+        /** 菜单项的类型，对应permission类型 */
+        private Integer type;
+
+        /** 菜单项的表达式，对应permission表达式 */
+        private String expression;
+
+        /** 菜单项的父级菜单id */
+        private Integer parentId;
+
+        /** 菜单项子项列表 */
+        private List<MenuItem> sub;
+
+    }
 }
