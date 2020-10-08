@@ -117,9 +117,11 @@ public class ReUserService implements UserDetailsService {
      */
     public void logout(ReUser reUser) {
         // 删除用户信息缓存
-        redisUtil.delete(ReRedisKeyEnum.USER_INFO_KEY.getValue()
-                .replace("id", String.valueOf(reUser.getId()))
-                .replace("username", reUser.getUsername()));
+        if (reUser != null) {
+            redisUtil.delete(ReRedisKeyEnum.USER_INFO_KEY.getValue()
+                    .replace("id", String.valueOf(reUser.getId()))
+                    .replace("username", reUser.getUsername()));
+        }
     }
 
     /**

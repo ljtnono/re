@@ -3,7 +3,7 @@ package cn.ljtnono.re.common.util;
 import java.util.UUID;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/21 10:01 上午
  * Description: UUID工具类
  */

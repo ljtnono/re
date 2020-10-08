@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 18:59
  * Description: redis工具类
  *

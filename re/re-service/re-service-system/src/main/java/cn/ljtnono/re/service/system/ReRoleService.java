@@ -51,12 +51,19 @@ public class ReRoleService {
         ReRole reRole = new ReRole();
         BeanUtils.copyProperties(reRoleDTO, reRole);
         reRole.setDeleted(ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
-        setCreateTimeAndModifyTime(reRole);
+        setCreateTimeAndModifyTimeNow(reRole);
 
         // TODO 设置
     }
 
-    private void setCreateTimeAndModifyTime(ReRole reRole) {
+    //*********************************** 私有方法 ***********************************//
+
+    /**
+     * @param reRole 角色对象
+     * @author Ling, Jiatong
+     *
+     */
+    private void setCreateTimeAndModifyTimeNow(ReRole reRole) {
         Date now = new Date();
         reRole.setCreateTime(now);
         reRole.setModifyTime(now);
@@ -75,11 +82,12 @@ public class ReRoleService {
         }
     }
 
-
     //*********************************** 公共方法 ***********************************//
 
     /**
      * 根据用户id获取角色id和角色名
+     * @param userId 用户id
+     * @return ReRole 角色对象
      * @author Ling, Jiatong
      *
      */
@@ -93,6 +101,7 @@ public class ReRoleService {
     /**
      * 根据id检查该角色是否存在
      * @param id 角色id
+     * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
      *
      */
@@ -103,4 +112,6 @@ public class ReRoleService {
                 .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
         return reRole != null;
     }
+
+    //*********************************** 其他方法 ***********************************//
 }

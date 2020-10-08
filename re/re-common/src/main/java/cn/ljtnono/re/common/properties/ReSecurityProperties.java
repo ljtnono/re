@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/10/6 23:33
  * Description: 安全配置类
  */

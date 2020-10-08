@@ -1,9 +1,8 @@
 package cn.ljtnono.re.security.util;
 
-import cn.ljtnono.re.cache.ReUserInfoCache;
-import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
+import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
-import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.entity.system.ReUser;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,6 @@ public class ReJwtUtil {
 
     @Autowired
     private ReSecurityProperties reSecurityProperties;
-    @Autowired
-    private RedisUtil redisUtil;
 
     /**
      * 对秘钥进行base64
@@ -68,14 +65,13 @@ public class ReJwtUtil {
     /**
      * 判断token是否过期
      * @param token token
-     * @throws NullPointerException 当token为null或空串时抛出
      * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
-     * @return 过期返回false, 未过期返回true
+     * @return 过期返回true, 未过期返回false
      */
     public boolean isTokenExpired(String token) {
         Claims claims = getClaimsFromToken(token);
         Date expiration = claims.getExpiration();
-        return expiration.before(new Date());
+        return new Date().after(expiration);
     }
 
     /**
@@ -83,13 +79,21 @@ public class ReJwtUtil {
      * @param token token
      * @throws NullPointerException 当token为null或空串时抛出
      * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
-     * @return token中的Claims键值对信息，当token不符合格式时返回null
+     * @return token中的Claims键值对信息
      */
     public Claims getClaimsFromToken(String token) {
         JwtParser parser = Jwts.parser();
-        return parser.setSigningKey(generateSecret())
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return parser.setSigningKey(generateSecret())
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (UnsupportedJwtException | MalformedJwtException e) {
+            throw new UserPermissionException(ReErrorEnum.TOKEN_FORMAT_ERROR);
+        } catch (SignatureException e) {
+            throw new UserPermissionException(ReErrorEnum.TOKEN_SIGNATURE_ERROR);
+        } catch (ExpiredJwtException e) {
+            throw new UserPermissionException(ReErrorEnum.TOKEN_EXPIRED_ERROR);
+        }
     }
 
     /**
@@ -100,23 +104,9 @@ public class ReJwtUtil {
      * @return 合法返回true,不合法返回false
      */
     public boolean validateToken(String token, ReUser reUser) {
-        // 缓存校验, 如果存在缓存说明已经登录
-        Object cache = redisUtil.get(ReRedisKeyEnum.USER_INFO_KEY.getValue()
-                .replace("id", String.valueOf(reUser.getId()))
-                .replace("username", reUser.getUsername()));
-        if (cache == null) {
-            return false;
-        }
-        ReUserInfoCache reUserInfoCache = (ReUserInfoCache) cache;
-        if (!reUserInfoCache.getToken().equals(token)) {
-            return false;
-        }
         // 校验用户名
         String username = getUsernameFromToken(token);
-        if (username != null && username.equals(reUser.getUsername())) {
-            isTokenExpired(token);
-        }
-        return true;
+        return username != null && username.equals(reUser.getUsername());
     }
 
     /**

@@ -1,7 +1,7 @@
 package cn.ljtnono.re.common.util;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/8 9:49 上午
  * Description: 加密工具
  */

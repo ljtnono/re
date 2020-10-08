@@ -30,6 +30,11 @@
             <artifactId>re-service-blog</artifactId>
             <version>${re-version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-schedule</artifactId>
+            <version>${re-version}</version>
+        </dependency>
     </dependencies>
 
     <profiles>

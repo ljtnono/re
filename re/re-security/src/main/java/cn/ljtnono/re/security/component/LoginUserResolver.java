@@ -5,7 +5,6 @@ import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -44,9 +43,8 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
             return null;
         }
         token = token.substring(reSecurityProperties.getTokenPrefix().length());
-        try {
-            reJwtUtil.isTokenExpired(token);
-        } catch (ExpiredJwtException e) {
+        // 处理token过期
+        if (reJwtUtil.isTokenExpired(token)) {
             return null;
         }
         Claims claims = reJwtUtil.getClaimsFromToken(token);

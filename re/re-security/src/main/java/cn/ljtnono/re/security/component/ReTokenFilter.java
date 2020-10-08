@@ -1,6 +1,11 @@
 package cn.ljtnono.re.security.component;
 
+import cn.ljtnono.re.cache.ReUserInfoCache;
+import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
+import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
+import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.entity.system.ReUser;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -35,20 +40,29 @@ public class ReTokenFilter extends OncePerRequestFilter {
     private ReJwtUtil reJwtUtil;
     @Autowired
     private ReSecurityProperties reSecurityProperties;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        String token = httpServletRequest.getHeader(reSecurityProperties.getTokenHeader());
         String username = null;
+        String token = httpServletRequest.getHeader(reSecurityProperties.getTokenHeader());
         if (!StringUtils.isEmpty(token) && token.startsWith(reSecurityProperties.getTokenPrefix())) {
             // 获取到用户名
             token = token.substring(reSecurityProperties.getTokenPrefix().length());
+            // 检查token是否过期
+            if (reJwtUtil.isTokenExpired(token)) {
+                throw new UserPermissionException(ReErrorEnum.TOKEN_EXPIRED_ERROR);
+            }
             username = reJwtUtil.getUsernameFromToken(token);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // 检验Token是否合法
             ReUser reUser = (ReUser) userDetailsService.loadUserByUsername(username);
+            // 检验Token是否合法
             if (reJwtUtil.validateToken(token, reUser)) {
+                if (isAlreadyLogin(reUser, token)) {
+                    throw new UserPermissionException(ReErrorEnum.USER_ALREADY_LOGIN_ERROR);
+                }
                 UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(reUser, reUser.getPassword(), reUser.getAuthorities());
                 upToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(upToken);
@@ -56,4 +70,25 @@ public class ReTokenFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
+
+    /**
+     * 校验是否已经登录
+     * @param reUser 当前携带token的用户
+     * @return 已经登录返回true，没有登陆返回false
+     * @author Ling, Jiatong
+     *
+     */
+    public boolean isAlreadyLogin(ReUser reUser, String token) {
+        // 缓存校验, 如果存在缓存说明已经登录
+        Object cache = redisUtil.get(ReRedisKeyEnum.USER_INFO_KEY.getValue()
+                .replace("id", String.valueOf(reUser.getId()))
+                .replace("username", reUser.getUsername()));
+        if (cache == null) {
+            return false;
+        }
+        // TODO 以后可以添加通过给ReUser添加一个字段来实现强制登陆
+        ReUserInfoCache reUserInfoCache = (ReUserInfoCache) cache;
+        return reUserInfoCache.getToken().equals(token);
+    }
+
 }

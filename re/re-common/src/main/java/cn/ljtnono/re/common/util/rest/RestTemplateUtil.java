@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/18 22:09 下午
  * Description: http请求客户端
  * {@link RestTemplate(Class)}

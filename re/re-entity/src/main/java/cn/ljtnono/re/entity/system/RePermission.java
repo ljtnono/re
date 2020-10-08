@@ -10,7 +10,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/12 22:23 下午
  * Description: 权限实体
  */

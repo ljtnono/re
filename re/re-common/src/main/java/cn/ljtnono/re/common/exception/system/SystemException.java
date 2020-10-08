@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/9 18:02
  * Description: 系统异常
  */

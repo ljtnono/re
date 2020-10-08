@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/24 1:19
  * Description: 日志切面
  */

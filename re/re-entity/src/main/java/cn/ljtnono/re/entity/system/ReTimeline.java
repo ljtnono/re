@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/30 1:01
  * Description: 时间轴实体
  */

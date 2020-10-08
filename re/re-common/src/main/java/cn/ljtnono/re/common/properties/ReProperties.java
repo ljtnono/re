@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/24 1:16
  * Description: 项目配置类
  */

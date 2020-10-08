@@ -3,7 +3,7 @@ package cn.ljtnono.re.common.exception.system;
 import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/9/22 0:47
  * Description: 数据库操作异常
  */

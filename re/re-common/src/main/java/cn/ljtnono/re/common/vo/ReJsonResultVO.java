@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/12 23:53 下午
  * Description: HTTP Restful Api 统一返回值封装
  */

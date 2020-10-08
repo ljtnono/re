@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/7/30 0:58
  * Description: 用户技能实体
  */

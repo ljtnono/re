@@ -23,5 +23,5 @@ spring:
 logging:
   level:
     root: info
-    cn.ljtnono.re.api: info
+    cn.ljtnono.re.api: debug
 # 配置logging等级

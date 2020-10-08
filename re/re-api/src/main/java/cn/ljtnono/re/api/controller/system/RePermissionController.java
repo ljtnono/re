@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date 2020/7/16 1:19 上午
  * Description: 权限Controller
  */

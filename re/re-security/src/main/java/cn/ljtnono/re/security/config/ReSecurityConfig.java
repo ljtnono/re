@@ -1,8 +1,11 @@
 package cn.ljtnono.re.security.config;
 
+import cn.ljtnono.re.common.annotation.PassToken;
+import cn.ljtnono.re.common.enumeration.ReErrorEnum;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
-import cn.ljtnono.re.common.annotation.PassToken;
+import cn.ljtnono.re.common.util.jackson.JacksonUtil;
+import cn.ljtnono.re.common.vo.ReJsonResultVO;
 import cn.ljtnono.re.security.component.ReTokenFilter;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +93,12 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .exceptionHandling();
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setContentType("application/json");
+                    String s = JacksonUtil.objectToString(ReJsonResultVO.error(ReErrorEnum.USER_NOT_AUTHENTICATION));
+                    response.getWriter().write(s);
+                });
 
         http.addFilterBefore(reTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
