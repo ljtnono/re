@@ -172,7 +172,7 @@ public class ReUserService implements UserDetailsService {
         boolean exist = isExistById(id);
         if (exist) {
             int update = reUserMapper.update(null, new LambdaUpdateWrapper<ReUser>()
-                    .set(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED)
+                    .set(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
                     .set(ReUser::getModifyTime, new Date())
                     .eq(ReUser::getId, id));
             if (update <= 0) {
@@ -227,7 +227,7 @@ public class ReUserService implements UserDetailsService {
         LambdaQueryWrapper<ReUser> wrapper = new LambdaQueryWrapper<>();
         // 除了password字段
         wrapper.select(ReUser.class, i -> !i.getProperty().startsWith("password"))
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED);
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         if (!StringUtils.isEmpty(reUserDTO.getSearchCondition())) {
             wrapper.like(ReUser::getUsername, reUserDTO.getSearchCondition())
                     .or()
@@ -311,7 +311,7 @@ public class ReUserService implements UserDetailsService {
         // 检验是否存在该用户名和密码
         ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
                 .eq(ReUser::getUsername, username)
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         // 用户不存在
         if (reUser == null) {
             throw new ResourceNotExistException(ReErrorEnum.USER_NOT_EXIST);
@@ -418,7 +418,7 @@ public class ReUserService implements UserDetailsService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(ReErrorEnum.USER_ID_NULL_ERROR));
         ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reUser != null;
     }
 
@@ -435,7 +435,7 @@ public class ReUserService implements UserDetailsService {
         }
         ReUser reUser = reUserMapper.selectOne(new LambdaQueryWrapper<ReUser>()
                 .eq(ReUser::getUsername, username)
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reUser != null;
     }
 
@@ -452,7 +452,7 @@ public class ReUserService implements UserDetailsService {
                 // 除去密码
                 .select(ReUser.class, i -> !i.getProperty().startsWith("password"))
                 .eq(ReUser::getId, id)
-                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReUser::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
     }
 
     /**

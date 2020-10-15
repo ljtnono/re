@@ -32,8 +32,8 @@ import java.util.Optional;
  * Date: 2020/8/9 16:30
  * Description: 角色Service类
  */
-@Service
 @Slf4j
+@Service
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class}, isolation = Isolation.DEFAULT)
 public class ReRoleService {
 
@@ -50,7 +50,7 @@ public class ReRoleService {
     public List<ReRole> select() {
         return reRoleMapper.selectList(new LambdaQueryWrapper<ReRole>()
                 .select(ReRole::getId, ReRole::getName)
-                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
     }
 
     /**
@@ -99,7 +99,7 @@ public class ReRoleService {
         boolean exist = isExistById(id);
         if (exist) {
             int update = reRoleMapper.update(null, new LambdaUpdateWrapper<ReRole>()
-                    .set(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED)
+                    .set(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
                     .set(ReRole::getModifyTime, new Date())
                     .eq(ReRole::getId, id));
             if (update <= 0) {
@@ -167,7 +167,7 @@ public class ReRoleService {
         LambdaQueryWrapper<ReRole> wrapper = new LambdaQueryWrapper<>();
         wrapper
                 .like(!StringUtils.isEmpty(reRoleDTO.getName()), ReRole::getName, reRoleDTO.getName())
-                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED);
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         return reRoleMapper.selectPage(page, wrapper);
     }
 
@@ -214,7 +214,7 @@ public class ReRoleService {
         ReRole reRole = reRoleMapper.selectOne(new LambdaQueryWrapper<ReRole>()
                 .select(ReRole::getName)
                 .eq(ReRole::getName, name)
-                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reRole != null;
     }
 
@@ -230,7 +230,7 @@ public class ReRoleService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(ReErrorEnum.ROLE_ID_NULL_ERROR));
         ReRole reRole = reRoleMapper.selectOne(new LambdaQueryWrapper<ReRole>()
-                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reRole != null;
     }
 
@@ -246,7 +246,7 @@ public class ReRoleService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(ReErrorEnum.ROLE_ID_NULL_ERROR));
         return reRoleMapper.selectOne(new LambdaQueryWrapper<ReRole>()
-                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED));
+                .eq(ReRole::getDeleted, ReStatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
     }
 
     //*********************************** 其他方法 ***********************************//
