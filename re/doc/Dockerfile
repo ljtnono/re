@@ -12,19 +12,40 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak \
 RUN curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo \
     && yum clean all \
     && yum makecache
-# 更改时区
-RUN echo export TZ=Asia/Shanghai >> /etc/profile \
-    && source /etc/profile
 # 创建目录
 RUN mkdir /re \
     && mkdir /re/re_api \
     && mkdir /re/re_admin \
     && mkdir /re/re_front \
-    && mkdir /re/software \
-    && mkdir /re/software/redis \
-    && mkdir /re/software/mysql8 \
-    && mkdir /re/software/jre
-# 编译安装redis和mysql
-
-
+    && mkdir /re/software
+# 安装必要工具
+RUN yum install -y wget \
+    && yum install -y tree \
+    && yum install -y vim
+# 拷贝redis、mysql、nginx到相关文件夹
+COPY redis/. /re/software/redis
+COPY nginx/nginx/. /re/software/nginx
+COPY mysql8/mysql/. /re/software/mysql
+COPY jre/. /re/software/jre
+# 配置mysql相关
+# 安装mysql依赖库
+RUN yum search libaio \
+    && yum -y install libaio \
+    && yum -y install numactl
+# 添加mysql用户和组，配置相关权限
+RUN groupadd mysql \
+    && useradd -r -g mysql -s /bin/false mysql \
+    && chown -R mysql:mysql /re/software/mysql
+# 初始化mysql
+RUN /re/software/mysql/bin/mysqld \
+    --defaults-file=/re/software/mysql/my.cnf \
+    --initialize
+# 配置环境变量
+ENV TZ Asia/Shanghai
+ENV JAVA_HOME /re/software/jre
+ENV MYSQL_HOME /re/software/mysql
+ENV PATH $PATH:$JAVA_HOME/bin:$MYSQL_HOME/bin
+# 刷新环境变量
+RUN source /etc/profile
+# 容器后台运行命令
 CMD ["/usr/sbin/init"]
