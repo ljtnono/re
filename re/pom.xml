@@ -28,11 +28,11 @@
 
     <!-- 版本号管理 -->
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <re-version>0.0.1</re-version>
         <mybatis-plus.version>3.3.2</mybatis-plus.version>
         <mysql.version>8.0.20</mysql.version>
