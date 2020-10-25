@@ -96,7 +96,7 @@ public class SpringBeanConfig {
      */
     @Bean
     @Lazy
-    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory factory) {
+    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         // 设置redis连接工厂
         redisTemplate.setConnectionFactory(factory);

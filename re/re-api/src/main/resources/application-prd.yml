@@ -7,10 +7,9 @@ spring:
     password: re#mysql2020
   # 配置redis
   redis:
-    jedis:
+    lettuce:
       pool:
         max-active: -1
-        max-wait: -1
         max-idle: -1
         min-idle: -1
     port: 8004
