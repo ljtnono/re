@@ -1,9 +1,9 @@
 package cn.ljtnono.re.security.util;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
-import cn.ljtnono.re.entity.system.ReUser;
+import cn.ljtnono.re.entity.system.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -88,11 +88,11 @@ public class ReJwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (UnsupportedJwtException | MalformedJwtException e) {
-            throw new UserPermissionException(ReErrorEnum.TOKEN_FORMAT_ERROR);
+            throw new UserPermissionException(GlobalErrorEnum.TOKEN_FORMAT_ERROR);
         } catch (SignatureException e) {
-            throw new UserPermissionException(ReErrorEnum.TOKEN_SIGNATURE_ERROR);
+            throw new UserPermissionException(GlobalErrorEnum.TOKEN_SIGNATURE_ERROR);
         } catch (ExpiredJwtException e) {
-            throw new UserPermissionException(ReErrorEnum.TOKEN_EXPIRED_ERROR);
+            throw new UserPermissionException(GlobalErrorEnum.TOKEN_EXPIRED_ERROR);
         }
     }
 
@@ -103,7 +103,7 @@ public class ReJwtUtil {
      * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
      * @return 合法返回true,不合法返回false
      */
-    public boolean validateToken(String token, ReUser reUser) {
+    public boolean validateToken(String token, User reUser) {
         // 校验用户名
         String username = getUsernameFromToken(token);
         return username != null && username.equals(reUser.getUsername());

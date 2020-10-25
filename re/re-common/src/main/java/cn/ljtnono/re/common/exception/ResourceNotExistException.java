@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.exception;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
 
 /**
@@ -10,8 +10,8 @@ import cn.ljtnono.re.common.exception.businese.BusinessException;
  */
 public class ResourceNotExistException extends BusinessException {
 
-    public ResourceNotExistException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum);
+    public ResourceNotExistException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum);
     }
 
 }

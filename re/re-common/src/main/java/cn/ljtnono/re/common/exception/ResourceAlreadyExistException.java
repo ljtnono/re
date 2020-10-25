@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.exception;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
 
 /**
@@ -9,7 +9,7 @@ import cn.ljtnono.re.common.exception.businese.BusinessException;
  * Description: 资源已存在异常
  */
 public class ResourceAlreadyExistException extends BusinessException {
-    public ResourceAlreadyExistException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum);
+    public ResourceAlreadyExistException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum);
     }
 }

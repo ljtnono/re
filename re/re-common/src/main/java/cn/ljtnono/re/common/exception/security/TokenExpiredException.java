@@ -1,7 +1,6 @@
 package cn.ljtnono.re.common.exception.security;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
-import cn.ljtnono.re.common.exception.businese.BusinessException;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,12 +16,12 @@ import lombok.ToString;
 public class TokenExpiredException extends RuntimeException {
     private Integer code;
 
-    private ReErrorEnum reErrorEnum;
+    private GlobalErrorEnum globalErrorEnum;
 
-    public TokenExpiredException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum.getMessage());
-        this.reErrorEnum = reErrorEnum;
-        this.code = reErrorEnum.getCode();
+    public TokenExpiredException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum.getMessage());
+        this.globalErrorEnum = globalErrorEnum;
+        this.code = globalErrorEnum.getCode();
     }
 
     public TokenExpiredException(String message) {

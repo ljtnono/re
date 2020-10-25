@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.exception.system;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 
 /**
  * @author Ling, Jiatong
@@ -9,8 +9,8 @@ import cn.ljtnono.re.common.enumeration.ReErrorEnum;
  */
 public class DataBaseException extends SystemException{
 
-    public DataBaseException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum);
+    public DataBaseException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum);
     }
 
 }

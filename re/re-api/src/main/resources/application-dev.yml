@@ -4,7 +4,7 @@ spring:
     url: jdbc:mysql://localhost:8002/re?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: ljtLJT715336
+    password: re#mysql2020
   # 配置redis
   redis:
     lettuce:
@@ -16,7 +16,7 @@ spring:
       shutdown-timeout: 100
     port: 8003
     host: 127.0.0.1
-    password: ljtLJT715336
+    password: re#redis2020
     timeout: 12000
 
 logging:

@@ -1,7 +1,7 @@
 package cn.ljtnono.re.security.config;
 
 import cn.ljtnono.re.common.annotation.PassToken;
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.common.util.jackson.JacksonUtil;
@@ -96,7 +96,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
-                    String s = JacksonUtil.objectToString(ReJsonResultVO.error(ReErrorEnum.USER_NOT_AUTHENTICATION));
+                    String s = JacksonUtil.objectToString(ReJsonResultVO.error(GlobalErrorEnum.USER_NOT_AUTHENTICATION));
                     response.getWriter().write(s);
                 });
 

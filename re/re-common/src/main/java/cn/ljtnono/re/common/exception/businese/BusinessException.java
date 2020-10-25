@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.exception.businese;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.GlobalException;
 
 /**
@@ -10,7 +10,7 @@ import cn.ljtnono.re.common.exception.GlobalException;
  */
 public class BusinessException extends GlobalException {
 
-    public BusinessException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum);
+    public BusinessException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum);
     }
 }

@@ -1,12 +1,12 @@
 package cn.ljtnono.re.security.component;
 
-import cn.ljtnono.re.cache.ReUserInfoCache;
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
-import cn.ljtnono.re.common.enumeration.ReRedisKeyEnum;
+import cn.ljtnono.re.cache.UserInfoCache;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
-import cn.ljtnono.re.entity.system.ReUser;
+import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,16 +52,16 @@ public class ReTokenFilter extends OncePerRequestFilter {
             token = token.substring(reSecurityProperties.getTokenPrefix().length());
             // 检查token是否过期
             if (reJwtUtil.isTokenExpired(token)) {
-                throw new UserPermissionException(ReErrorEnum.TOKEN_EXPIRED_ERROR);
+                throw new UserPermissionException(GlobalErrorEnum.TOKEN_EXPIRED_ERROR);
             }
             username = reJwtUtil.getUsernameFromToken(token);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            ReUser reUser = (ReUser) userDetailsService.loadUserByUsername(username);
+            User reUser = (User) userDetailsService.loadUserByUsername(username);
             // 检验Token是否合法
             if (reJwtUtil.validateToken(token, reUser)) {
                 if (isAlreadyLogin(reUser, token)) {
-                    throw new UserPermissionException(ReErrorEnum.USER_ALREADY_LOGIN_ERROR);
+                    throw new UserPermissionException(GlobalErrorEnum.USER_ALREADY_LOGIN_ERROR);
                 }
                 UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(reUser, reUser.getPassword(), reUser.getAuthorities());
                 upToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
@@ -78,17 +78,17 @@ public class ReTokenFilter extends OncePerRequestFilter {
      * @author Ling, Jiatong
      *
      */
-    public boolean isAlreadyLogin(ReUser reUser, String token) {
+    public boolean isAlreadyLogin(User reUser, String token) {
         // 缓存校验, 如果存在缓存说明已经登录
-        Object cache = redisUtil.get(ReRedisKeyEnum.USER_INFO_KEY.getValue()
+        Object cache = redisUtil.get(RedisKeyEnum.USER_INFO_KEY.getValue()
                 .replace("id", String.valueOf(reUser.getId()))
                 .replace("username", reUser.getUsername()));
         if (cache == null) {
             return false;
         }
         // TODO 以后可以添加通过给ReUser添加一个字段来实现强制登陆
-        ReUserInfoCache reUserInfoCache = (ReUserInfoCache) cache;
-        return reUserInfoCache.getToken().equals(token);
+        UserInfoCache userInfoCache = (UserInfoCache) cache;
+        return userInfoCache.getToken().equals(token);
     }
 
 }

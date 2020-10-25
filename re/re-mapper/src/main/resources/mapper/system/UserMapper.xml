@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ljtnono.re.mapper.system.UserMapper">
+
+    <!-- 根据用户名查出所有权限列表 -->
+    <select id="getPermissionExpressionListByUserId" resultType="cn.ljtnono.re.entity.system.Permission">
+        SELECT
+            p.expression
+        FROM sys_permission p
+        LEFT JOIN sys_role_permission rp
+        ON rp.permission_id = p.id
+        LEFT JOIN sys_user_role ur
+        ON ur.role_id = rp.role_id
+        LEFT JOIN sys_user u
+        ON u.id = ur.user_id
+        <where>
+            <if test="userId != null">
+                AND u.id = #{userId}
+                AND p.is_deleted = 0
+                AND u.is_deleted = 0
+            </if>
+        </where>
+    </select>
+
+    <!-- 插入用户角色表 -->
+    <insert id="insertUserRole">
+        INSERT INTO sys_user_role(user_id, role_id)
+        VALUES(#{reUserDTO.id}, #{reUserDTO.roleId})
+    </insert>
+
+    <!-- 根据用户id获取角色id和用户名 -->
+    <select id="getRoleById" resultType="cn.ljtnono.re.entity.system.Role">
+        SELECT
+            sr.id,
+            sr.name
+        FROM sys_role sr
+        LEFT JOIN sys_user_role sur
+        ON sr.id = sur.role_id
+        LEFT JOIN sys_user su
+        ON su.id = sur.user_id
+        <where>
+            <if test="id != null">
+                AND su.id = #{id}
+                AND su.is_deleted = 0
+            </if>
+        </where>
+    </select>
+</mapper>

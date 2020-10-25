@@ -1,11 +1,9 @@
 package cn.ljtnono.re.common.exception;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.io.Serializable;
 
 /**
  * @author Ling, Jiatong
@@ -19,12 +17,12 @@ public class GlobalException extends RuntimeException {
 
     private Integer code;
 
-    private ReErrorEnum reErrorEnum;
+    private GlobalErrorEnum globalErrorEnum;
 
-    public GlobalException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum.getMessage());
-        this.reErrorEnum = reErrorEnum;
-        this.code = reErrorEnum.getCode();
+    public GlobalException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum.getMessage());
+        this.globalErrorEnum = globalErrorEnum;
+        this.code = globalErrorEnum.getCode();
     }
 
     public GlobalException(String message) {

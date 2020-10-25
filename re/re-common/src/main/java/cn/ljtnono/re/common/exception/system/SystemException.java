@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.exception.system;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,12 +17,12 @@ public class SystemException extends RuntimeException {
 
     private Integer code;
 
-    private ReErrorEnum reErrorEnum;
+    private GlobalErrorEnum globalErrorEnum;
 
-    public SystemException(ReErrorEnum reErrorEnum) {
-        super(reErrorEnum.getMessage());
-        this.reErrorEnum = reErrorEnum;
-        this.code = reErrorEnum.getCode();
+    public SystemException(GlobalErrorEnum globalErrorEnum) {
+        super(globalErrorEnum.getMessage());
+        this.globalErrorEnum = globalErrorEnum;
+        this.code = globalErrorEnum.getCode();
     }
 
     public SystemException(String message) {

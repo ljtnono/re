@@ -1,6 +1,6 @@
 package cn.ljtnono.re.common.vo;
 
-import cn.ljtnono.re.common.enumeration.ReErrorEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -84,11 +84,11 @@ public class ReJsonResultVO<T> implements Serializable {
     /**
      * 失败响应 传入错误枚举
      *
-     * @param reErrorEnum HTTP Restful Api 错误枚举
+     * @param globalErrorEnum HTTP Restful Api 错误枚举
      * @param <T>       范型
      * @return 统一返回值封装
      */
-    public static <T> ReJsonResultVO<T> error(ReErrorEnum reErrorEnum) {
-        return new ReJsonResultVO<>(reErrorEnum.getCode(), reErrorEnum.getMessage());
+    public static <T> ReJsonResultVO<T> error(GlobalErrorEnum globalErrorEnum) {
+        return new ReJsonResultVO<>(globalErrorEnum.getCode(), globalErrorEnum.getMessage());
     }
 }

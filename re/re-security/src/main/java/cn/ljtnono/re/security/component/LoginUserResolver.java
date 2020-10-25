@@ -2,7 +2,7 @@ package cn.ljtnono.re.security.component;
 
 import cn.ljtnono.re.common.annotation.LoginUser;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
-import cn.ljtnono.re.entity.system.ReUser;
+import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.security.util.ReJwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().isAssignableFrom(ReUser.class)
+        return parameter.getParameterType().isAssignableFrom(User.class)
                 && parameter.hasParameterAnnotation(LoginUser.class);
     }
 
@@ -39,7 +39,7 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
         // token格式错误或者过期，参数类型不正确都会返回null
         if (StringUtils.isEmpty(token) ||
                 !token.startsWith(reSecurityProperties.getTokenPrefix()) ||
-                parameter.getParameterType().isInstance(ReUser.class)) {
+                parameter.getParameterType().isInstance(User.class)) {
             return null;
         }
         token = token.substring(reSecurityProperties.getTokenPrefix().length());
@@ -48,7 +48,7 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
             return null;
         }
         Claims claims = reJwtUtil.getClaimsFromToken(token);
-        ReUser reUser = new ReUser();
+        User reUser = new User();
         Integer userId = claims.get("userId", Integer.class);
         String username = claims.get("username", String.class);
         Integer roleId = claims.get("roleId", Integer.class);

@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class UserServiceTest {
 
     @Autowired
-    private ReUserService reUserService;
+    private UserService userService;
 
 
 }
