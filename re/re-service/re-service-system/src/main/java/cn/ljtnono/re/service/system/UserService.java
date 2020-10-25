@@ -73,17 +73,17 @@ public class UserService implements UserDetailsService {
 
     /**
      * 用户登录
-     * @param reUserDTO 参数封装
+     * @param userDTO 参数封装
      * @return ReUserLoginVO
      * @author Ling, Jiatong
      */
-    public UserLoginVO login(UserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO)
+    public UserLoginVO login(UserDTO userDTO) {
+        Optional.ofNullable(userDTO)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 登陆校验用户名密码
-        User reUser = loginCheckUsernameAndPassword(reUserDTO.getUsername(), reUserDTO.getPassword());
+        User reUser = loginCheckUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
         // 校验验证码
-        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
+        verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
         // 用户角色校验
         Role reRole = roleService.getRoleIdAndNameByUserId(reUser.getId());
         // 用户权限异常

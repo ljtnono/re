@@ -1,5 +1,6 @@
 package cn.ljtnono.re.common.util.redis;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +15,8 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisUtil {
 
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     //*****************************String类型*****************************//
 
@@ -30,7 +28,7 @@ public class RedisUtil {
      * @param unit 时间单位
      */
     public void set(String key, Object value, long timeout, TimeUnit unit) {
-        redisTemplate.boundValueOps(key).set(value, timeout, unit);
+        redisTemplate.opsForValue().set(key, value, timeout, unit);
     }
 
     /**
@@ -39,7 +37,7 @@ public class RedisUtil {
      * @return Object
      */
     public Object get(String key) {
-        return redisTemplate.boundValueOps(key).get();
+        return redisTemplate.opsForValue().get(key);
     }
 
     /**

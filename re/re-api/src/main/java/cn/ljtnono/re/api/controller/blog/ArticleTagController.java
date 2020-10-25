@@ -6,4 +6,5 @@ package cn.ljtnono.re.api.controller.blog;
  * Description:
  */
 public class ArticleTagController {
+
 }

@@ -13,6 +13,8 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -93,7 +95,8 @@ public class SpringBeanConfig {
      * @return RedisTemplate<String, Object>
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory factory) {
+    @Lazy
+    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         // 设置redis连接工厂
         redisTemplate.setConnectionFactory(factory);
@@ -103,7 +106,7 @@ public class SpringBeanConfig {
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
 
-        RedisSerializer<?> serializer = new StringRedisSerializer();
+        RedisSerializer<String> serializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(serializer);
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setHashKeySerializer(serializer);

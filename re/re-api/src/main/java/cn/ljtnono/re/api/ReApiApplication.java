@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Date: 2020/8/9 23:04
  * Description: api层启动类
  */
-@EnableScheduling
+//@EnableScheduling
 @SpringBootApplication(scanBasePackages = {"cn.ljtnono.re"})
 @MapperScan(basePackages = {"cn.ljtnono.re.mapper"})
 public class ReApiApplication {

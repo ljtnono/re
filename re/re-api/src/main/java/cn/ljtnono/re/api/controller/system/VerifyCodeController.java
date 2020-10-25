@@ -39,20 +39,17 @@ public class VerifyCodeController {
      */
     @GetMapping
     public void getVerifyCode(HttpServletResponse response) {
-        response.setDateHeader("Expires", 0);
-        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
-        response.addHeader("Cache-Control", "create_date-check=0, pre-check=0");
-        response.setHeader("Pragma", "no-cache");
+        log.info("[re-system -> VerifyCodeController -> getVerifyCode()] 获取验证码");
         response.setContentType("image/jpeg");
         String capText = captchaProducer.createText();
         String codeId = "verifyCodeId:" + UUIDUtil.generateUUID();
-        response.addCookie(new Cookie("VerifyCodeId", codeId));
+        response.addHeader("VerifyCodeId", codeId);
         BufferedImage bi = captchaProducer.createImage(capText);
         try {
             redisUtil.set(codeId, capText, 5, TimeUnit.MINUTES);
             ImageIO.write(bi, "jpg", response.getOutputStream());
         } catch (IOException e) {
-            log.error("[re-system -> ReVerifyCodeController -> getVerifyCode()] 生成验证码图片失败, 错误信息: {}", e.getMessage());
+            log.error("[re-system -> VerifyCodeController -> getVerifyCode()] 生成验证码图片失败, 错误信息: {}", e.getMessage());
             throw new SystemException(GlobalErrorEnum.SYSTEM_ERROR);
         }
     }
