@@ -1,43 +1,48 @@
 <template>
-  <div class="login">
-    <div class="login-con">
-      <Card icon="log-in" title="欢迎登录" :bordered="false">
-        <div class="form-con">
-          <login-form @on-success-valid="handleSubmit"></login-form>
+    <div class="login">
+        <div class="login-con">
+            <Card icon="log-in" title="欢迎登录" :bordered="false">
+                <div class="form-con">
+                    <login-form @on-success-valid="handleSubmit"/>
+                </div>
+            </Card>
         </div>
-      </Card>
     </div>
-  </div>
 </template>
 
 <script>
 import LoginForm from '_c/login-form'
-import { mapActions } from 'vuex'
+import {mapActions} from 'vuex'
 
 export default {
-  components: {
-    LoginForm
-  },
-  methods: {
-    ...mapActions([
-      "handleLogin",
-    ]),
-    handleSubmit ({ username, password }) {
-      this.handleLogin({ username, password }).then(res => {
-        this.$Message.success("登陆成功");
-        this.$router.push({
-          name: this.$config.homeName
-        });
-      }).catch(e => {
-        this.$Message.error("登陆失败");
-      })
+    data() {
+        return {
+            verifyCode: null
+        }
+    },
+    components: {
+        LoginForm
+    },
+    methods: {
+        ...mapActions([
+            "handleLogin"
+        ]),
+        handleSubmit({username, password, verifyCodeId, verifyCode}) {
+            this.handleLogin({username, password, verifyCodeId, verifyCode}).then(res => {
+                this.$Message.info(res.message);
+                this.$router.push({
+                    name: this.$config.homeName
+                });
+            }).catch(error => {
+                this.$Message.error(error.message);
+            })
+        }
     }
-  }
 }
 </script>
 
 <style scoped lang="less">
-  .login {
+.login {
     width: 100%;
     height: 100%;
     background-image: url('../../assets/images/login-bg.jpg');
@@ -46,28 +51,28 @@ export default {
     position: relative;
 
     &-con {
-      position: absolute;
-      right: 160px;
-      top: 50%;
-      transform: translateY(-60%);
-      width: 300px;
+        position: absolute;
+        right: 160px;
+        top: 50%;
+        transform: translateY(-60%);
+        width: 300px;
 
-      &-header {
-        font-size: 16px;
-        font-weight: 300;
-        text-align: center;
-        padding: 30px 0;
-      }
+        &-header {
+            font-size: 16px;
+            font-weight: 300;
+            text-align: center;
+            padding: 30px 0;
+        }
 
-      .form-con {
-        padding: 10px 0 0;
-      }
+        .form-con {
+            padding: 10px 0 0;
+        }
 
-      .login-tip {
-        font-size: 10px;
-        text-align: center;
-        color: #c3c3c3;
-      }
+        .login-tip {
+            font-size: 10px;
+            text-align: center;
+            color: #c3c3c3;
+        }
     }
-  }
+}
 </style>

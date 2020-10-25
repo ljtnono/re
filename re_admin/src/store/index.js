@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import user from "./module/user";
+import user from "./module/system/user";
 import app from "./module/app";
 import createPersistedState from "vuex-persistedstate";
 
