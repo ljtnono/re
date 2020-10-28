@@ -3,7 +3,7 @@
         <FormItem prop="username">
             <Input v-model="form.username" placeholder="请输入用户名">
                 <span slot="prepend">
-                    <Icon :size="16" type="ios-person"></Icon>
+                    <Icon :size="16" type="ios-person" />
                 </span>
             </Input>
         </FormItem>
@@ -18,7 +18,7 @@
             <Input class="verifyCode" v-model="form.verifyCode" placeholder="请输入验证码">
                 <!-- 验证码 -->
                 <div slot="suffix" @click="refreshVerifyCode">
-                    <img :src="verifyCodeSrc" alt="验证码">
+                    <img :src="verifyCodeSrc" alt="验证码" />
                 </div>
             </Input>
         </FormItem>
@@ -80,7 +80,7 @@ export default {
             type: Array,
             default: () => {
                 return [
-                    {required: true, message: '账号不能为空', trigger: 'blur'}
+                    {required: true, message: '账号不能为空', trigger: 'message'}
                 ]
             }
         },
@@ -88,7 +88,7 @@ export default {
             type: Array,
             default: () => {
                 return [
-                    {required: true, message: '密码不能为空', trigger: 'blur'}
+                    {required: true, message: '密码不能为空', trigger: 'message'}
                 ]
             }
         }

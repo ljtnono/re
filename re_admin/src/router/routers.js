@@ -15,7 +15,6 @@ import Main from '@/components/main'
  *  beforeCloseName: (-) 设置该字段，则在关闭当前tab页时会去'@/router/before-close.js'里寻找该字段名对应的方法，作为关闭前的钩子函数
  * }
  */
-
 export default [
   {
     path: '/blog',

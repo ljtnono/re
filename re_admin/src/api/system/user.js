@@ -16,11 +16,3 @@ export const login = (username, password, verifyCodeId, verifyCode) => {
         verifyCode: verifyCode
     });
 };
-
-export const getUserInfo = (token) => {
-  return axios.get(proxyUrlPrefix + "/user/getUserInfoByToken", {
-    params: {
-      token: token
-    }
-  });
-};

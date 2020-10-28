@@ -1,8 +1,24 @@
-import {login, getUserInfo} from "@/api/system/user";
-import {getVerifyCode} from "@/api/verifyCode/verifyCode";
+import {login} from "@/api/system/user";
 
 export default {
-    state: {},
+    state: {
+        // 用户id，
+        userId: null,
+        // 用户角色id
+        roleId: null,
+        // 用户token
+        token: "",
+        // 权限列表
+        permissionList: [],
+        // 角色名
+        roleName: "",
+        // email
+        email: "",
+        // phone
+        phone: "",
+        // 是否删除 0 正常 1 已删除
+        deleted: null
+    },
     mutations: {},
     getters: {},
     actions: {

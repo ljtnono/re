@@ -1,4 +1,4 @@
-import {login, getUserInfo} from "@/api/system/user";
+import {login, getUserInfo} from "@/api/user";
 import {setToken} from "@/libs/util";
 
 export default {

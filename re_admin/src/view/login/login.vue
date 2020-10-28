@@ -13,6 +13,7 @@
 <script>
 import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
+import Cookies from 'js-cookie';
 
 export default {
     data() {
@@ -29,13 +30,29 @@ export default {
         ]),
         handleSubmit({username, password, verifyCodeId, verifyCode}) {
             this.handleLogin({username, password, verifyCodeId, verifyCode}).then(res => {
-                this.$Message.info(res.message);
+                // 登陆成功
+                this.$Message.success("登陆成功");
+                // 存储用户相关信息
+                this.saveUserInfo(res);
+                // 跳转到页面
                 this.$router.push({
                     name: this.$config.homeName
                 });
             }).catch(error => {
                 this.$Message.error(error.message);
             })
+        },
+        // 存储用户信息
+        saveUserInfo(res) {
+            Cookies.set("token", res["token"]);
+            this.$store.state.userId = res["userId"];
+            this.$store.state.roleId = res["roleId"];
+            this.$store.state.token = res["token"];
+            this.$store.state.permissionList = res["permissionList"];
+            this.$store.state.roleName = res["roleName"];
+            this.$store.state.email = res["email"];
+            this.$store.state.phone = res["phone"];
+            this.$store.state.deleted = res["deleted"];
         }
     }
 }
