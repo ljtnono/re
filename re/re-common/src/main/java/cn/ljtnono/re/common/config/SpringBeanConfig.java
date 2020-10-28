@@ -14,7 +14,6 @@ import com.google.code.kaptcha.util.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -112,7 +111,8 @@ public class SpringBeanConfig {
         redisTemplate.setHashKeySerializer(serializer);
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.afterPropertiesSet();
-        redisTemplate.setEnableTransactionSupport(true);
+        // 开启redis事务会导致连接不释放
+//        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 }
