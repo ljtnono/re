@@ -1,24 +1,7 @@
-import {login} from "@/api/system/user";
+import {login, logout} from "@/api/system/user";
 
 export default {
-    state: {
-        // 用户id，
-        userId: null,
-        // 用户角色id
-        roleId: null,
-        // 用户token
-        token: "",
-        // 权限列表
-        permissionList: [],
-        // 角色名
-        roleName: "",
-        // email
-        email: "",
-        // phone
-        phone: "",
-        // 是否删除 0 正常 1 已删除
-        deleted: null
-    },
+    state: {},
     mutations: {},
     getters: {},
     actions: {
@@ -32,9 +15,13 @@ export default {
                     } else {
                         reject(result);
                     }
-                }).catch(error => {
-                    reject(error);
                 });
+            });
+        },
+        // 处理用户退出登陆
+        handleLogOut({state, commit}) {
+            return new Promise((resolve, reject) => {
+
             });
         }
     }

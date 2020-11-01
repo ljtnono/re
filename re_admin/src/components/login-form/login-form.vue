@@ -71,7 +71,10 @@ export default {
                 // 获取验证码结果
                 this.form.verifyCodeId = res.headers["verifyCodeId".toLocaleLowerCase()];
             }).catch(error => {
-                this.$Message.error(error.data.message);
+                this.$Message.error({
+                    background: true,
+                    content: error.data.message
+                });
             });
         }
     },

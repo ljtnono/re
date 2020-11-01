@@ -1,12 +1,9 @@
+
 export default {
     /**
      * @description 配置显示在浏览器标签的title
      */
     title: "根元素后台",
-    /**
-     * @description token在Cookie中存储的天数，默认1天
-     */
-    cookieExpires: 1,
     /**
      * @description 默认打开的首页的路由name值，默认为home
      */
@@ -48,11 +45,5 @@ export default {
         /* 2.2.1 */
         subfield: true, // 单双栏模式
         preview: true, // 预览
-    },
-    /**
-     * 权限id和权限名对应关系
-     */
-    permissionMap: {
-        1: "用户管理"
     }
 };

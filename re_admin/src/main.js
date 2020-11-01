@@ -1,36 +1,37 @@
 import Vue from 'vue'
-import App from './App'
+import app from './app'
 import router from './router'
 import store from './store'
-import iView from 'iview'
+import iView from 'view-design'
 import moment from "moment";
 import config from '@/config'
-import mavonEditor from 'mavon-editor'
+import editor from 'mavon-editor'
 import './index.less'
 import '@/assets/icons/iconfont.css'
 import 'mavon-editor/dist/css/index.css'
 
-Vue.use(mavonEditor);
+Vue.use(editor);
+// 配置iView全局配置
 Vue.use(iView);
-
-/**
- * @description 生产环境关掉提示
- */
+// 挂载全局配置
+Vue.prototype.$LoadingBar = iView.LoadingBar;
+// 配置Vue消息全局
+Vue.prototype.$Message.config({
+    duration: 2,
+    top: 50
+});
+// 生产环境关掉提示
 Vue.config.productionTip = false;
-
-/**
- * @description 全局注册应用配置
- */
+// 全局注册应用配置
 Vue.prototype.$config = config;
-
 // 配置全局过滤器
 Vue.filter("timeFormat", function (time) {
-  return moment(time).format("YYYY-MM-DD");
+    return moment(time).format("YYYY-MM-DD HH:mm:ss");
 });
 
 new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
+    el: '#app',
+    router,
+    store,
+    render: h => h(app)
 });

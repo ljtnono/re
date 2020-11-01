@@ -14,6 +14,7 @@
 import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 import Cookies from 'js-cookie';
+import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/config/system";
 
 export default {
     data() {
@@ -29,30 +30,40 @@ export default {
             "handleLogin"
         ]),
         handleSubmit({username, password, verifyCodeId, verifyCode}) {
-            this.handleLogin({username, password, verifyCodeId, verifyCode}).then(res => {
+            let promise = this.handleLogin({username, password, verifyCodeId, verifyCode});
+            promise.then(res => {
                 // 登陆成功
-                this.$Message.success("登陆成功");
+                this.$Message.success({
+                    background: true,
+                    content: "登陆成功"
+                });
                 // 存储用户相关信息
-                this.saveUserInfo(res);
+                this.saveUserInfo(res.data);
                 // 跳转到页面
                 this.$router.push({
-                    name: this.$config.homeName
+                    name: HOME_PAGE_NAME
                 });
             }).catch(error => {
-                this.$Message.error(error.message);
-            })
+                this.$Message.error({
+                    background: true,
+                    content: error.message
+                });
+            });
         },
-        // 存储用户信息
-        saveUserInfo(res) {
-            Cookies.set("token", res["token"]);
-            this.$store.state.userId = res["userId"];
-            this.$store.state.roleId = res["roleId"];
-            this.$store.state.token = res["token"];
-            this.$store.state.permissionList = res["permissionList"];
-            this.$store.state.roleName = res["roleName"];
-            this.$store.state.email = res["email"];
-            this.$store.state.phone = res["phone"];
-            this.$store.state.deleted = res["deleted"];
+        // 存储用户信息, 存储在token中去
+        saveUserInfo(data) {
+            // cookie存储用户信息, 设置为1天过期
+            Cookies.set("userInfo", {
+                id: data.id,
+                roleId: data.roleId,
+                token: data.token,
+                permissionIdList: data.permissionIdList,
+                roleName: data.roleName,
+                email: data.email,
+                phone: data.phone,
+                deleted: data.deleted
+            }, {expires: USERINFO_EXPIRE});
+
         }
     }
 }
