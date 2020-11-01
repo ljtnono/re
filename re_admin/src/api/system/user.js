@@ -1,6 +1,5 @@
 import axios from "axios";
-import {proxyUrlPrefix} from "@/api/base/base";
-import Cookies from "js-cookie"
+import {getToken, proxyUrlPrefix} from "@/api/base/base";
 // 基础url
 const baseUrl = proxyUrlPrefix + "/re/api/v1/system/user";
 
@@ -21,15 +20,13 @@ export const login = (username, password, verifyCodeId, verifyCode) => {
     });
 };
 /**
- * 用户登出
+ * TODO 用户登出
  */
 export const logout = () => {
-    let userInfo = Cookies.getJSON("userInfo");
+    let token = getToken();
     return axios.get(baseUrl + "/logout", {
         headers: {
-            "Authen": ""
+            "Authorization": token
         }
-    }).then(res => {
-
     });
 }

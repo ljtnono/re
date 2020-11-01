@@ -14,7 +14,7 @@
 import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 import Cookies from 'js-cookie';
-import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/config/system";
+import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/constant/systemConstant";
 
 export default {
     data() {
@@ -63,7 +63,6 @@ export default {
                 phone: data.phone,
                 deleted: data.deleted
             }, {expires: USERINFO_EXPIRE});
-
         }
     }
 }
