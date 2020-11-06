@@ -15,11 +15,12 @@ import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.UserDTO;
+import cn.ljtnono.re.entity.system.Config;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
-import cn.ljtnono.re.security.util.ReJwtUtil;
+import cn.ljtnono.re.security.util.JwtUtil;
 import cn.ljtnono.re.vo.system.UserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -59,7 +60,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     private RedisUtil redisUtil;
     @Autowired
-    private ReJwtUtil reJwtUtil;
+    private JwtUtil jwtUtil;
     @Autowired
     private RoleService roleService;
     @Autowired
@@ -68,6 +69,8 @@ public class UserService implements UserDetailsService {
     private ReSecurityProperties reSecurityProperties;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private ConfigService configService;
 
     //*********************************** 接口方法 ***********************************//
 
@@ -103,7 +106,7 @@ public class UserService implements UserDetailsService {
         // 登录认证
         authenticate(reUser);
         // 生成token
-        String token = reJwtUtil.generateToken(reUser.getId(), reUser.getUsername(), reUser.getRoleId());
+        String token = jwtUtil.generateToken(reUser.getId(), reUser.getUsername(), reUser.getRoleId());
         // 缓存用户信息
         setUserInfoCache(reUser, token);
         // 生成vo对象
@@ -272,6 +275,8 @@ public class UserService implements UserDetailsService {
         BeanUtils.copyProperties(user, vo);
         vo.setPermissionIdList(permission);
         vo.setToken(token);
+        Config avatarImage = configService.getConfigByKey("avatarImagePath");
+        vo.setAvatarImage(avatarImage.getValue());
         return vo;
     }
 

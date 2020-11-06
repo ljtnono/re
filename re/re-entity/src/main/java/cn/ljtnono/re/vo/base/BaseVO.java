@@ -3,18 +3,14 @@ package cn.ljtnono.re.vo.base;
 import lombok.Data;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 2020/8/27 0:32
  * Description:
  */
 @Data
 @ToString
-public class BaseVO implements Serializable {
-
-    private static final long serialVersionUID = 4593999010097299274L;
+public class BaseVO {
 
     /**
      * id

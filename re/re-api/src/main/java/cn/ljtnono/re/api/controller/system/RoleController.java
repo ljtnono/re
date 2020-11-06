@@ -1,6 +1,6 @@
 package cn.ljtnono.re.api.controller.system;
 
-import cn.ljtnono.re.common.vo.ReJsonResultVO;
+import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.dto.system.RoleDTO;
 import cn.ljtnono.re.service.system.RoleService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +29,9 @@ public class RoleController {
      */
     @GetMapping("/{id:\\d+}")
     @PreAuthorize("hasAnyAuthority('system:role:view')")
-    public ReJsonResultVO<?> getRoleById(@PathVariable Integer id) {
+    public JsonResultVO<?> getRoleById(@PathVariable Integer id) {
         log.info("[re-system -> ReRoleController -> getRoleById()] 获取角色信息，角色id：{}", id);
-        return ReJsonResultVO.success(roleService.getRoleById(id));
+        return JsonResultVO.success(roleService.getRoleById(id));
     }
 
     /**
@@ -41,36 +41,36 @@ public class RoleController {
      */
     @GetMapping("/select")
     @PreAuthorize("hasAnyAuthority('system:role:view')")
-    public ReJsonResultVO<?> select() {
+    public JsonResultVO<?> select() {
         log.info("[re-system -> ReRoleController -> select()] 获取角色下拉列表");
-        return ReJsonResultVO.success(roleService.select());
+        return JsonResultVO.success(roleService.select());
     }
 
     /**
      * 新增角色
-     * @param reRoleDTO 参数封装
+     * @param roleDTO 参数封装
      * @author Ling, Jiatong
      *
      */
     @PostMapping
     @PreAuthorize("hasAnyAuthority('system:role:add')")
-    public ReJsonResultVO<?> addRole(@RequestBody RoleDTO reRoleDTO) {
-        log.info("[re-system -> ReRoleController -> addRole()] 新增角色，参数：{}", reRoleDTO);
-        roleService.addRole(reRoleDTO);
-        return ReJsonResultVO.success();
+    public JsonResultVO<?> addRole(@RequestBody RoleDTO roleDTO) {
+        log.info("[re-system -> ReRoleController -> addRole()] 新增角色，参数：{}", roleDTO);
+        roleService.addRole(roleDTO);
+        return JsonResultVO.success();
     }
 
     /**
      * 分页获取角色列表
-     * @param reRoleDTO 参数封装
+     * @param roleDTO 参数封装
      * @author Ling, Jiatong
      *
      */
     @GetMapping("/list")
     @PreAuthorize("hasAnyAuthority('system:role:view')")
-    public ReJsonResultVO<?> getRoleListPage(RoleDTO reRoleDTO) {
-        log.info("[re-system -> ReRoleController -> getRoleListPage()] 分页获取角色列表，参数：{}", reRoleDTO);
-        return ReJsonResultVO.success(roleService.getRoleListPage(reRoleDTO));
+    public JsonResultVO<?> getRoleListPage(RoleDTO roleDTO) {
+        log.info("[re-system -> ReRoleController -> getRoleListPage()] 分页获取角色列表，参数：{}", roleDTO);
+        return JsonResultVO.success(roleService.getRoleListPage(roleDTO));
     }
 
     /**
@@ -81,24 +81,24 @@ public class RoleController {
      */
     @DeleteMapping("/{id:\\d+}")
     @PreAuthorize("hasAnyAuthority('system:role:delete')")
-    public ReJsonResultVO<?> logicDeleteById(@PathVariable Integer id) {
+    public JsonResultVO<?> logicDeleteById(@PathVariable Integer id) {
         log.info("[re-system -> ReRoleController -> logicDeleteById()] 逻辑删除角色，角色id：{}", id);
         roleService.logicDeleteById(id);
-        return ReJsonResultVO.success();
+        return JsonResultVO.success();
     }
 
     /**
      * 更新角色信息
-     * @param reRoleDTO 参数封装
+     * @param roleDTO 参数封装
      * @author Ling, Jiatong
      *
      */
     @PutMapping
     @PreAuthorize("hasAnyAuthority('system:role:update')")
-    public ReJsonResultVO<?> updateRole(@RequestBody RoleDTO reRoleDTO) {
-        log.info("[re-system -> ReRoleController -> updateRole()] 更新角色，参数：{}", reRoleDTO);
-        roleService.updateRole(reRoleDTO);
-        return ReJsonResultVO.success();
+    public JsonResultVO<?> updateRole(@RequestBody RoleDTO roleDTO) {
+        log.info("[re-system -> ReRoleController -> updateRole()] 更新角色，参数：{}", roleDTO);
+        roleService.updateRole(roleDTO);
+        return JsonResultVO.success();
     }
 
 }

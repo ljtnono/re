@@ -6,7 +6,7 @@ import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.common.util.jackson.JacksonUtil;
 import cn.ljtnono.re.common.vo.JsonResultVO;
-import cn.ljtnono.re.security.component.ReTokenFilter;
+import cn.ljtnono.re.security.component.TokenFilter;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,16 +31,16 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * @author ljt
+ * @author Ling, Jiatong
  * Date: 202/7/11 23:24 下午
  * Description: 安全配置
  */
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, proxyTargetClass = true)
-public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private ReTokenFilter reTokenFilter;
+    private TokenFilter tokenFilter;
     @Resource
     private UserDetailsService userDetailsService;
     @Autowired
@@ -100,7 +100,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
                     response.getWriter().write(s);
                 });
 
-        http.addFilterBefore(reTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,9 +16,7 @@ import java.util.Date;
  */
 @Data
 @ToString
-public class BaseEntity implements Serializable {
-
-    private static final long serialVersionUID = -5097540987940971509L;
+public class BaseEntity {
 
     /** 实体id */
     @TableId(type = IdType.AUTO)

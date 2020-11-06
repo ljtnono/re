@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * Description: 加密器
  */
 @Component
-public class RePasswordEncoderImpl implements PasswordEncoder {
+public class PasswordEncoderImpl implements PasswordEncoder {
 
     @Override
     public String encode(CharSequence charSequence) {

@@ -10,7 +10,7 @@ import cn.ljtnono.re.common.exception.security.TokenExpiredException;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.exception.system.DataBaseException;
 import cn.ljtnono.re.common.exception.system.SystemException;
-import cn.ljtnono.re.common.vo.ReJsonResultVO;
+import cn.ljtnono.re.common.vo.JsonResultVO;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -37,9 +37,9 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ReJsonResultVO<?> unknownException(Exception exception) {
+    public JsonResultVO<?> unknownException(Exception exception) {
         log.error(exception.toString(), exception);
-        return ReJsonResultVO.error(500, "未知异常");
+        return JsonResultVO.error(500, "未知异常");
     }
 
     /**
@@ -50,12 +50,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(GlobalException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> globalException(GlobalException exception) {
+    public JsonResultVO<?> globalException(GlobalException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.SYSTEM_ERROR.getCode(), GlobalErrorEnum.SYSTEM_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.SYSTEM_ERROR.getCode(), GlobalErrorEnum.SYSTEM_ERROR.getMessage());
     }
 
     /**
@@ -66,12 +66,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(ParamException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> paramException(ParamException exception) {
+    public JsonResultVO<?> paramException(ParamException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.REQUEST_PARAM_ERROR.getCode(), GlobalErrorEnum.REQUEST_PARAM_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.REQUEST_PARAM_ERROR.getCode(), GlobalErrorEnum.REQUEST_PARAM_ERROR.getMessage());
     }
 
     /**
@@ -82,12 +82,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(ResourceAlreadyExistException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> resourceAlreadyExistException(ResourceAlreadyExistException exception) {
+    public JsonResultVO<?> resourceAlreadyExistException(ResourceAlreadyExistException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.RESOURCE_ALREADY_EXIST_ERROR.getCode(), GlobalErrorEnum.RESOURCE_ALREADY_EXIST_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.RESOURCE_ALREADY_EXIST_ERROR.getCode(), GlobalErrorEnum.RESOURCE_ALREADY_EXIST_ERROR.getMessage());
     }
 
     /**
@@ -98,12 +98,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(ResourceNotExistException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> resourceNotExistException(ResourceNotExistException exception) {
+    public JsonResultVO<?> resourceNotExistException(ResourceNotExistException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.RESOURCE_NOT_EXIST_ERROR.getCode(), GlobalErrorEnum.RESOURCE_NOT_EXIST_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.RESOURCE_NOT_EXIST_ERROR.getCode(), GlobalErrorEnum.RESOURCE_NOT_EXIST_ERROR.getMessage());
     }
 
     /**
@@ -114,12 +114,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(SystemException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> systemException(SystemException exception) {
+    public JsonResultVO<?> systemException(SystemException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.SYSTEM_ERROR.getCode(), GlobalErrorEnum.SYSTEM_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.SYSTEM_ERROR.getCode(), GlobalErrorEnum.SYSTEM_ERROR.getMessage());
     }
 
     /**
@@ -130,12 +130,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(DataBaseException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> dataBaseException(DataBaseException exception) {
+    public JsonResultVO<?> dataBaseException(DataBaseException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.DATABASE_OPERATION_ERROR.getCode(), GlobalErrorEnum.DATABASE_OPERATION_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.DATABASE_OPERATION_ERROR.getCode(), GlobalErrorEnum.DATABASE_OPERATION_ERROR.getMessage());
     }
 
     /**
@@ -146,12 +146,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(UserPermissionException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> userPermissionException(UserPermissionException exception) {
+    public JsonResultVO<?> userPermissionException(UserPermissionException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.USER_PERMISSION_ERROR.getCode(), GlobalErrorEnum.USER_PERMISSION_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.USER_PERMISSION_ERROR.getCode(), GlobalErrorEnum.USER_PERMISSION_ERROR.getMessage());
     }
 
     /**
@@ -162,12 +162,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> businessException(BusinessException exception) {
+    public JsonResultVO<?> businessException(BusinessException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.BUSINESS_ERROR.getCode(), GlobalErrorEnum.BUSINESS_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.BUSINESS_ERROR.getCode(), GlobalErrorEnum.BUSINESS_ERROR.getMessage());
     }
 
     /**
@@ -178,12 +178,12 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(TokenExpiredException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> tokenExpiredException(TokenExpiredException exception) {
+    public JsonResultVO<?> tokenExpiredException(TokenExpiredException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
-            return ReJsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
+            return JsonResultVO.error(exception.getGlobalErrorEnum().getCode(), exception.getGlobalErrorEnum().getMessage());
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getCode(), GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getCode(), GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getMessage());
     }
 
 
@@ -194,11 +194,11 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(ExpiredJwtException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> expiredJwtException(ExpiredJwtException exception) {
+    public JsonResultVO<?> expiredJwtException(ExpiredJwtException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getCode(), GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getCode(), GlobalErrorEnum.TOKEN_EXPIRED_ERROR.getMessage());
     }
 
     /**
@@ -208,11 +208,11 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(MalformedJwtException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> malformedJwtException(MalformedJwtException exception) {
+    public JsonResultVO<?> malformedJwtException(MalformedJwtException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.TOKEN_FORMAT_ERROR.getCode(), GlobalErrorEnum.TOKEN_FORMAT_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.TOKEN_FORMAT_ERROR.getCode(), GlobalErrorEnum.TOKEN_FORMAT_ERROR.getMessage());
     }
 
     /**
@@ -222,10 +222,10 @@ public class GlobalExceptionAdvice {
      */
     @ExceptionHandler(SignatureException.class)
     @ResponseStatus(value = HttpStatus.OK)
-    public ReJsonResultVO<?> signatureException(SignatureException exception) {
+    public JsonResultVO<?> signatureException(SignatureException exception) {
         if (exception != null) {
             log.error(exception.toString(), exception);
         }
-        return ReJsonResultVO.error(GlobalErrorEnum.TOKEN_SIGNATURE_ERROR.getCode(), GlobalErrorEnum.TOKEN_SIGNATURE_ERROR.getMessage());
+        return JsonResultVO.error(GlobalErrorEnum.TOKEN_SIGNATURE_ERROR.getCode(), GlobalErrorEnum.TOKEN_SIGNATURE_ERROR.getMessage());
     }
 }

@@ -3,7 +3,7 @@ package cn.ljtnono.re.security.component;
 import cn.ljtnono.re.common.annotation.LoginUser;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.entity.system.User;
-import cn.ljtnono.re.security.util.ReJwtUtil;
+import cn.ljtnono.re.security.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -23,7 +23,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class LoginUserResolver implements HandlerMethodArgumentResolver {
 
     @Autowired
-    private ReJwtUtil reJwtUtil;
+    private JwtUtil jwtUtil;
     @Autowired
     private ReSecurityProperties reSecurityProperties;
 
@@ -44,10 +44,10 @@ public class LoginUserResolver implements HandlerMethodArgumentResolver {
         }
         token = token.substring(reSecurityProperties.getTokenPrefix().length());
         // 处理token过期
-        if (reJwtUtil.isTokenExpired(token)) {
+        if (jwtUtil.isTokenExpired(token)) {
             return null;
         }
-        Claims claims = reJwtUtil.getClaimsFromToken(token);
+        Claims claims = jwtUtil.getClaimsFromToken(token);
         User reUser = new User();
         Integer userId = claims.get("userId", Integer.class);
         String username = claims.get("username", String.class);

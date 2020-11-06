@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 @Data
 @ToString
-public class ReJsonResultVO<T> implements Serializable {
+public class JsonResultVO<T> implements Serializable {
 
     private static final long serialVersionUID = 7266682980444049698L;
 
@@ -34,7 +34,7 @@ public class ReJsonResultVO<T> implements Serializable {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
-    public ReJsonResultVO(T data) {
+    public JsonResultVO(T data) {
         this.code = CODE_SUCCESS;
         this.message = MESSAGE_SUCCESS;
         this.data = data;
@@ -44,8 +44,8 @@ public class ReJsonResultVO<T> implements Serializable {
      *
      * @return ReJsonResultVO<T>
      */
-    public static <T> ReJsonResultVO<T> success() {
-        return ReJsonResultVO.success(null);
+    public static <T> JsonResultVO<T> success() {
+        return JsonResultVO.success(null);
     }
 
     /**
@@ -54,7 +54,7 @@ public class ReJsonResultVO<T> implements Serializable {
      * @param code    响应码
      * @param message 错误信息
      */
-    private ReJsonResultVO(Integer code, String message) {
+    private JsonResultVO(Integer code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -66,8 +66,8 @@ public class ReJsonResultVO<T> implements Serializable {
      * @param <T>  范型
      * @return 统一返回值封装
      */
-    public static <T> ReJsonResultVO<T> success(T data) {
-        return new ReJsonResultVO<T>(data);
+    public static <T> JsonResultVO<T> success(T data) {
+        return new JsonResultVO<T>(data);
     }
     /**
      * 失败响应 传入code和message
@@ -77,8 +77,8 @@ public class ReJsonResultVO<T> implements Serializable {
      * @param <T>     范型
      * @return 统一返回值封装
      */
-    public static <T> ReJsonResultVO<T> error(Integer code, String message) {
-        return new ReJsonResultVO<>(code, message);
+    public static <T> JsonResultVO<T> error(Integer code, String message) {
+        return new JsonResultVO<>(code, message);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ReJsonResultVO<T> implements Serializable {
      * @param <T>       范型
      * @return 统一返回值封装
      */
-    public static <T> ReJsonResultVO<T> error(GlobalErrorEnum globalErrorEnum) {
-        return new ReJsonResultVO<>(globalErrorEnum.getCode(), globalErrorEnum.getMessage());
+    public static <T> JsonResultVO<T> error(GlobalErrorEnum globalErrorEnum) {
+        return new JsonResultVO<>(globalErrorEnum.getCode(), globalErrorEnum.getMessage());
     }
 }

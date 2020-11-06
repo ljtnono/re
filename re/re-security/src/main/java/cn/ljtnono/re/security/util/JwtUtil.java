@@ -19,7 +19,7 @@ import java.util.Map;
  * Description: jwt工具类
  */
 @Component
-public class ReJwtUtil {
+public class JwtUtil {
 
     @Autowired
     private ReSecurityProperties reSecurityProperties;
