@@ -27,7 +27,7 @@
                         <keep-alive :include="cacheList">
                             <router-view/>
                         </keep-alive>
-                        <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>
+                        <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper" />
                     </Content>
                 </Layout>
             </Content>
@@ -35,6 +35,7 @@
     </Layout>
 </template>
 <script>
+import Cookies from "js-cookie";
 import SideMenu from "./components/side-menu";
 import HeaderBar from "./components/header-bar";
 import TagsNav from "./components/tags-nav";
@@ -77,7 +78,7 @@ export default {
             return this.$store.state.app.tagRouter;
         },
         userAvatar() {
-            return this.$store.state.user.avatarImgPath;
+            return Cookies.getJSON("userInfo").avatarImgPath;
         },
         cacheList() {
             const list = ["ParentView", ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []];
@@ -133,7 +134,7 @@ export default {
         handleCloseTag(res, type, route) {
             if (type !== "others") {
                 if (type === "all") {
-                    this.turnToPage(this.$config.homeName);
+                    this.turnToPage(this.$systemConstant.HOME_PAGE_NAME);
                 } else {
                     if (routeEqual(this.$route, route)) {
                         this.closeTag(route);
@@ -172,7 +173,7 @@ export default {
         // 如果当前打开页面不在标签栏中，跳到homeName页
         if (!this.tagNavList.find(item => item.name === this.$route.name)) {
             this.$router.push({
-                name: this.$config.homeName
+                name: this.$systemConstant.HOME_PAGE_NAME
             });
         }
         // 获取未读消息条数

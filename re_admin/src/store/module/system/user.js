@@ -1,4 +1,5 @@
 import {login, logout} from "@/api/system/user";
+import Cookies from "js-cookie";
 
 export default {
     state: {},
@@ -13,6 +14,7 @@ export default {
                     if (result.code === 0 && result.message === "success") {
                         resolve(result);
                     } else {
+                        // TODO 一般这里抛出异常
                         reject(result);
                     }
                 });
@@ -21,8 +23,19 @@ export default {
         // 处理用户退出登陆
         handleLogOut({state, commit}) {
             return new Promise((resolve, reject) => {
-
+                logout().then(res => {
+                    let result = res.data;
+                    if (result.code === 0 && result.message === "success") {
+                        resolve(result);
+                    } else {
+                        reject(result);
+                    }
+                });
             });
+        },
+        // 删除用户cookie
+        clearUserCookie({state, commit}) {
+            Cookies.remove("userInfo");
         }
     }
 };

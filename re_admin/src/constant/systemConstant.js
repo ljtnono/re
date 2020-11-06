@@ -41,6 +41,15 @@ const FORBIDDEN_PAGE_NAME = "error_403";
 const WEBSITE_TITLE = "根元素后台";
 
 /**
+ * 不需要token的接口地址
+ * @type {*[]}
+ */
+const PASS_TOKEN_API = [
+    "/system/user/login",
+    "/system/verifyCode"
+]
+
+/**
  *
  * @type {{preview: boolean, code: boolean, underline: boolean, superscript: boolean, link: boolean, save: boolean, redo: boolean, italic: boolean, undo: boolean, navigation: boolean, quote: boolean, alignleft: boolean, subfield: boolean, ul: boolean, strikethrough: boolean, ol: boolean, table: boolean, subscript: boolean, imagelink: boolean, bold: boolean, alignright: boolean, trash: boolean, help: boolean, fullscreen: boolean, aligncenter: boolean, htmlcode: boolean, readmodel: boolean, header: boolean, mark: boolean}}
  */
@@ -88,5 +97,6 @@ export {
     FORBIDDEN_PAGE_NAME,
     HOME_PAGE_NAME,
     WEBSITE_TITLE,
-    MARKDOWN_OPTION
+    MARKDOWN_OPTION,
+    PASS_TOKEN_API
 }

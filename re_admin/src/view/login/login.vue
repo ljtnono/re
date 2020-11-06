@@ -53,6 +53,7 @@ export default {
         // 存储用户信息, 存储在token中去
         saveUserInfo(data) {
             // cookie存储用户信息, 设置为1天过期
+            console.log(data);
             Cookies.set("userInfo", {
                 id: data.id,
                 roleId: data.roleId,
@@ -61,8 +62,10 @@ export default {
                 roleName: data.roleName,
                 email: data.email,
                 phone: data.phone,
-                deleted: data.deleted
+                deleted: data.deleted,
+                avatarImgPath: data.avatarImagePath
             }, {expires: USERINFO_EXPIRE});
+            console.log(Cookies.getJSON("userInfo"));
         }
     }
 }

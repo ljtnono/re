@@ -4,11 +4,11 @@
             <Badge :dot="!!messageUnreadCount">
                 <Avatar :src="userAvatar"/>
             </Badge>
-            <Icon :size="18" type="md-arrow-dropdown" />
+            <Icon :size="18" type="md-arrow-dropdown"/>
             <DropdownMenu slot="list">
                 <DropdownItem name="message">
                     消息中心
-                    <Badge style="margin-left: 10px" :count="messageUnreadCount" />
+                    <Badge style="margin-left: 10px" :count="messageUnreadCount"/>
                 </DropdownItem>
                 <DropdownItem name="logout">退出登录</DropdownItem>
             </DropdownMenu>
@@ -19,6 +19,7 @@
 <script>
 import "./user.less";
 import {mapActions} from "vuex";
+import {LOGIN_PAGE_NAME} from "@/constant/systemConstant";
 
 export default {
     name: "User",
@@ -34,12 +35,24 @@ export default {
     },
     methods: {
         ...mapActions([
-            "handleLogOut"
+            "handleLogOut",
+            "clearUserCookie"
         ]),
         logout() {
-            this.handleLogOut().then(() => {
+            this.handleLogOut().then((res) => {
+                this.$Message.success({
+                    background: true,
+                    content: "退出登陆"
+                });
+                // 删除cookie
+                this.clearUserCookie();
                 this.$router.push({
-                    name: "login"
+                    name: LOGIN_PAGE_NAME
+                });
+            }).catch(error => {
+                this.$Message.error({
+                    background: true,
+                    content: error.message
                 });
             });
         },

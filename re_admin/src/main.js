@@ -16,6 +16,7 @@ Vue.use(iView);
 // 挂载全局配置
 Vue.prototype.$LoadingBar = iView.LoadingBar;
 // 配置Vue消息全局
+Vue.prototype.$Message = iView.Message;
 Vue.prototype.$Message.config({
     duration: 2,
     top: 50
@@ -23,14 +24,11 @@ Vue.prototype.$Message.config({
 // 生产环境关掉提示
 Vue.config.productionTip = false;
 // 全局注册应用配置
-Vue.prototype.$constant = {
-    systemConstant
-};
+Vue.prototype.$systemConstant = systemConstant;
 // 配置全局过滤器
 Vue.filter("timeFormat", function (time) {
     return moment(time).format("YYYY-MM-DD HH:mm:ss");
 });
-
 new Vue({
     el: '#app',
     router,

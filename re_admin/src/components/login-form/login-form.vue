@@ -70,11 +70,6 @@ export default {
                 this.verifyCodeSrc = URL.createObjectURL(blob);
                 // 获取验证码结果
                 this.form.verifyCodeId = res.headers["verifyCodeId".toLocaleLowerCase()];
-            }).catch(error => {
-                this.$Message.error({
-                    background: true,
-                    content: error.data.message
-                });
             });
         }
     },

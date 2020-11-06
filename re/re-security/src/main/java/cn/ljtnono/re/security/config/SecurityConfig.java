@@ -5,7 +5,7 @@ import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.common.util.jackson.JacksonUtil;
-import cn.ljtnono.re.common.vo.ReJsonResultVO;
+import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.security.component.ReTokenFilter;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,7 +96,7 @@ public class ReSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
-                    String s = JacksonUtil.objectToString(ReJsonResultVO.error(GlobalErrorEnum.USER_NOT_AUTHENTICATION));
+                    String s = JacksonUtil.objectToString(JsonResultVO.error(GlobalErrorEnum.USER_NOT_AUTHENTICATION));
                     response.getWriter().write(s);
                 });
 

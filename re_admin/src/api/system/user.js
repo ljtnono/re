@@ -1,8 +1,4 @@
-import axios from "axios";
-import {getToken, proxyUrlPrefix} from "@/api/base/base";
-// 基础url
-const baseUrl = proxyUrlPrefix + "/re/api/v1/system/user";
-
+import {http} from "@/config/axiosConfig";
 /**
  * 登陆接口
  * @param username 用户名
@@ -12,7 +8,7 @@ const baseUrl = proxyUrlPrefix + "/re/api/v1/system/user";
  * @returns {AxiosPromise<any>}
  */
 export const login = (username, password, verifyCodeId, verifyCode) => {
-    return axios.post(baseUrl + "/login", {
+    return http.post("/system/user/login", {
         username: username,
         password: password,
         verifyCodeId: verifyCodeId,
@@ -20,13 +16,8 @@ export const login = (username, password, verifyCodeId, verifyCode) => {
     });
 };
 /**
- * TODO 用户登出
+ * 用户登出
  */
 export const logout = () => {
-    let token = getToken();
-    return axios.get(baseUrl + "/logout", {
-        headers: {
-            "Authorization": token
-        }
-    });
+    return http.get("/system/user/logout");
 }

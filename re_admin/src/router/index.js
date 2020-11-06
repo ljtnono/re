@@ -3,7 +3,7 @@ import Router from "vue-router";
 import routes from "./routers";
 import Cookies from 'js-cookie';
 import {canTurnToPage} from "@/utils/permissionUtil";
-import {LOGIN_PAGE_NAME, FORBIDDEN_PAGE_NAME, HOME_PAGE_NAME} from "@/constant/systemConstant";
+import {LOGIN_PAGE_NAME, FORBIDDEN_PAGE_NAME} from "@/constant/systemConstant";
 // 使用路由插件
 Vue.use(Router);
 // 创建路由对象
@@ -12,7 +12,6 @@ const router = new Router({
     base: "/admin/",
     mode: "history"
 });
-const Message = Vue.prototype.$Message;
 // 跳转前操作
 router.beforeEach((to, from, next) => {
     // 开启iView的LoadingBar
@@ -22,10 +21,10 @@ router.beforeEach((to, from, next) => {
     } else {
         let userInfo = Cookies.getJSON("userInfo");
         if (userInfo === null || userInfo === undefined) {
-            Message.error({
+            Vue.prototype.$Message.error({
                 background: true,
                 content: "用户未认证"
-            })
+            });
             next({
                 name: LOGIN_PAGE_NAME
             });
@@ -35,10 +34,10 @@ router.beforeEach((to, from, next) => {
                 next();
             } else {
                 // 无权限，重定向到403页面
-                Message.error({
+                Vue.prototype.$Message.error({
                     background: true,
                     content: "没有权限，禁止访问"
-                })
+                });
                 next({replace: true, name: FORBIDDEN_PAGE_NAME});
             }
         }
@@ -47,9 +46,6 @@ router.beforeEach((to, from, next) => {
 
 // 跳转后操作
 router.afterEach(to => {
-    if (to.name === HOME_PAGE_NAME) {
-        // TODO 如果跳转的是主页，那么设置各种信息
-    }
     Vue.prototype.$LoadingBar.finish();
     window.scrollTo(0, 0);
 });
