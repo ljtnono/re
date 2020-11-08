@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.util.concurrent.TimeUnit;
 
 /**
