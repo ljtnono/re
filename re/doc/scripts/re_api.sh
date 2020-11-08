@@ -65,11 +65,12 @@ fi
 
 # 启动函数
 function start() {
-    containerJarName=$(docker exec -it $containerName /bin/bash -c "ls $containerDirPath | grep re-.*\.jar")
-    jarPid=$(docker exec -it $containerName /bin/bash -c 'ps aux | grep "$containerJarName" | grep -v grep | awk "{print \$2}"')
+    containerJarName=$(docker exec -it $containerName /bin/bash -c 'ls '$containerDirPath' | grep re-.*.jar')
+    jarPid=$(docker exec -it $containerName /bin/bash -c 'ps aux | grep re-.*\.jar | grep -v grep | awk {"print \$2"}')
     if [ -z "$jarPid" ]; then
         # 检查是否是启动状态
-        docker exec -i $containerName /bin/bash -c "nohup $containerJavaHome/bin/java -jar $containerDirPath/$containerJarName &> $containerDirPath/re.log 2>&1 &"
+        cmd="nohup $containerJavaHome/bin/java -jar $containerDirPath/$containerJarName &> $containerDirPath/re.log 2>&1 &"
+        docker exec -i $containerName /bin/bash -c "$cmd"
     fi
 }
 
@@ -86,13 +87,14 @@ function stop() {
 # 重启
 function restart() {
     containerJarName=$(docker exec -it $containerName /bin/bash -c "ls $containerDirPath | grep re-.*\.jar")
-    jarPid=$(docker exec -it $containerName /bin/bash -c 'ps aux | grep "$containerJarName" | grep -v grep | awk "{print \$2}"')
+    jarPid=$(docker exec -it $containerName /bin/bash -c 'ps aux | grep re-.*\.jar | grep -v grep | awk "{print \$2}"')
     if [ -n "$jarPid" ]; then
         # 如果jar包在运行，先停止
         docker exec -i $containerName sh -c "kill -9 $jarPid"
     fi
     # 找到相关文件并启动
-    docker exec -i $containerName /bin/bash -c "nohup $containerJavaHome/bin/java -jar $containerDirPath/$containerJarName &> $containerDirPath/re.log 2>&1 &"
+    cmd="nohup $containerJavaHome/bin/java -jar $containerDirPath/$containerJarName &> $containerDirPath/re.log 2>&1 &"
+    docker exec -i $containerName /bin/bash -c "$cmd"
 }
 
 # 替换
