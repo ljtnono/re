@@ -14,7 +14,6 @@ export default {
                     if (result.code === 0 && result.message === "success") {
                         resolve(result);
                     } else {
-                        // TODO 一般这里抛出异常
                         reject(result);
                     }
                 });
@@ -34,7 +33,7 @@ export default {
             });
         },
         // 删除用户cookie
-        clearUserCookie({state, commit}) {
+        clearUserCookie() {
             Cookies.remove("userInfo");
         }
     }

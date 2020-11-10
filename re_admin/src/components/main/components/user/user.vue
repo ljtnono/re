@@ -2,6 +2,7 @@
     <div class="user-avatar-dropdown">
         <Dropdown @on-click="handleClick">
             <Badge :dot="!!messageUnreadCount">
+
                 <Avatar :src="userAvatar"/>
             </Badge>
             <Icon :size="18" type="md-arrow-dropdown"/>
@@ -30,7 +31,15 @@ export default {
         },
         messageUnreadCount: {
             type: Number,
-            default: 0
+            default: 22
+        },
+        username: {
+            type: String,
+            default: "admin"
+        },
+        roleName: {
+            type: String,
+            default: "超级管理员"
         }
     },
     methods: {
@@ -39,7 +48,7 @@ export default {
             "clearUserCookie"
         ]),
         logout() {
-            this.handleLogOut().then((res) => {
+            this.handleLogOut().then(result => {
                 this.$Message.success({
                     background: true,
                     content: "退出登陆"
@@ -49,10 +58,10 @@ export default {
                 this.$router.push({
                     name: LOGIN_PAGE_NAME
                 });
-            }).catch(error => {
+            }, result => {
                 this.$Message.error({
                     background: true,
-                    content: error.message
+                    content: result.message
                 });
             });
         },

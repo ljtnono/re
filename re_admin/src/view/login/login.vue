@@ -15,6 +15,7 @@ import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 import Cookies from 'js-cookie';
 import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/constant/systemConstant";
+import iView from "view-design";
 
 export default {
     data() {
@@ -43,8 +44,8 @@ export default {
                 this.$router.push({
                     name: HOME_PAGE_NAME
                 });
-            }).catch(error => {
-                this.$Message.error({
+            }, error => {
+                iView.Message.error({
                     background: true,
                     content: error.message
                 });
@@ -52,20 +53,18 @@ export default {
         },
         // 存储用户信息, 存储在token中去
         saveUserInfo(data) {
-            // cookie存储用户信息, 设置为1天过期
-            console.log(data);
             Cookies.set("userInfo", {
                 id: data.id,
                 roleId: data.roleId,
                 token: data.token,
+                username: data.username,
                 permissionIdList: data.permissionIdList,
                 roleName: data.roleName,
                 email: data.email,
                 phone: data.phone,
                 deleted: data.deleted,
-                avatarImgPath: data.avatarImagePath
+                avatarImage: data.avatarImage
             }, {expires: USERINFO_EXPIRE});
-            console.log(Cookies.getJSON("userInfo"));
         }
     }
 }

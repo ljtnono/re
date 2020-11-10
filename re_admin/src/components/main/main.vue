@@ -14,7 +14,7 @@
         <Layout>
             <Header class="header-con">
                 <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-                    <user :message-unread-count="unreadCount" :user-avatar="userAvatar"/>
+                    <user :message-unread-count="unreadCount" :user-avatar="userAvatar" :username="username" :role-name="roleName"/>
                     <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
                 </header-bar>
             </Header>
@@ -78,7 +78,7 @@ export default {
             return this.$store.state.app.tagRouter;
         },
         userAvatar() {
-            return Cookies.getJSON("userInfo").avatarImgPath;
+            return Cookies.getJSON("userInfo").avatarImage
         },
         cacheList() {
             const list = ["ParentView", ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []];
@@ -94,7 +94,14 @@ export default {
             return this.$store.state.app.hasReadErrorPage;
         },
         unreadCount() {
-            return this.$store.state.user.unreadCount;
+            // TODO 未读消息
+            return 0;
+        },
+        username() {
+            return Cookies.getJSON("userInfo").username
+        },
+        roleName() {
+            return Cookies.getJSON("userInfo").roleName
         }
     },
     methods: {

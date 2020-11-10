@@ -26,6 +26,17 @@ http.interceptors.request.use(request => {
 
 // 响应拦截器
 http.interceptors.response.use(response => {
+    let result = response.data;
+    // 如果返回类型是json类型并且返回消息码不为0，那么弹出提示消息
+    if (response.config.headers.responseType === "application/json") {
+        // 如果存在消息码不为0
+        if (result.code !== 0) {
+            iView.Message.error({
+                background: true,
+                content: result.message
+            });
+        }
+    }
     return response;
 }, error => {
     iView.Message.error({
