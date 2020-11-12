@@ -1,4 +1,4 @@
-import {http} from "@/config/axiosConfig";
+import {http} from "@/config/axios";
 
 /**
  * 获取验证码

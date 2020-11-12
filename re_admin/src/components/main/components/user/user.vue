@@ -2,7 +2,6 @@
     <div class="user-avatar-dropdown">
         <Dropdown @on-click="handleClick">
             <Badge :dot="!!messageUnreadCount">
-
                 <Avatar :src="userAvatar"/>
             </Badge>
             <Icon :size="18" type="md-arrow-dropdown"/>
@@ -21,6 +20,7 @@
 import "./user.less";
 import {mapActions} from "vuex";
 import {LOGIN_PAGE_NAME} from "@/constant/systemConstant";
+import Cookies from "js-cookie";
 
 export default {
     name: "User",
@@ -58,10 +58,10 @@ export default {
                 this.$router.push({
                     name: LOGIN_PAGE_NAME
                 });
-            }, result => {
-                this.$Message.error({
-                    background: true,
-                    content: result.message
+            }).catch(error => {
+                this.clearUserCookie();
+                this.$router.push({
+                    name: LOGIN_PAGE_NAME
                 });
             });
         },

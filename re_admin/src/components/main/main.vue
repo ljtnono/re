@@ -48,6 +48,7 @@ import routers from "@/router/routers";
 import minLogo from "@/assets/images/logo-min.png";
 import maxLogo from "@/assets/images/logo.png";
 import "./main.less";
+import {getList} from "@/api/system/user";
 
 export default {
     name: "Main",
