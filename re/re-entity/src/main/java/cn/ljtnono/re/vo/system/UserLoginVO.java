@@ -22,7 +22,7 @@ public class UserLoginVO extends BaseVO {
     /**
      * 用户名
      */
-    private Integer username;
+    private String username;
 
     /**
      * 登陆token

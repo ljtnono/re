@@ -84,33 +84,33 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(userDTO)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 登陆校验用户名密码
-        User reUser = loginCheckUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
+        User user = loginCheckUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
         // 校验验证码
         verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
         // 用户角色校验
-        Role reRole = roleService.getRoleIdAndNameByUserId(reUser.getId());
+        Role reRole = roleService.getRoleIdAndNameByUserId(user.getId());
         // 用户权限异常
         Optional.ofNullable(reRole)
                 .orElseThrow(() -> new UserPermissionException(GlobalErrorEnum.USER_PERMISSION_ERROR));
-        reUser.setRoleId(reRole.getId());
-        reUser.setRoleName(reRole.getName());
+        user.setRoleId(reRole.getId());
+        user.setRoleName(reRole.getName());
         // 用户登录状态校验
-        boolean isLogin = isLogin(reUser.getId(), reUser.getUsername());
+        boolean isLogin = isLogin(user.getId(), user.getUsername());
         // 如果已经登录
         if (isLogin) {
             // 用户已经登录
             throw new BusinessException(GlobalErrorEnum.USER_ALREADY_LOGIN_ERROR);
         }
         // 获取权限信息
-        List<Integer> permission = rolePermissionService.getPermissionIdListByUserId(reUser.getId());
+        List<Integer> permission = rolePermissionService.getPermissionIdListByUserId(user.getId());
         // 登录认证
-        authenticate(reUser);
+        authenticate(user);
         // 生成token
-        String token = jwtUtil.generateToken(reUser.getId(), reUser.getUsername(), reUser.getRoleId());
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRoleId());
         // 缓存用户信息
-        setUserInfoCache(reUser, token);
+        setUserInfoCache(user, token);
         // 生成vo对象
-        return generateUserLoginVO(reUser, token, permission);
+        return generateUserLoginVO(user, token, permission);
     }
 
     /**
@@ -275,7 +275,7 @@ public class UserService implements UserDetailsService {
         BeanUtils.copyProperties(user, vo);
         vo.setPermissionIdList(permission);
         vo.setToken(token);
-        Config avatarImage = configService.getConfigByKey("avatarImagePath");
+        Config avatarImage = configService.getConfigByKey("avatarImage");
         vo.setAvatarImage(avatarImage.getValue());
         return vo;
     }
@@ -314,18 +314,18 @@ public class UserService implements UserDetailsService {
             throw new ParamException(GlobalErrorEnum.INPUT_PASSWORD);
         }
         // 检验是否存在该用户名和密码
-        User reUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username)
                 .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         // 用户不存在
-        if (reUser == null) {
+        if (user == null) {
             throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
         }
         // 密码错误
-        if (!reUser.getPassword().equalsIgnoreCase(EncryptUtil.getInstance().getMd5LowerCase(password))) {
+        if (!user.getPassword().equalsIgnoreCase(EncryptUtil.getInstance().getMd5LowerCase(password))) {
             throw new ParamException(GlobalErrorEnum.PASSWORD_ERROR);
         }
-        return reUser;
+        return user;
     }
 
     /**

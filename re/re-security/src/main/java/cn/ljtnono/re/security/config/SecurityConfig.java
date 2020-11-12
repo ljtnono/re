@@ -10,6 +10,7 @@ import cn.ljtnono.re.security.component.TokenFilter;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -96,6 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
+                    response.setStatus(HttpStatus.OK.value());
                     String s = JacksonUtil.objectToString(JsonResultVO.error(GlobalErrorEnum.USER_NOT_AUTHENTICATION));
                     response.getWriter().write(s);
                 });

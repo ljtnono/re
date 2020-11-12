@@ -12,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,9 +26,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @TableName("sys_user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User extends BaseEntity implements Serializable, UserDetails {
-
-    private static final long serialVersionUID = 4057606458753697276L;
+public class User extends BaseEntity implements UserDetails {
 
     /** 用户名 */
     private String username;
