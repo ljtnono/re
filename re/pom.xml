@@ -24,6 +24,7 @@
         <module>re-security</module>
         <module>re-mapper</module>
         <module>re-schedule</module>
+        <module>re-message</module>
     </modules>
 
     <!-- 版本号管理 -->

@@ -10,3 +10,8 @@ spring:
     port: 6379
     host: 127.0.0.1
     password: re#redis2020
+
+logging:
+  level:
+    root: info
+    cn.ljtnono.re.api: debug

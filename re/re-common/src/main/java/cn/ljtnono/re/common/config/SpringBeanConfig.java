@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -21,6 +22,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Properties;
+import java.util.concurrent.*;
 
 /**
  * @author Ling, Jiatong
@@ -29,7 +31,6 @@ import java.util.Properties;
  */
 @Configuration
 public class SpringBeanConfig {
-
 
     /**
      * mybatis-plus 分页拦截器
@@ -114,5 +115,24 @@ public class SpringBeanConfig {
         // 开启redis事务会导致连接不释放
 //        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
+    }
+
+    /**
+     * 编程用线程池
+     * @return ExecutorService
+     * @author Ling, Jiatong
+     *
+     */
+    @Bean
+    @Lazy
+    public ExecutorService commonThreadPool() {
+        Runtime runtime = Runtime.getRuntime();
+        int processors = runtime.availableProcessors();
+        int coreSize = processors + 1;
+        int maxSize = coreSize * 2;
+        int queueSize = 10000;
+        ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueSize);
+        ThreadPoolExecutor.CallerRunsPolicy policy = new ThreadPoolExecutor.CallerRunsPolicy();
+        return new ThreadPoolExecutor(coreSize, maxSize, 1000L, TimeUnit.DAYS, queue, Executors.defaultThreadFactory(),policy);
     }
 }
