@@ -17,15 +17,6 @@
             <version>${re-version}</version>
         </dependency>
         <dependency>
-            <groupId>cn.ljtnono</groupId>
-            <artifactId>re-entity</artifactId>
-            <version>${re-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
-        <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>

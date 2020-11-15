@@ -18,8 +18,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-service-system</artifactId>
+            <version>${re-version}</version>
         </dependency>
     </dependencies>
 

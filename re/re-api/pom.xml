@@ -12,10 +12,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-security</artifactId>
             <version>${re-version}</version>
@@ -33,6 +29,11 @@
         <dependency>
             <groupId>cn.ljtnono</groupId>
             <artifactId>re-schedule</artifactId>
+            <version>${re-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-message</artifactId>
             <version>${re-version}</version>
         </dependency>
     </dependencies>

@@ -3,9 +3,10 @@ package cn.ljtnono.re.message.config;
 import cn.ljtnono.re.message.component.MessageInputChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.stereotype.Component;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
@@ -15,7 +16,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * Description:
  */
 @Slf4j
-@Component
+@Configuration
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Autowired

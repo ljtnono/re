@@ -36,4 +36,4 @@ mybatis-plus:
     banner: false
 # 日志配置
 logging:
-  config: classpath:/log/logback-${spring.profiles.active}.xml
+  config: classpath:log/logback-${spring.profiles.active}.xml

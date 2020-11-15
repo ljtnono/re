@@ -1,5 +1,6 @@
 package cn.ljtnono.re.common.config;
 
+import cn.ljtnono.re.entity.system.User;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
-import io.netty.util.concurrent.DefaultThreadFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -134,5 +134,11 @@ public class SpringBeanConfig {
         ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueSize);
         ThreadPoolExecutor.CallerRunsPolicy policy = new ThreadPoolExecutor.CallerRunsPolicy();
         return new ThreadPoolExecutor(coreSize, maxSize, 1000L, TimeUnit.DAYS, queue, Executors.defaultThreadFactory(),policy);
+    }
+
+    @Bean(name = "webSocketOnlineMap")
+    public ConcurrentHashMap<String, User> webSocketOnlineMap() {
+        // 在线列表，key为用户名，User为用户对象
+        return new ConcurrentHashMap<>(10);
     }
 }
