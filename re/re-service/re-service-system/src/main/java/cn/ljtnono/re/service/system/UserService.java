@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.cache.UserInfoCache;
-import cn.ljtnono.re.common.constant.UserValidatePatternConstant;
+import cn.ljtnono.re.common.constant.system.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
 import cn.ljtnono.re.common.enumeration.StatusEnum;

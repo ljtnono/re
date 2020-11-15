@@ -13,10 +13,26 @@ import lombok.ToString;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class SystemMonitorMessage extends BaseMessage {
+public class ServerMonitorMessage extends BaseMessage {
 
-    private Integer cpu;
+    /**
+     * 操作系统名（厂商 + 系统名 + 版本）
+     */
+    private String systemName;
 
-    private Integer memory;
+    /**
+     * 可用内存数（字节大小）
+     */
+    private long memoryAvailable;
+
+    /**
+     * 总内存数（字节大小）
+     */
+    private long memoryTotal;
+
+    /**
+     * 获取信息时的时间戳
+     */
+    private long timeStamp;
 
 }

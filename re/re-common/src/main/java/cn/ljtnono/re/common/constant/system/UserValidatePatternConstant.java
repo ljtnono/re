@@ -1,4 +1,4 @@
-package cn.ljtnono.re.common.constant;
+package cn.ljtnono.re.common.constant.system;
 
 import java.util.regex.Pattern;
 

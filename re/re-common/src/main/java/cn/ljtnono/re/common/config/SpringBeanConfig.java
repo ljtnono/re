@@ -136,7 +136,7 @@ public class SpringBeanConfig {
         return new ThreadPoolExecutor(coreSize, maxSize, 1000L, TimeUnit.DAYS, queue, Executors.defaultThreadFactory(),policy);
     }
 
-    @Bean(name = "webSocketOnlineMap")
+    @Bean(name = "websocketOnlineMap")
     public ConcurrentHashMap<String, User> webSocketOnlineMap() {
         // 在线列表，key为用户名，User为用户对象
         return new ConcurrentHashMap<>(10);

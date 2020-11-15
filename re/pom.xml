@@ -45,6 +45,8 @@
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <easyexcel.version>2.1.7</easyexcel.version>
+        <oshi.version>5.3.5</oshi.version>
+        <jna.version>5.5.0</jna.version>
     </properties>
 
     <!-- 依赖统一管理 -->
@@ -103,6 +105,21 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>${jna.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna-platform</artifactId>
+                <version>${jna.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

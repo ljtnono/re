@@ -12,10 +12,10 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.security.Principal;
 
 /**
  * @author Ling, Jiatong
@@ -41,10 +41,8 @@ public class MessageInputChannel implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        List<String> authentication = accessor.getNativeHeader("Authentication");
-        String token;
-        if (!CollectionUtils.isEmpty(authentication)) {
-            token = authentication.get(0);
+        String token = accessor.getFirstNativeHeader("Authorization");
+        if (!StringUtils.isEmpty(token)) {
             String username = jwtUtil.getUsernameFromToken(token);
             User user = (User) userDetailsService.loadUserByUsername(username);
             // 设置消息通知

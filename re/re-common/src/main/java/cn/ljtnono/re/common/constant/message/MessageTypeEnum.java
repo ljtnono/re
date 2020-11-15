@@ -1,4 +1,4 @@
-package cn.ljtnono.re.message.constant;
+package cn.ljtnono.re.common.constant.message;
 
 /**
  * @author Ling, Jiatong
@@ -9,7 +9,7 @@ public enum MessageTypeEnum {
 
     
     /** 系统监控型消息 */
-    SYSTEM_MONITOR(100, "系统监控消息"),
+    SERVER_MONITOR(100, "系统监控消息", "/topic/server/monitor"),
 
     ;
 
@@ -23,6 +23,11 @@ public enum MessageTypeEnum {
      */
     private final String name;
 
+    /**
+     * 消息订阅路径
+     */
+    private final String destination;
+
     public Integer getCode() {
         return code;
     }
@@ -31,8 +36,13 @@ public enum MessageTypeEnum {
         return name;
     }
 
-    MessageTypeEnum(Integer code, String name) {
+    public String getDestination() {
+        return destination;
+    }
+
+    MessageTypeEnum(Integer code, String name, String destination) {
         this.code = code;
         this.name = name;
+        this.destination = destination;
     }
 }

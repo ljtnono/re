@@ -24,6 +24,7 @@ re:
     white-url:
       - /api/v1/system/user/login
       - /api/v1/system/verifyCode
+      - /message/**
 
 # rest
 rest:
