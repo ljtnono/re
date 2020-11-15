@@ -23,7 +23,7 @@
         </Row>
         <Row>
             <Card shadow>
-                <example style="height: 310px;"/>
+                <server style="height: 310px;" :options="serverMonitorBarData"/>
             </Card>
         </Row>
     </div>
@@ -33,7 +33,10 @@
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
 import {ChartPie, ChartBar} from '_c/charts'
-import Example from './example.vue'
+import server from './server.vue'
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
+import Cookies from "js-cookie";
 
 export default {
     name: 'home',
@@ -42,7 +45,7 @@ export default {
         CountTo,
         ChartPie,
         ChartBar,
-        Example
+        server
     },
     data() {
         return {
@@ -69,14 +72,31 @@ export default {
                 Fri: 24643,
                 Sat: 1322,
                 Sun: 1324
-            }
+            },
+            serverMonitorBarData: {}
         }
     },
     methods: {
+        message() {
+            let socket = new SockJS("http://localhost:8001/re/message");
+            let client = Stomp.over(socket);
+            let userInfo = Cookies.getJSON("userInfo");
+            let token = userInfo.token;
+            let headers = {
+                Authorization: token
+            }
+            client.connect(headers, (frame) => {
+                // 订阅系统监控消息
+                client.subscribe("/topic/server/monitor", message => {
+                    // 处理订阅消息
+                    this.serverMonitorBarData = JSON.parse(message.body);
+                }, headers);
 
+            });
+        },
     },
     mounted() {
-
+        this.message();
     }
 }
 </script>

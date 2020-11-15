@@ -19,7 +19,7 @@
 <script>
 import "./user.less";
 import {mapActions} from "vuex";
-import {LOGIN_PAGE_NAME} from "@/constant/systemConstant";
+import {LOGIN_PAGE_NAME} from "@/constant/system/constant";
 import Cookies from "js-cookie";
 
 export default {

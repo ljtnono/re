@@ -8,7 +8,7 @@ import editor from 'mavon-editor'
 import './index.less'
 import '@/assets/icons/iconfont.css'
 import 'mavon-editor/dist/css/index.css'
-import * as systemConstant from "@/constant/systemConstant";
+import * as systemConstant from "@/constant/system/constant";
 
 Vue.use(editor);
 // 配置iView全局配置

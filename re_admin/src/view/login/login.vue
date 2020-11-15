@@ -14,7 +14,7 @@
 import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 import Cookies from 'js-cookie';
-import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/constant/systemConstant";
+import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/constant/system/constant";
 import iView from "view-design";
 
 export default {

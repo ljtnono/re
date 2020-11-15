@@ -61,7 +61,7 @@ const MARKDOWN_OPTION = {
     strikethrough: true, // 中划线
     mark: true, // 标记
     superscript: true, // 上角标
-    subscript: true, // 下角标
+    message: true, // 下角标
     quote: true, // 引用
     ol: true, // 有序列表
     ul: true, // 无序列表

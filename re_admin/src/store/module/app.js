@@ -13,7 +13,7 @@ import {
 } from "@/libs/util";
 import router from "@/router";
 import routers from "@/router/routers";
-import * as systemConstant from "@/constant/systemConstant";
+import * as systemConstant from "@/constant/system/constant";
 
 const {HOME_PAGE_NAME} = systemConstant;
 

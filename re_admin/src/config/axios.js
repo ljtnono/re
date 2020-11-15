@@ -1,7 +1,7 @@
 import axios from "axios";
 import iView from "view-design";
 import Cookies from "js-cookie";
-import {PASS_TOKEN_API} from "@/constant/systemConstant";
+import {PASS_TOKEN_API} from "@/constant/system/constant";
 
 // 创建axios实例
 const http = axios.create({
