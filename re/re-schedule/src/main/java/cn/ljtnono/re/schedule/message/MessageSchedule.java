@@ -37,7 +37,7 @@ public class MessageSchedule {
      * @author Ling, Jiatong
      *
      */
-    @Scheduled(cron = "*/3 * * * * ?")
+    @Scheduled(cron = "*/1 * * * * ?")
     public void serverMonitor() {
         log.info("========== websocket当前在线人数：{} ==========", onlineMap.size());
         List<String> users = onlineMap.values()
