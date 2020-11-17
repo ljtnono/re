@@ -35,6 +35,10 @@ export default {
         // 删除用户cookie
         clearUserCookie() {
             Cookies.remove("userInfo");
+        },
+        // 处理webSocket消息
+        handlerMessage() {
+
         }
     }
 };

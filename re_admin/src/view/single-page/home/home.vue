@@ -23,7 +23,7 @@
         </Row>
         <Row>
             <Card shadow>
-                <server style="height: 310px;" :options="serverMonitorBarData"/>
+                <server style="height: 310px;" :server-monitor-bar-data="serverMonitorBarData"/>
             </Card>
         </Row>
     </div>
@@ -91,7 +91,6 @@ export default {
                     // 处理订阅消息
                     this.serverMonitorBarData = JSON.parse(message.body);
                 }, headers);
-
             });
         },
     },
