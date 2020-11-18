@@ -47,4 +47,14 @@
             </if>
         </where>
     </select>
+
+    <!-- 分页获取用户列表 -->
+    <select id="getList" resultType="cn.ljtnono.re.vo.system.UserListVO">
+        SELECT
+            su.id,
+            su.username,
+            su.email,
+            su.phone,
+
+    </select>
 </mapper>

@@ -15,12 +15,14 @@ import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.UserDTO;
+import cn.ljtnono.re.dto.system.UserListQueryDTO;
 import cn.ljtnono.re.entity.system.Config;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
+import cn.ljtnono.re.vo.system.UserListVO;
 import cn.ljtnono.re.vo.system.UserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -219,26 +221,26 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 分页获取用户信息
-     * @return IPage<ReUser>
+     * 分页获取用户列表
+     * @param dto 参数封装
+     * @return IPage<UserListVO>
+     * @author Ling, Jiatong
+     *
      */
     @Transactional(readOnly = true)
-    public IPage<User> getUserListPage(UserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO)
+    public IPage<UserListVO> getList(UserListQueryDTO dto) {
+        Optional.ofNullable(dto)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
-        Page<User> page = new Page<>(reUserDTO.getPageNum(), reUserDTO.getPageSize());
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        // 除了password字段
-        wrapper.select(User.class, i -> !i.getProperty().startsWith("password"))
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
-        if (!StringUtils.isEmpty(reUserDTO.getSearchCondition())) {
-            wrapper.like(User::getUsername, reUserDTO.getSearchCondition())
-                    .or()
-                    .like(User::getEmail, reUserDTO.getSearchCondition())
-                    .or()
-                    .like(User::getPhone, reUserDTO.getSearchCondition());
+        // 校验请求参数
+        Page<User> page = new Page<>(dto.getPageNum(), dto.getPageSize());
+        // 生成排序参数
+        try {
+            dto.generateSortCondition();
+        } catch (IllegalArgumentException e) {
+            throw new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR);
         }
-        return userMapper.selectPage(page, wrapper);
+        // TODO 待完成
+        return userMapper.getList(page, dto);
     }
 
     //*********************************** 私有方法 ***********************************//
@@ -493,4 +495,5 @@ public class UserService implements UserDetailsService {
         reUser.setAuthorities(permission);
         return reUser;
     }
+
 }

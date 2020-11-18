@@ -1,10 +1,14 @@
 package cn.ljtnono.re.mapper.system;
 
 import cn.ljtnono.re.dto.system.UserDTO;
+import cn.ljtnono.re.dto.system.UserListQueryDTO;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
+import cn.ljtnono.re.vo.system.UserListVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -36,4 +40,14 @@ public interface UserMapper extends BaseMapper<User> {
      * @return ReRole
      */
     Role getRoleById(@Param("id") Integer id);
+
+    /**
+     * 分页获取用户列表
+     * @param dto 参数封装
+     * @param page 分页参数
+     * @return IPage<UserListVO>
+     * @author Ling, Jiatong
+     *
+     */
+    IPage<UserListVO> getList(Page<User> page, @Param("dto") UserListQueryDTO dto);
 }

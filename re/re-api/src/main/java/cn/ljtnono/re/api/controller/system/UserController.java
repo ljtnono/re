@@ -3,9 +3,11 @@ package cn.ljtnono.re.api.controller.system;
 import cn.ljtnono.re.common.annotation.LoginUser;
 import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.dto.system.UserDTO;
+import cn.ljtnono.re.dto.system.UserListQueryDTO;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.common.annotation.PassToken;
 import cn.ljtnono.re.service.system.UserService;
+import cn.ljtnono.re.vo.system.UserListVO;
 import cn.ljtnono.re.vo.system.UserLoginVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
@@ -110,16 +112,15 @@ public class UserController {
 
     /**
      * 分页获取用户信息
-     * @param userDTO 参数封装
+     * @param dto 参数封装
      * @return ReJsonResultVO<IPage<ReUser>>
      * @author Ling, Jiatong
      */
     @GetMapping("/list")
-//    @PassToken
     @PreAuthorize("hasAnyAuthority('system:user:view')")
-    public JsonResultVO<IPage<User>> list(UserDTO userDTO) {
-        log.info("[re-system -> UserController -> list()] 分页获取用户信息，参数：{}", userDTO);
-        return JsonResultVO.success(userService.getUserListPage(userDTO));
+    public JsonResultVO<IPage<UserListVO>> list(UserListQueryDTO dto) {
+        log.info("[re-system -> UserController -> list()] 分页获取用户信息，参数：{}", dto);
+        return JsonResultVO.success(userService.getList(dto));
     }
 
 }
