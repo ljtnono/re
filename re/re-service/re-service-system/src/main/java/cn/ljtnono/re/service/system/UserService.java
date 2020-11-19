@@ -223,7 +223,8 @@ public class UserService implements UserDetailsService {
     /**
      * 分页获取用户列表
      * @param dto 参数封装
-     * @return IPage<UserListVO>
+     * @return 用户列表查询VO分页包装对象
+     * @see UserListVO
      * @author Ling, Jiatong
      *
      */
@@ -239,7 +240,6 @@ public class UserService implements UserDetailsService {
         } catch (IllegalArgumentException e) {
             throw new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR);
         }
-        // TODO 待完成
         return userMapper.getList(page, dto);
     }
 

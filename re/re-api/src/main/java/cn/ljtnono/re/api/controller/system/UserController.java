@@ -5,7 +5,6 @@ import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.dto.system.UserDTO;
 import cn.ljtnono.re.dto.system.UserListQueryDTO;
 import cn.ljtnono.re.entity.system.User;
-import cn.ljtnono.re.common.annotation.PassToken;
 import cn.ljtnono.re.service.system.UserService;
 import cn.ljtnono.re.vo.system.UserListVO;
 import cn.ljtnono.re.vo.system.UserLoginVO;
@@ -31,10 +30,10 @@ public class UserController {
     /**
      * 用户登录接口
      * @param userDTO 参数封装
-     * @return ReJsonResultVO<ReUserLoginVO>
+     * @return 用户登录VO对象
+     * @see UserLoginVO
      * @author Ling, Jiatong
      */
-    @PassToken
     @PostMapping("/login")
     public JsonResultVO<UserLoginVO> login(@RequestBody UserDTO userDTO) {
         log.info("[re-system -> UserController -> login()] 用户登录，登录参数：{}", userDTO);
@@ -42,13 +41,12 @@ public class UserController {
     }
 
     /**
-     * 用户登出
+     * 用户登出（需要用户处于登陆状态）
      * @param user 当前用户
-     * @return ReJsonResultVO<?>
+     * @return 成功返回普通成功消息，失败抛出异常消息
      * @author Ling, Jiatong
      *
      */
-    @PassToken
     @GetMapping("/logout")
     public JsonResultVO<?> logout(@LoginUser User user) {
         log.info("[re-system -> UserController -> logout()] 用户登出，参数：{}", user);
@@ -89,7 +87,7 @@ public class UserController {
      * @return ReJsonResultVO<?>
      * @author Ling, Jiatong
      */
-    @DeleteMapping("/{id:\\d+}")
+    @DeleteMapping("/logic/{id:\\d+}")
     @PreAuthorize("hasAnyAuthority('system:user:delete')")
     public JsonResultVO<?> logicDeleteById(@PathVariable Integer id) {
         log.info("[re-system -> UserController -> logicDeleteById()] 逻辑删除用户，用户id：{}", id);
@@ -113,7 +111,8 @@ public class UserController {
     /**
      * 分页获取用户信息
      * @param dto 参数封装
-     * @return ReJsonResultVO<IPage<ReUser>>
+     * @return 用户列表查询VO对象
+     * @see UserListVO
      * @author Ling, Jiatong
      */
     @GetMapping("/list")
@@ -122,5 +121,4 @@ public class UserController {
         log.info("[re-system -> UserController -> list()] 分页获取用户信息，参数：{}", dto);
         return JsonResultVO.success(userService.getList(dto));
     }
-
 }

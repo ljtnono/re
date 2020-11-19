@@ -55,6 +55,28 @@
             su.username,
             su.email,
             su.phone,
-
+            su.create_time,
+            su.modify_time,
+            su.is_deleted AS deleted,
+            su.id AS role_id,
+            sr.name AS role_name
+        FROM sys_user su
+        LEFT JOIN sys_user_role sur ON sur.user_id = su.id
+        LEFT JOIN sys_role sr ON sr.id = sur.role_id
+        <where>
+            su.is_deleted = 0
+            <!-- 用户名查询条件 -->
+            <if test="dto != null and dto.username != null and dto.username != ''">
+                AND su.username LIKE CONCAT('%', #{dto.username}, '%')
+            </if>
+            <!-- 角色Id筛选条件 -->
+            <if test="dto != null and dto.roleId != null">
+                AND sr.id = #{dto.roleId}
+            </if>
+        </where>
+        <!-- 排序条件 -->
+        <if test="dto != null and dto.sortCondition != null and dto.sortCondition != ''">
+            ORDER BY ${dto.sortCondition}
+        </if>
     </select>
 </mapper>

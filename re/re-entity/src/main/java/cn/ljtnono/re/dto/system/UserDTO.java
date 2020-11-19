@@ -40,6 +40,6 @@ public class UserDTO extends BaseDTO {
     /** 验证码 */
     private String verifyCode;
 
-    /** 列表查询条件 */
-    private String searchCondition;
+    /** 是否强制登陆 1 强制登陆 2 不强制登陆 */
+    private Integer forceLogin;
 }

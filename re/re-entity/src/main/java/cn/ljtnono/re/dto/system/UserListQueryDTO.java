@@ -18,19 +18,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class UserListQueryDTO extends BaseListQueryDTO {
 
-    /** id */
-    private Integer id;
+    /** 角色Id筛选条件 */
+    private Integer roleId;
 
-    /** 用户名 */
+    /** 用户名查询条件 */
     private String username;
 
-    /** 用户邮箱 */
-    private String email;
-
-    /** 用户手机 */
-    private String phone;
-
     /** 可选排序字段列表，不可变列表 */
-    private List<String> sortFieldValueList = Arrays.asList("create_date", "username");
+    private List<String> sortFieldValueList = Arrays.asList("create_time", "username");
 
 }

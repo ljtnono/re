@@ -63,7 +63,7 @@ public class BaseListQueryDTO extends BaseDTO{
                 }
             }
             // 校验排序字段
-            if (!sortFieldValueList.containsAll(sortFieldList)) {
+            if (!getSortFieldValueList().containsAll(sortFieldList)) {
                 throw new IllegalArgumentException("排序字段错误");
             }
             // 拼接排序条件

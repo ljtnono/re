@@ -1,6 +1,8 @@
 package cn.ljtnono.re.vo.system;
 
 import cn.ljtnono.re.vo.base.BaseVO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -15,6 +17,7 @@ import java.util.Date;
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserListVO extends BaseVO {
 
     /** 用户名 */
@@ -26,18 +29,17 @@ public class UserListVO extends BaseVO {
     /** 用户邮箱 */
     private String email;
 
-    /** 用户发表的文章数量 */
-    private Integer articleNum;
+    /** 角色id */
+    private Integer roleId;
 
-    /** 用户发表的文章的总浏览量 */
-    private Integer viewNum;
-
-    /** 用户发表的文章的喜欢总数 */
-    private Integer favoriteNum;
+    /** 角色名 */
+    private String roleName;
 
     /** 创建时间 */
-    private Date createDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime;
 
     /** 最后修改时间 */
-    private Date modifyDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date modifyTime;
 }
