@@ -15,4 +15,6 @@ import org.springframework.stereotype.Component;
 public class ReProperties {
 
     private ReSecurityProperties security;
+
+    private boolean swaggerUiOpen;
 }

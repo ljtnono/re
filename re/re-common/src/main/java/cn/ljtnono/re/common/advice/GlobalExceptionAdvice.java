@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Description: 异常处理器
  */
 @Slf4j
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "cn.ljtnono.re")
 public class GlobalExceptionAdvice {
 
     /**

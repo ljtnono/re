@@ -2,7 +2,6 @@ package cn.ljtnono.re.common.vo;
 
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
@@ -25,10 +24,8 @@ public class JsonResultVO<T> implements Serializable {
 
     public static final String MESSAGE_FAILED = "failed";
 
-    @ApiModelProperty(value = "响应码，0为请求成功，非0请求失败")
     private Integer code;
 
-    @ApiModelProperty(value = "响应信息，请求成功时为success，请求失败时为具体错误信息", example = "success")
     private String message;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -34,6 +34,7 @@ public class SpringBeanConfig {
 
     /**
      * mybatis-plus 分页拦截器
+     *
      * @return PaginationInterceptor 分页拦截器
      */
     @Bean
@@ -46,6 +47,7 @@ public class SpringBeanConfig {
 
     /**
      * 验证码配置
+     *
      * @return DefaultKaptcha
      */
     @Bean
@@ -92,6 +94,7 @@ public class SpringBeanConfig {
 
     /**
      * redisTemplate配置
+     *
      * @return RedisTemplate<String, Object>
      */
     @Bean
@@ -119,9 +122,9 @@ public class SpringBeanConfig {
 
     /**
      * 编程用线程池
+     *
      * @return ExecutorService
      * @author Ling, Jiatong
-     *
      */
     @Bean
     @Lazy
@@ -133,7 +136,7 @@ public class SpringBeanConfig {
         int queueSize = 10000;
         ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(queueSize);
         ThreadPoolExecutor.CallerRunsPolicy policy = new ThreadPoolExecutor.CallerRunsPolicy();
-        return new ThreadPoolExecutor(coreSize, maxSize, 1000L, TimeUnit.DAYS, queue, Executors.defaultThreadFactory(),policy);
+        return new ThreadPoolExecutor(coreSize, maxSize, 1000L, TimeUnit.DAYS, queue, Executors.defaultThreadFactory(), policy);
     }
 
     @Bean(name = "websocketOnlineMap")
