@@ -52,10 +52,10 @@ public class TokenFilter extends OncePerRequestFilter {
             username = jwtUtil.getUsernameFromToken(token);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User reUser = (User) userDetailsService.loadUserByUsername(username);
+            User user = (User) userDetailsService.loadUserByUsername(username);
             // 检验Token是否合法
-            if (jwtUtil.validateToken(token, reUser)) {
-                UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(reUser, reUser.getPassword(), reUser.getAuthorities());
+            if (jwtUtil.validateToken(token, user)) {
+                UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
                 upToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(upToken);
             }

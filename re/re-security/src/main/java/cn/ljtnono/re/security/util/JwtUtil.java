@@ -1,8 +1,11 @@
 package cn.ljtnono.re.security.util;
 
+import cn.ljtnono.re.cache.UserInfoCache;
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
 import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
+import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.entity.system.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ public class JwtUtil {
 
     @Autowired
     private ReSecurityProperties reSecurityProperties;
+    @Autowired
+    private RedisUtil redisUtil;
 
     /**
      * 对秘钥进行base64
@@ -99,14 +104,20 @@ public class JwtUtil {
     /**
      * 验证token是否合法
      * @param token token
-     * @param reUser 用户对象
+     * @param user 用户对象
      * @see JwtParser#parseClaimsJws(String)  在解析token时会抛出各种异常，具体见此方法
      * @return 合法返回true,不合法返回false
      */
-    public boolean validateToken(String token, User reUser) {
-        // 校验用户名
-        String username = getUsernameFromToken(token);
-        return username != null && username.equals(reUser.getUsername());
+    public boolean validateToken(String token, User user) {
+        // TODO 校验在redis中是否存在，如果存在，那么说明用户已经处于登陆状态，需要比对token与缓存中是否相同，如果不存在，那么说明用户没有登陆
+        Object o = redisUtil.get(RedisKeyEnum.USER_INFO_KEY.getValue()
+                .replace("id", String.valueOf(user.getId()))
+                .replace("username", user.getUsername()));
+        if (o == null) {
+            return false;
+        }
+        UserInfoCache userInfoCache = (UserInfoCache) o;
+        return userInfoCache.getToken().equalsIgnoreCase(token) && userInfoCache.getUsername().equalsIgnoreCase(user.getUsername());
     }
 
     /**

@@ -96,12 +96,18 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UserPermissionException(GlobalErrorEnum.USER_PERMISSION_ERROR));
         user.setRoleId(role.getId());
         user.setRoleName(role.getName());
-        // 用户登录状态校验
-        boolean isLogin = isLogin(user.getId(), user.getUsername());
-        // 如果已经登录
-        if (isLogin) {
-            // 用户已经登录
-            throw new BusinessException(GlobalErrorEnum.USER_ALREADY_LOGIN_ERROR);
+        // 如果是强行登录
+        if (userDTO.getForceLogin() != null && userDTO.getForceLogin() == 1) {
+            // 下线原来的账号
+            deleteUserInfoCache(user.getId(), user.getUsername());
+        } else {
+            // 用户登录状态校验
+            boolean isLogin = isLogin(user.getId(), user.getUsername());
+            // 如果已经登录
+            if (isLogin) {
+                // 用户已经登录
+                throw new BusinessException(GlobalErrorEnum.USER_ALREADY_LOGIN_ERROR);
+            }
         }
         // 获取权限信息
         List<Integer> permission = rolePermissionService.getPermissionIdListByUserId(user.getId());
