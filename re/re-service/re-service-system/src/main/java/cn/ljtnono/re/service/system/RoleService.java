@@ -230,6 +230,7 @@ public class RoleService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role reRole = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
+                .eq(Role::getId, id)
                 .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reRole != null;
     }

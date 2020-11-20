@@ -48,7 +48,6 @@
         <oshi.version>5.3.5</oshi.version>
         <jna.version>5.5.0</jna.version>
     </properties>
-
     <!-- 依赖统一管理 -->
     <dependencyManagement>
         <dependencies>
@@ -111,7 +110,30 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- 定义一个变量用于引用 -->
+                <profiles.active>dev</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prd</id>
+            <properties>
+                <profiles.active>prd</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>

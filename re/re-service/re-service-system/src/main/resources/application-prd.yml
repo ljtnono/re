@@ -1,0 +1,17 @@
+spring:
+  # 配置数据源
+  datasource:
+    url: jdbc:mysql://localhost:3306/re?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: re#mysql2020
+  # 配置redis
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    password: re#redis2020
+
+logging:
+  level:
+    root: info
+    cn.ljtnono.re.api: debug

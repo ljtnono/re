@@ -1,0 +1,40 @@
+server:
+  port: 8001
+  servlet:
+    context-path: /re
+# spring 相关设置
+spring:
+  profiles:
+    active: @profiles.active@
+  # 配置utf-8编码
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+# 本项目相关配置
+re:
+  security:
+    # 配置jwt过期时间 单位 小时
+    token-expire: 12
+    # 配置jwt秘钥
+    token-secret-key: ROOTELEMENT
+    # url白名单
+    white-url:
+      - /api/v1/system/user/login
+      - /api/v1/system/verifyCode
+      - /message/**
+
+# rest
+rest:
+  read-timeout: 100
+  connect-timeout: 100
+
+# mybatis-plus 配置
+mybatis-plus:
+  global-config:
+    banner: false
+# 日志配置
+logging:
+  config: classpath:log/logback-${spring.profiles.active}.xml

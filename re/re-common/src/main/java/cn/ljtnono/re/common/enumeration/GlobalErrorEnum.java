@@ -68,7 +68,8 @@ public enum GlobalErrorEnum {
     USER_PERMISSION_ERROR(4003004, "用户权限异常"),
     /** 用户未认证 */
     USER_NOT_AUTHENTICATION(4003005, "用户未认证"),
-
+    /** 禁止访问 */
+    ACCESS_DENIED_ERROR(4003006, "禁止访问"),
 
     //**************************配置相关**************************//
     CONFIG_ID_NULL_ERROR(400400, "配置项id不能为空"),

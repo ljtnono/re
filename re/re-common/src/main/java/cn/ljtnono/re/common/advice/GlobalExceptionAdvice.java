@@ -16,9 +16,11 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 
 /**
  * @author Ling, Jiatong
@@ -40,6 +42,19 @@ public class GlobalExceptionAdvice {
     public JsonResultVO<?> unknownException(Exception exception) {
         log.error(exception.toString(), exception);
         return JsonResultVO.error(500, "未知异常");
+    }
+
+    /**
+     * 禁止访问捕获
+     *
+     * @param exception 禁止访问
+     * @return ReJsonResultVO<?> 自定义异常消息
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(value = HttpStatus.OK)
+    public JsonResultVO<?> accessDeniedException(AccessDeniedException exception) {
+        log.error(exception.toString(), exception);
+        return JsonResultVO.error(GlobalErrorEnum.ACCESS_DENIED_ERROR.getCode(), "禁止访问");
     }
 
     /**

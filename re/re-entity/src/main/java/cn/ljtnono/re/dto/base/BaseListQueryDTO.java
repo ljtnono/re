@@ -38,7 +38,7 @@ public class BaseListQueryDTO extends BaseDTO{
      * @author Ling, Jiatong
      *
      */
-    public String generateSortCondition() {
+    public void generateSortCondition() {
         if (!CollectionUtils.isEmpty(sortFieldList)) {
             int len = sortFieldList.size();
             // 默认设置为全部字段升序排序
@@ -80,8 +80,7 @@ public class BaseListQueryDTO extends BaseDTO{
                     builder.append(",");
                 }
             }
-            return builder.toString();
+            sortCondition = builder.toString();
         }
-        return null;
     }
 }

@@ -100,6 +100,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     response.setStatus(HttpStatus.OK.value());
                     String s = JacksonUtil.objectToString(JsonResultVO.error(GlobalErrorEnum.USER_NOT_AUTHENTICATION));
                     response.getWriter().write(s);
+                })
+                .accessDeniedHandler((request, response, exception) -> {
+                    response.setContentType("application/json");
+                    response.setStatus(HttpStatus.OK.value());
+                    String s = JacksonUtil.objectToString(JsonResultVO.error(GlobalErrorEnum.ACCESS_DENIED_ERROR));
+                    response.getWriter().write(s);
                 });
 
         http.addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);

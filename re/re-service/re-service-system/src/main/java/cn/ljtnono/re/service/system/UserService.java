@@ -90,12 +90,12 @@ public class UserService implements UserDetailsService {
         // 校验验证码
         verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
         // 用户角色校验
-        Role reRole = roleService.getRoleIdAndNameByUserId(user.getId());
+        Role role = roleService.getRoleIdAndNameByUserId(user.getId());
         // 用户权限异常
-        Optional.ofNullable(reRole)
+        Optional.ofNullable(role)
                 .orElseThrow(() -> new UserPermissionException(GlobalErrorEnum.USER_PERMISSION_ERROR));
-        user.setRoleId(reRole.getId());
-        user.setRoleName(reRole.getName());
+        user.setRoleId(role.getId());
+        user.setRoleName(role.getName());
         // 用户登录状态校验
         boolean isLogin = isLogin(user.getId(), user.getUsername());
         // 如果已经登录
@@ -117,50 +117,54 @@ public class UserService implements UserDetailsService {
 
     /**
      * 用户登出
-     * @param reUser 当前用户
+     * @param user 当前用户
      * @author Ling, Jiatong
      */
-    public void logout(User reUser) {
+    public void logout(User user) {
         // 删除用户信息缓存
-        if (reUser != null) {
+        if (user != null) {
             redisUtil.delete(RedisKeyEnum.USER_INFO_KEY.getValue()
-                    .replace("id", String.valueOf(reUser.getId()))
-                    .replace("username", reUser.getUsername()));
+                    .replace("id", String.valueOf(user.getId()))
+                    .replace("username", user.getUsername()));
         }
     }
 
     /**
      * 新增用户接口
-     * @param reUserDTO 用户参数封装
+     * @param userDTO 用户参数封装
+     * @see UserDTO
+     * @author Ling, Jiatong
      */
-    public void addUser(UserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO)
+    public void addUser(UserDTO userDTO) {
+        Optional.ofNullable(userDTO)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
-        userDtoBaseValidate(reUserDTO);
+        userDtoBaseValidate(userDTO);
         // 用户名重复校验
-        if (isUsernameExist(reUserDTO.getUsername())) {
+        if (isUsernameExist(userDTO.getUsername())) {
             throw new ResourceAlreadyExistException(GlobalErrorEnum.USERNAME_ALREADY_EXIST);
         }
         // 验证码校验
-        verifyCodeValidate(reUserDTO.getVerifyCodeId(), reUserDTO.getVerifyCode());
+        verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
         // 检查角色是否存在
-        boolean roleExist = roleService.isExistById(reUserDTO.getRoleId());
+        boolean roleExist = roleService.isExistById(userDTO.getRoleId());
         if (!roleExist) {
             // 角色不存在
             throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
         }
         // 构建用户实体和角色实体，插入到相应的表中去
-        User reUser = new User();
-        BeanUtils.copyProperties(reUserDTO, reUser);
-        reUser.setDeleted(StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
-        setCreateTimeAndModifyTimeNow(reUser);
-        int insert = userMapper.insert(reUser);
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
+        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(userDTO.getPassword()));
+        user.setDeleted(StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
+        setCreateTimeAndModifyTimeNow(user);
+        // 插入相关数据
+        int insert = userMapper.insert(user);
         if (insert <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
-        reUserDTO.setId(reUser.getId());
-        int result = userMapper.insertUserRole(reUserDTO);
+        userDTO.setId(user.getId());
+        int result = userMapper.insertUserRole(userDTO);
         if (result <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
@@ -169,47 +173,49 @@ public class UserService implements UserDetailsService {
     /**
      * 根据id删除一个用户, 逻辑删除
      * @param id 用户id
+     * @author Ling, Jiatong
      */
     public void logicDeleteById(Integer id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
         // 查看是否存在此用户
-        boolean exist = isExistById(id);
-        if (exist) {
-            int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
-                    .set(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
-                    .set(User::getModifyTime, new Date())
-                    .eq(User::getId, id));
-            if (update <= 0) {
-                throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
-            }
+        User user = checkExist(id);
+        int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
+                .set(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
+                .set(User::getModifyTime, new Date())
+                .eq(User::getId, id));
+        if (update <= 0) {
+            throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
+        // 如果用户在线的话，那么删除用户redis中的缓存信息
+        redisUtil.delete(RedisKeyEnum.USER_INFO_KEY.getValue()
+                .replace("id", String.valueOf(user.getId()))
+                .replace("username", user.getUsername()));
     }
 
     /**
      * 修改用户信息
-     * @param reUserDTO 用户参数封装
+     * @param userDTO 用户参数封装
+     * @see UserDTO
      * @author Ling, Jiatong
      */
-    public void updateUser(UserDTO reUserDTO) {
-        Optional.ofNullable(reUserDTO)
+    public void updateUser(UserDTO userDTO) {
+        Optional.ofNullable(userDTO)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
-        userDtoBaseValidate(reUserDTO);
+        userDtoBaseValidate(userDTO);
         // 是否存在此用户
-        boolean userExist = isExistById(reUserDTO.getId());
+        boolean userExist = isExistById(userDTO.getId());
         if (!userExist) {
             throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
         }
         // 检查角色是否存在
-        boolean roleExist = roleService.isExistById(reUserDTO.getRoleId());
+        boolean roleExist = roleService.isExistById(userDTO.getRoleId());
         if (!roleExist) {
             throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
         }
         // 更新用户
         User user = new User();
-        BeanUtils.copyProperties(reUserDTO, user);
-        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(reUserDTO.getPassword()));
+        BeanUtils.copyProperties(userDTO, user);
+        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(userDTO.getPassword()));
         user.setModifyTime(new Date());
         // 更新用户角色表
         userRoleService.updateRoleIdByUserId(user.getId(), user.getRoleId());
@@ -218,7 +224,16 @@ public class UserService implements UserDetailsService {
         if (update <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
+        // 重新生成token
+        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRoleId());
+        // 删除之前的用户信息
+        deleteUserInfoCache(user.getId(), user.getUsername());
+        // 重新缓存用户信息
+        // 重新登录认证
+        authenticate(user);
+        setUserInfoCache(user, token);
     }
+
 
     /**
      * 分页获取用户列表
@@ -245,25 +260,40 @@ public class UserService implements UserDetailsService {
 
     //*********************************** 私有方法 ***********************************//
 
+
     /**
      * 缓存用户信息
-     * @param reUser 用户对象
+     * @param user 用户对象
      * @param token 用户token
+     * @see User
      * @author Ling, Jiatong
      *
      */
-    private void setUserInfoCache(User reUser, final String token) {
+    private void setUserInfoCache(User user, final String token) {
         UserInfoCache userInfoCache = new UserInfoCache();
-        userInfoCache.setUserId(reUser.getId());
-        userInfoCache.setUsername(reUser.getUsername());
-        userInfoCache.setRoleId(reUser.getRoleId());
+        userInfoCache.setUserId(user.getId());
+        userInfoCache.setUsername(user.getUsername());
+        userInfoCache.setRoleId(user.getRoleId());
         userInfoCache.setToken(token);
         userInfoCache.setLoginDate(new Date());
         // 缓存时间为token过期时间
         redisUtil.set(RedisKeyEnum.USER_INFO_KEY.getValue()
-                        .replace("id", String.valueOf(reUser.getId()))
-                        .replace("username", reUser.getUsername()),
+                        .replace("id", String.valueOf(user.getId()))
+                        .replace("username", user.getUsername()),
                 userInfoCache, reSecurityProperties.getTokenExpire(), TimeUnit.HOURS);
+    }
+
+    /**
+     * 删除用户redis登录缓存信息
+     * @param id 用户id
+     * @param username 用户名
+     * @author Ling, Jiatong
+     *
+     */
+    private void deleteUserInfoCache(Integer id, String username) {
+        redisUtil.delete(RedisKeyEnum.USER_INFO_KEY.getValue()
+                        .replace("id", String.valueOf(id))
+                        .replace("username", username));
     }
 
     /**
@@ -414,8 +444,30 @@ public class UserService implements UserDetailsService {
         return userMapper.getRoleById(id);
     }
 
+
+
     /**
-     * 根据id判断是否角色是否存在
+     * 校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象
+     * @param id 用户id
+     * @return User 用户实体对象
+     * @see User
+     * @throws ResourceNotExistException 当用户不存在时抛出此异常
+     * @author Ling, Jiatong
+     *
+     */
+    public User checkExist(Integer id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getId, id)
+                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+        Optional.ofNullable(user)
+                .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST));
+        return user;
+    }
+
+    /**
+     * 根据id判断用户是否存在（不包括已经删除的用户信息）
      * @param id 用户id
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
@@ -424,9 +476,10 @@ public class UserService implements UserDetailsService {
     public boolean isExistById(Integer id) {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
-        User reUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
+                .eq(User::getId, id)
                 .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
-        return reUser != null;
+        return user != null;
     }
 
     /**
@@ -453,8 +506,10 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(readOnly = true)
     public User getUserById(Integer id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
+        boolean exist = isExistById(id);
+        if (!exist) {
+            throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
+        }
         return userMapper.selectOne(new LambdaQueryWrapper<User>()
                 // 除去密码
                 .select(User.class, i -> !i.getProperty().startsWith("password"))
