@@ -28,7 +28,7 @@ export const logout = () => {
 
 /**
  * 分页获取用户列表
- * @param username 用户名
+ * @param searchCondition 模糊查询条件
  * @param roleId 用户角色id
  * @param sortFieldList 排序字段列表
  * @param sortTypeList 排序类型列表
@@ -36,8 +36,8 @@ export const logout = () => {
  * @param pageSize 每页条数
  * @return {AxiosPromise<any>}
  */
-export const getList = ({username, roleId, sortFieldList, sortTypeList, pageNum, pageSize}) => {
-    let params = qs.stringify({username, roleId, sortFieldList, sortTypeList, pageNum, pageSize}, { arrayFormat: 'repeat' })
+export const getList = ({searchCondition, roleId, sortFieldList, sortTypeList, pageNum, pageSize}) => {
+    let params = qs.stringify({searchCondition, roleId, sortFieldList, sortTypeList, pageNum, pageSize}, { arrayFormat: 'repeat' })
     return http.get("/system/user/list?" + params);
 }
 

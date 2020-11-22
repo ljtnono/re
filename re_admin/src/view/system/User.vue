@@ -1,5 +1,23 @@
 <template>
     <div>
+        <!-- 编辑用户控件 -->
+        <modal
+            title="编辑用户"
+            width="600"
+            v-model="showEditForm"
+            class-name="vertical-center-modal">
+            <!-- 控件 -->
+            <user-edit-form />
+        </modal>
+        <!-- 新增用户控件 -->
+        <modal
+            title="新增用户"
+            width="600"
+            v-model="showAddForm"
+            class-name="vertical-center-modal">
+            <!-- 控件 -->
+            <user-add-form />
+        </modal>
         <Row style="padding:20px; margin-bottom: 40px">
             <!-- 用户总数 -->
             <Col span="7">
@@ -28,6 +46,15 @@
         <Card>
             <Form ref="searchForm" inline>
                 <FormItem>
+                    <Input type="text" v-model="getListParam.searchCondition" placeholder="用户名/手机/邮箱"/>
+                </FormItem>
+                <FormItem>
+                    <Button type="primary" icon="ios-search" @click="search">搜索</Button>
+                </FormItem>
+                <FormItem>
+                    <Button type="info" icon="md-add-circle" @click="add">新增用户</Button>
+                </FormItem>
+                <FormItem>
                     <Dropdown>
                         <Button type="primary">
                             更多操作
@@ -38,12 +65,6 @@
                             <DropdownItem>导出选中项</DropdownItem>
                         </DropdownMenu>
                     </Dropdown>
-                </FormItem>
-                <FormItem>
-                    <Input type="text" v-model="getListParam.username" placeholder="请输入用户名"/>
-                </FormItem>
-                <FormItem>
-                    <Button type="primary" icon="ios-search" @click="search">搜索</Button>
                 </FormItem>
             </Form>
             <Table :columns="columns"
@@ -69,9 +90,17 @@
 
 <script>
 import {getList, logicDelete} from "@/api/system/user";
+import {UserAddForm, UserEditForm} from "@/components/system/user"
 
 export default {
     name: "User",
+    components: {
+        UserAddForm,
+        UserEditForm
+    },
+    computed: {
+
+    },
     data() {
         return {
             columns: [
@@ -106,7 +135,7 @@ export default {
             total: 1,
             current: 1,
             getListParam: {
-                username: '',
+                searchCondition: "",
                 roleId: null,
                 sortFieldList: [],
                 sortTypeList: [],
@@ -114,7 +143,9 @@ export default {
                 pageSize: 10
             },
             userList: [],
-            loading: true
+            loading: true,
+            showEditForm: false,
+            showAddForm: false
         }
     },
     methods: {
@@ -184,7 +215,11 @@ export default {
         },
         // 编辑用户信息
         edit(row) {
-
+            this.showEditForm = !this.showEditForm;
+        },
+        // 新增用户
+        add(row) {
+            this.showAddForm = !this.showAddForm;
         },
         // 排序条件变化
         sortChange(row) {
@@ -243,5 +278,12 @@ export default {
 </script>
 
 <style scoped lang="less">
-
+    .vertical-center-modal {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .ivu-modal{
+            top: 0;
+        }
+    }
 </style>
