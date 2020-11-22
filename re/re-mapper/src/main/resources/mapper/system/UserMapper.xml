@@ -65,9 +65,11 @@
         LEFT JOIN sys_role sr ON sr.id = sur.role_id
         <where>
             su.is_deleted = 0
-            <!-- 用户名查询条件 -->
-            <if test="dto != null and dto.username != null and dto.username != ''">
-                AND su.username LIKE CONCAT('%', #{dto.username}, '%')
+            <!-- 模糊查询条件 -->
+            <if test="dto != null and dto.searchCondition != null and dto.searchCondition != ''">
+                AND (su.username LIKE CONCAT('%', #{dto.searchCondition}, '%')
+                OR su.email LIKE CONCAT('%', #{dto.searchCondition}, '%')
+                OR su.phone LIKE CONCAT('%', #{dto.searchCondition}, '%'))
             </if>
             <!-- 角色Id筛选条件 -->
             <if test="dto != null and dto.roleId != null">

@@ -22,7 +22,7 @@ public class UserListQueryDTO extends BaseListQueryDTO {
     private Integer roleId;
 
     /** 用户名查询条件 */
-    private String username;
+    private String searchCondition;
 
     /** 可选排序字段列表，不可变列表 */
     private List<String> sortFieldValueList = Arrays.asList("create_time", "modify_time");
