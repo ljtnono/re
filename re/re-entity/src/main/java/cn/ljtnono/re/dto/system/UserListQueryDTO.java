@@ -25,6 +25,6 @@ public class UserListQueryDTO extends BaseListQueryDTO {
     private String username;
 
     /** 可选排序字段列表，不可变列表 */
-    private List<String> sortFieldValueList = Arrays.asList("create_time", "username");
+    private List<String> sortFieldValueList = Arrays.asList("create_time", "modify_time");
 
 }

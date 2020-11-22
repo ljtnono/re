@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,6 +49,15 @@ public class RedisUtil {
      */
     public void delete(final String key) {
         redisTemplate.delete(key);
+    }
+
+    /**
+     * 根据正则表达式删除redis键
+     * @param pattern 正则表达式
+     */
+    public void deleteByPattern(final String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 
 }

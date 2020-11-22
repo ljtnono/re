@@ -35,6 +35,8 @@ rest:
 mybatis-plus:
   global-config:
     banner: false
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 # 日志配置
 logging:
   config: classpath:log/logback-${spring.profiles.active}.xml

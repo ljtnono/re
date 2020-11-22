@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.List;
+
 /**
  * @author Ling, Jiatong
  * Date: 2020/7/13 23:26 下午
@@ -15,6 +17,9 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class UserDTO extends BaseDTO {
+
+    /** id列表，当进行批量操作时可以使用此字段 */
+    private List<Integer> idList;
 
     /** 用户名 */
     private String username;

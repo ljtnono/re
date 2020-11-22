@@ -39,6 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -177,24 +178,33 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据id删除一个用户, 逻辑删除
-     * @param id 用户id
+     * 逻辑删除用户
+     * @param dto 参数封装
      * @author Ling, Jiatong
      */
-    public void logicDeleteById(Integer id) {
-        // 查看是否存在此用户
-        User user = checkExist(id);
+    public void logicDelete(UserDTO dto) {
+        Optional.ofNullable(dto)
+                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
+        if (CollectionUtils.isEmpty(dto.getIdList())) {
+            return;
+        }
+        List<Integer> idList = dto.getIdList();
+        // 校验每个用户是否存在，如果不存在那么抛出异常
+        idList.parallelStream().forEach(this::checkExist);
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
                 .set(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
                 .set(User::getModifyTime, new Date())
-                .eq(User::getId, id));
+                .in(User::getId, idList));
         if (update <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
         // 如果用户在线的话，那么删除用户redis中的缓存信息
-        redisUtil.delete(RedisKeyEnum.USER_INFO_KEY.getValue()
-                .replace("id", String.valueOf(user.getId()))
-                .replace("username", user.getUsername()));
+        idList.parallelStream().forEach(id -> {
+            String key = RedisKeyEnum.USER_INFO_KEY.getValue()
+                    .replace("id", String.valueOf(id))
+                    .replace(":username", "") + "*";
+            redisUtil.deleteByPattern(key);
+        });
     }
 
     /**

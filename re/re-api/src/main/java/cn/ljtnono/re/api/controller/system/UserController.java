@@ -83,15 +83,16 @@ public class UserController {
 
     /**
      * 根据用户id删除用户，逻辑删除
-     * @param id 用户id
-     * @return ReJsonResultVO<?>
+     * @param dto 参数封装 {@link UserDTO}
+     * @see UserDTO
+     * @return JsonResultVO
      * @author Ling, Jiatong
      */
-    @DeleteMapping("/logic/{id:\\d+}")
+    @DeleteMapping("/logic")
     @PreAuthorize("hasAnyAuthority('system:user:delete')")
-    public JsonResultVO<?> logicDeleteById(@PathVariable Integer id) {
-        log.info("[re-system -> UserController -> logicDeleteById()] 逻辑删除用户，用户id：{}", id);
-        userService.logicDeleteById(id);
+    public JsonResultVO<?> logicDeleteById(@RequestBody UserDTO dto) {
+        log.info("[re-system -> UserController -> logicDeleteById()] 逻辑删除用户，用户id：{}", dto);
+        userService.logicDelete(dto);
         return JsonResultVO.success();
     }
 

@@ -20,16 +20,16 @@ import java.util.stream.IntStream;
 public class BaseListQueryDTO extends BaseDTO{
 
     /** 排序类型列表 1 表示自然排序（升序） 2 表示降序 */
-    protected List<Integer> sortTypeList;
+    private List<Integer> sortTypeList;
 
     /** 前端传递排序字段列表 */
-    protected List<String> sortFieldList;
+    private List<String> sortFieldList;
 
     /** 允许的排序字段列表，这是一个不可变列表，子类重写此字段 */
-    protected List<String> sortFieldValueList;
+    private List<String> sortFieldValueList;
 
     /** 拼接出来的排序条件 */
-    protected String sortCondition;
+    private String sortCondition;
 
     /**
      * 根据排序字段列表和排序方式列表生成最终的排序字符串，方便xml中直接用于拼接
