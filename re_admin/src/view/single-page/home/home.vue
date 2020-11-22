@@ -79,7 +79,9 @@ export default {
     methods: {
         message() {
             let socket = new SockJS("http://localhost:8001/re/message");
-            let client = Stomp.over(socket);
+            let client = Stomp.over(socket, {
+                debug: false
+            });
             let userInfo = Cookies.getJSON("userInfo");
             let token = userInfo.token;
             let headers = {

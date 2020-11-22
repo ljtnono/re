@@ -2,7 +2,9 @@ import {login, logout} from "@/api/system/user";
 import Cookies from "js-cookie";
 
 export default {
-    state: {},
+    state: {
+        client: null,
+    },
     mutations: {},
     getters: {},
     actions: {
@@ -35,6 +37,10 @@ export default {
         // 删除用户cookie
         clearUserCookie() {
             Cookies.remove("userInfo");
+        },
+        // 连接上websocket
+        connectWebSocketServer() {
+
         },
         // 处理webSocket消息
         handlerMessage() {

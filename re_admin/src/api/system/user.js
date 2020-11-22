@@ -1,4 +1,5 @@
 import {http} from "@/config/axios";
+import qs from "qs";
 
 /**
  * 登陆接口
@@ -26,13 +27,29 @@ export const logout = () => {
 }
 
 /**
- * 获取用户列表
+ * 分页获取用户列表
+ * @param username 用户名
+ * @param roleId 用户角色id
+ * @param sortFieldList 排序字段列表
+ * @param sortTypeList 排序类型列表
+ * @param pageNum 页数
+ * @param pageSize 每页条数
  * @return {AxiosPromise<any>}
  */
-export const getList = () => {
-    return http.get("/system/user/list", {
-        params: {
+export const getList = ({username, roleId, sortFieldList, sortTypeList, pageNum, pageSize}) => {
+    let params = qs.stringify({username, roleId, sortFieldList, sortTypeList, pageNum, pageSize}, { arrayFormat: 'repeat' })
+    return http.get("/system/user/list?" + params);
+}
 
+/**
+ * 逻辑删除用户
+ * @param idList 用户id列表
+ * @return {AxiosPromise}
+ */
+export const logicDelete = ({idList}) => {
+    return http.delete("/system/user/logic", {
+        data: {
+            idList
         }
     });
 }

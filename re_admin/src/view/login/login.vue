@@ -15,12 +15,11 @@ import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 import Cookies from 'js-cookie';
 import {HOME_PAGE_NAME, USERINFO_EXPIRE} from "@/constant/system/constant";
-import iView from "view-design";
 
 export default {
     data() {
         return {
-            verifyCode: null
+            verifyCode: ""
         }
     },
     components: {
@@ -32,23 +31,25 @@ export default {
         ]),
         handleSubmit({username, password, verifyCodeId, verifyCode}) {
             let promise = this.handleLogin({username, password, verifyCodeId, verifyCode});
-            promise.then(res => {
+            promise.then(result => {
                 // 登陆成功
                 this.$Message.success({
                     background: true,
                     content: "登陆成功"
                 });
                 // 存储用户相关信息
-                this.saveUserInfo(res.data);
+                this.saveUserInfo(result.data);
                 // 跳转到页面
                 this.$router.push({
                     name: HOME_PAGE_NAME
                 });
-            }, error => {
-                iView.Message.error({
-                    background: true,
-                    content: error.message
-                });
+            }).catch(error => {
+                let message = error.message;
+                let code = error.code;
+                // TODO 弹出是否继续登录框
+                if(code === 400113 && message === "用户已经登录") {
+
+                }
             });
         },
         // 存储用户信息, 存储在token中去
