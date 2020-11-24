@@ -5,20 +5,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
+ * <p>角色DTO对象</p>
  * @author Ling, Jiatong
  * Date: 2020/8/13 23:18
- * Description:
  */
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class RoleDTO extends BaseDTO implements Serializable {
+public class RoleDTO extends BaseDTO {
 
-    private static final long serialVersionUID = 4505176109063156696L;
+    /** 角色id列表 */
+    private List<Integer> idList;
 
     /**
      * 角色名

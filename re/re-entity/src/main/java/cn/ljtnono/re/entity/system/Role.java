@@ -7,22 +7,22 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
 /**
+ * <p>角色实体</p>
  * @author Ling, Jiatong
  * Date: 2020/7/12 22:23 下午
- * Description: 角色实体
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @TableName("sys_role")
-public class Role extends BaseEntity implements Serializable {
-
-    private static final long serialVersionUID = -152690006554286058L;
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+public class Role extends BaseEntity {
 
     /** 角色名 */
     private String name;
+
+    /** 角色描述 */
+    private String description;
 
     /** 是否删除 1 删除 0 正常 */
     @TableField("is_deleted")

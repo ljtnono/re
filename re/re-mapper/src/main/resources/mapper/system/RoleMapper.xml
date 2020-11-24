@@ -13,4 +13,26 @@
         WHERE
             su.id = #{userId} AND sr.is_deleted = 0
     </select>
+
+    <!-- 分页获取角色列表 -->
+    <select id="getList" resultType="cn.ljtnono.re.vo.system.RoleListVO">
+        SELECT
+            sr.id,
+            sr.name,
+            sr.description,
+            sr.create_time,
+            sr.modify_time,
+            sr.is_delete
+        FROM sys_role sr
+        <where>
+            <!-- 角色搜索条件 -->
+            <if test="dto != null and dto.">
+
+            </if>
+        </where>
+
+        <if test="dto != null and dto.sortCondition != null and dto.sortCondition != ''">
+            ORDER BY ${dto.sortCondition}
+        </if>
+    </select>
 </mapper>
