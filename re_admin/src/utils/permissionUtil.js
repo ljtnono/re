@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 
-
 /**
  * 权限表的映射
  * @type {{name: string, id: number}[]}

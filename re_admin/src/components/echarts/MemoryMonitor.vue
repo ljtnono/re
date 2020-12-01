@@ -7,7 +7,7 @@ import echarts from "echarts";
 import {on, off} from "@/libs/tools";
 
 export default {
-    name: "server",
+    name: "MemoryMonitor",
     data() {
         return {
             dom: null,
@@ -15,8 +15,6 @@ export default {
             memoryAvailableData: [],
             // 总内存
             memoryTotalData: [],
-            // 系统名字
-            systemName: "",
             // 横轴时间
             timeStamp: []
         };
@@ -27,10 +25,9 @@ export default {
         }
     },
     mounted() {
-        this.memoryAvailableData.push(this.serverMonitorBarData.memoryAvailable / 1024 / 1024);
-        this.memoryTotalData.push(this.serverMonitorBarData.memoryTotal / 1024 / 1024);
-        this.timeStamp.push(new Date(this.serverMonitorBarData.timeStamp));
-        this.systemName = this.serverMonitorBarData.systemName;
+        this.memoryAvailableData.push(this.memoryData.memoryAvailable / 1024 / 1024);
+        this.memoryTotalData.push(this.memoryData.memoryTotal / 1024 / 1024);
+        this.timeStamp.push(new Date(this.memoryData.timeStamp));
         let totalData = [];
         let availableData = [];
         let totalLength = this.memoryTotalData.length;
@@ -47,44 +44,44 @@ export default {
         }
         // 配置项
         let option = {
-            title: {
-                text: this.systemName
+            color: ["#319AFF", "#19BE6B", "#FF9900", "#FA76CD", "#9A66E4"],
+            legend: {
             },
             tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    animation: false
-                }
+                trigger: 'axis'
             },
             xAxis: {
                 name: "时间",
                 type: "time",
                 splitLine: {
                     show: false
-                }
+                },
+                nameGap: 10
             },
             yAxis: {
-                name: "MB",
+                name: "空间/MB",
                 type: "value",
-                minInterval: 3000,
-                boundaryGap: [0, '100%'],
-                splitLine: {
-                    show: false
-                }
+                interval: 3000,
+                nameGap: 30
             },
-            series: [{
-                name: "可用内存",
-                type: "line",
-                showSymbol: true,
-                hoverAnimation: true,
-                data: availableData
-            }, {
-                name: "总内存",
-                type: "line",
-                showSymbol: true,
-                hoverAnimation: true,
-                data: totalData
-            }]
+            series: [
+                {
+                    name: "可用内存",
+                    type: "line",
+                    showSymbol: true,
+                    symbolSize: 10,
+                    hoverAnimation: true,
+                    data: availableData
+                },
+                {
+                    name: "总内存",
+                    type: "line",
+                    showSymbol: true,
+                    symbolSize: 10,
+                    hoverAnimation: true,
+                    data: totalData
+                }
+            ]
         }
         this.$nextTick(() => {
             this.dom = echarts.init(this.$refs.dom);
@@ -93,20 +90,20 @@ export default {
         });
     },
     watch: {
-        serverMonitorBarData() {
-            if (this.memoryAvailableData.length > 100) {
+        memoryData() {
+            if (this.memoryAvailableData.length > 5) {
                 this.memoryAvailableData.shift();
             }
-            if (this.memoryTotalData.length > 100) {
+            if (this.memoryTotalData.length > 5) {
                 this.memoryTotalData.shift();
             }
-            if (this.timeStamp.length > 100) {
+            if (this.timeStamp.length > 5) {
                 this.timeStamp.shift();
             }
-            this.memoryAvailableData.push(this.serverMonitorBarData.memoryAvailable / 1024 / 1024);
-            this.memoryTotalData.push(this.serverMonitorBarData.memoryTotal / 1024 / 1024);
-            this.timeStamp.push(new Date(this.serverMonitorBarData.timeStamp));
-            this.systemName = this.serverMonitorBarData.systemName;
+            this.memoryAvailableData.push(this.memoryData.memoryAvailable / 1024 / 1024);
+            this.memoryTotalData.push(this.memoryData.memoryTotal / 1024 / 1024);
+            this.timeStamp.push(new Date(this.memoryData.timeStamp));
+            this.systemName = this.memoryData.systemName;
             let totalData = [];
             let availableData = [];
             let totalLength = this.memoryTotalData.length;
@@ -143,10 +140,14 @@ export default {
         off(window, "resize", this.resize);
     },
     props: {
-        serverMonitorBarData: {
+        memoryData: {
             type: Object,
             default: null
         }
     }
 };
 </script>
+
+<style lang="less">
+
+</style>

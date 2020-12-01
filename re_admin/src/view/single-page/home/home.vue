@@ -21,10 +21,15 @@
                 </Card>
             </i-col>
         </Row>
-        <Row>
-            <Card shadow>
-                <server style="height: 310px;" :server-monitor-bar-data="serverMonitorBarData"/>
-            </Card>
+        <Row :gutter="20" style="margin-top: 10px;">
+            <i-col :md="24" :lg="8" style="margin-bottom: 20px;">
+                <Card shadow>
+                    <memory-monitor style="height: 310px;" :memory-data="memoryData"/>
+                </Card>
+            </i-col>
+            <i-col :md="24" :lg="16" style="margin-bottom: 20px;">
+                <span>hello</span>
+            </i-col>
         </Row>
     </div>
 </template>
@@ -33,7 +38,7 @@
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
 import {ChartPie, ChartBar} from '_c/charts'
-import server from './server.vue'
+import MemoryMonitor from '_c/echarts/MemoryMonitor.vue'
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 import Cookies from "js-cookie";
@@ -45,7 +50,7 @@ export default {
         CountTo,
         ChartPie,
         ChartBar,
-        server
+        MemoryMonitor
     },
     data() {
         return {
@@ -73,7 +78,7 @@ export default {
                 Sat: 1322,
                 Sun: 1324
             },
-            serverMonitorBarData: {}
+            memoryData: {}
         }
     },
     methods: {
@@ -91,7 +96,7 @@ export default {
                 // 订阅系统监控消息
                 client.subscribe("/topic/server/monitor", message => {
                     // 处理订阅消息
-                    this.serverMonitorBarData = JSON.parse(message.body);
+                    this.memoryData = JSON.parse(message.body);
                 }, headers);
             });
         },

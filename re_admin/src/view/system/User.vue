@@ -5,9 +5,10 @@
             title="编辑用户"
             width="600"
             v-model="showEditForm"
+            @cancel="cancelEditForm"
             class-name="vertical-center-modal">
             <!-- 控件 -->
-            <user-edit-form />
+            <user-edit-form :is-show="showEditForm"/>
         </modal>
         <!-- 新增用户控件 -->
         <modal
@@ -16,12 +17,12 @@
             v-model="showAddForm"
             class-name="vertical-center-modal">
             <!-- 控件 -->
-            <user-add-form />
+            <user-add-form/>
         </modal>
         <Row style="padding:20px; margin-bottom: 40px">
             <!-- 用户总数 -->
             <Col span="7">
-                <Card >
+                <Card>
 
                 </Card>
             </Col>
@@ -58,7 +59,7 @@
                     <Dropdown>
                         <Button type="primary">
                             更多操作
-                            <Icon type="ios-arrow-down" />
+                            <Icon type="ios-arrow-down"/>
                         </Button>
                         <DropdownMenu slot="list">
                             <DropdownItem>删除选中项</DropdownItem>
@@ -98,9 +99,7 @@ export default {
         UserAddForm,
         UserEditForm
     },
-    computed: {
-
-    },
+    computed: {},
     data() {
         return {
             columns: [
@@ -215,7 +214,7 @@ export default {
         },
         // 编辑用户信息
         edit(row) {
-            this.showEditForm = !this.showEditForm;
+            this.showEditForm = true;
         },
         // 新增用户
         add(row) {
@@ -263,6 +262,9 @@ export default {
         clearSortParam() {
             this.getListParam.sortTypeList = [];
             this.getListParam.sortFieldList = [];
+        },
+        cancelEditForm() {
+            this.showEditForm = false;
         }
     },
     mounted() {
@@ -278,12 +280,13 @@ export default {
 </script>
 
 <style scoped lang="less">
-    .vertical-center-modal {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .ivu-modal{
-            top: 0;
-        }
+.vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ivu-modal {
+        top: 0;
     }
+}
 </style>
