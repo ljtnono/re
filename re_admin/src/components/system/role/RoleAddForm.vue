@@ -4,7 +4,7 @@
 
 <script>
 export default {
-name: "RoleAddForm"
+    name: "RoleAddForm"
 }
 </script>
 

@@ -1,11 +1,11 @@
 <template>
     <div class="user-edit-form">
-        <Form ref="formData" v-model="formData" :label-width="60" :rules="rules">
+        <Form ref="form" v-model="formData" :label-width="60" :rules="rules">
             <FormItem prop="username" label="用户名">
                 <Input type="text" v-model="formData.username" placeholder="请输入用户名" />
             </FormItem>
             <FormItem prop="password" label="密码">
-                <Input type="password" v-model="formData.password" placeholder="请输入用户名" />
+                <Input type="password" v-model="formData.password" placeholder="请输入密码" />
             </FormItem>
             <FormItem prop="roleId" label="角色">
                 <Select v-model="formData.roleId">
@@ -13,17 +13,24 @@
                 </Select>
             </FormItem>
             <FormItem prop="email" label="邮箱">
-                <Input v-model="formData.email" placeholder="请输入用户名" />
+                <Input v-model="formData.email" placeholder="请输入邮箱" />
             </FormItem>
-            <FormItem prop="phone" label="电话">
-                <Input v-model="formData.phone" placeholder="请输入用户名" />
+            <FormItem prop="phone" label="手机号码">
+                <Input v-model="formData.phone" placeholder="请输入手机号码" />
+            </FormItem>
+            <FormItem>
+                <Button type="primary" @click="submit">提交</Button>
+                <Button style="margin-left: 20px;" @click="cancel">取消</Button>
             </FormItem>
         </Form>
+        <Spin size="large" fix v-if="spinShow" />
     </div>
 </template>
 
 <script>
 import {select} from "@/api/system/role";
+import {getUserById, updateUser} from "@/api/system/user";
+import {mapActions} from "vuex";
 
 export default {
     name: "UserEditForm",
@@ -37,13 +44,15 @@ export default {
                 email: "",
                 phone: ""
             },
-            roleSelectList: [],
             rules: {
-                username: [{required: true, message: "用户名不能为空"}],
-                password: [{required: true, message: "密码不能为空"}],
+                username: [{ validator: this.validateUsername, required: true, trigger: 'message'}],
                 email: [{required: true, message: "邮箱不能为空"}],
-                phone: [{required: true, message: "电话不能为空"}]
-            }
+                phone: [{required: true, message: "手机号码不能为空"}],
+                roleId: [{required: true, message: "用户角色不能为空"}]
+            },
+
+            roleSelectList: [],
+            spinShow: false
         }
     },
     props: {
@@ -51,19 +60,27 @@ export default {
         isShow: {
             type: Boolean,
             default: false
+        },
+        // 编辑的用户id
+        userId: {
+            type: Number,
+            default: null
         }
     },
     // 监听是否处于显示状态
     watch: {
         isShow(val) {
             if (val) {
-                // 打开的时候清空表单数据
-                this.$refs["formData"].resetFields();
                 this.getSelectList();
+                this.getUserDetailById(this.userId);
             }
+        },
+        userId() {
+            this.getUserDetailById(this.userId);
         }
     },
     methods: {
+        ...mapActions(['clearUserCookie']),
         // 获取角色下拉列表并设置到下拉列表中去
         getSelectList() {
             select().then(result => {
@@ -72,13 +89,51 @@ export default {
                     this.roleSelectList = data.data;
                 }
             }).catch(error => {});
+        },
+        // 获取用户回显信息
+        getUserDetailById(userId) {
+            // 显示loading
+            this.spinShow = true;
+            getUserById(userId).then(result => {
+                let data = result.data;
+                if (data.code === 0 && data.message === "success") {
+                    this.formData = {...data.data};
+                }
+                this.spinShow = false;
+            }).catch(error => {
+                this.spinShow = false;
+            });
+        },
+        // 提交表单
+        submit() {
+            updateUser({...this.formData}).then(result => {
+                this.spinShow = true;
+                let data = result.data;
+                if (data.code === 0 && data.message === "success") {
+                    this.$Message.success({
+                        background: true,
+                        content: "修改成功"
+                    });
+                    // 关闭窗口，删除cookie
+                    this.closeModal();
+                    this.clearUserCookie();
+                }
+                this.spinShow = false;
+            }).catch(error => {});
+        },
+        // 点击取消
+        cancel() {
+            this.closeModal();
+        },
+        // 关闭弹窗
+        closeModal() {
+            this.$emit("closeModal");
+        },
+        // 校验用户名
+        validateUsername() {
+            let username = this.formData.username;
+            return false;
         }
-    },
-    mounted() {
     }
 }
 </script>
-
-<style scoped lang="less">
-
-</style>

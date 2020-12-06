@@ -41,10 +41,6 @@ export default {
         // 连接上websocket
         connectWebSocketServer() {
 
-        },
-        // 处理webSocket消息
-        handlerMessage() {
-
         }
     }
 };

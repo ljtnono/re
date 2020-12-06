@@ -4,26 +4,33 @@
         <modal
             title="编辑用户"
             width="600"
-            v-model="showEditForm"
-            @cancel="cancelEditForm"
+            :loading="editFormLoading"
+            v-model="editFormSwitch"
+            ok-text="提交"
             class-name="vertical-center-modal">
-            <!-- 控件 -->
-            <user-edit-form :is-show="showEditForm"/>
+            <user-edit-form @closeModal="closeEditModal" :is-show="editFormSwitch" :user-id="editFormUserId"/>
+            <template slot="footer">
+                <div />
+            </template>
         </modal>
         <!-- 新增用户控件 -->
         <modal
             title="新增用户"
             width="600"
-            v-model="showAddForm"
+            :loading="addFormLoading"
+            v-model="addFormSwitch"
             class-name="vertical-center-modal">
             <!-- 控件 -->
             <user-add-form/>
+            <template slot="footer">
+                <div />
+            </template>
         </modal>
         <Row style="padding:20px; margin-bottom: 40px">
             <!-- 用户总数 -->
             <Col span="7">
                 <Card>
-
+                    <pie />
                 </Card>
             </Col>
             <Col span="7" offset="1">
@@ -53,7 +60,7 @@
                     <Button type="primary" icon="ios-search" @click="search">搜索</Button>
                 </FormItem>
                 <FormItem>
-                    <Button type="info" icon="md-add-circle" @click="add">新增用户</Button>
+                    <Button type="info" icon="md-add-circle" @click="() => {this.addFormSwitch = !this.addFormSwitch}">新增用户</Button>
                 </FormItem>
                 <FormItem>
                     <Dropdown>
@@ -71,11 +78,11 @@
             <Table :columns="columns"
                    stripe
                    :data="userList"
-                   :loading="loading"
+                   :loading="tableLoading"
                    @on-sort-change="sortChange"
                    ref="table">
                 <template slot-scope="{ row, index }" slot="action">
-                    <Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">编辑</Button>
+                    <Button type="primary" size="small" style="margin-right: 5px" @click="showEditModal(row)">编辑</Button>
                     <Button type="error" size="small" style="margin-right: 5px" @click="logicDelete(row)">删除</Button>
                 </template>
             </Table>
@@ -92,14 +99,15 @@
 <script>
 import {getList, logicDelete} from "@/api/system/user";
 import {UserAddForm, UserEditForm} from "@/components/system/user"
+import {Pie} from "_c/common/charts"
 
 export default {
     name: "User",
     components: {
         UserAddForm,
-        UserEditForm
+        UserEditForm,
+        Pie
     },
-    computed: {},
     data() {
         return {
             columns: [
@@ -142,9 +150,12 @@ export default {
                 pageSize: 10
             },
             userList: [],
-            loading: true,
-            showEditForm: false,
-            showAddForm: false
+            editFormLoading: false,
+            addFormLoading: false,
+            tableLoading: true,
+            editFormSwitch: false,
+            addFormSwitch: false,
+            editFormUserId: null
         }
     },
     methods: {
@@ -152,19 +163,18 @@ export default {
         search() {
             this.getList().then(result => {
                 this.setListData(result);
-            }).catch(error => {
-            });
+            }).catch(error => {});
         },
         // 调用获取用户列表接口返回其promise对象
         getList() {
-            this.loading = true;
+            this.tableLoading = true;
             return getList({...this.getListParam});
         },
         // 调用接口之后将接口返回的数据设置到data属性上
         setListData(result) {
             let data = result.data.data;
             this.userList = data.records;
-            this.loading = false;
+            this.tableLoading = false;
             // 当前页
             this.current = data.current;
             // 总条数
@@ -189,11 +199,9 @@ export default {
                             });
                             that.getList().then(result => {
                                 that.setListData(result);
-                            }).catch(error => {
-                            });
+                            }).catch(error => {});
                         }
-                    }).catch(error => {
-                    });
+                    }).catch(error => {});
                 },
                 onCancel() {
                     this.$Message.info({
@@ -212,13 +220,15 @@ export default {
             });
             return true;
         },
-        // 编辑用户信息
-        edit(row) {
-            this.showEditForm = true;
+        // 弹出modal
+        showEditModal(row) {
+            // 显示用户编辑弹窗
+            this.editFormSwitch = true;
+            this.editFormUserId = row.id
         },
-        // 新增用户
-        add(row) {
-            this.showAddForm = !this.showAddForm;
+        // 关闭编辑用户弹窗
+        closeEditModal() {
+            this.editFormSwitch = false;
         },
         // 排序条件变化
         sortChange(row) {
@@ -262,9 +272,6 @@ export default {
         clearSortParam() {
             this.getListParam.sortTypeList = [];
             this.getListParam.sortFieldList = [];
-        },
-        cancelEditForm() {
-            this.showEditForm = false;
         }
     },
     mounted() {
@@ -273,8 +280,7 @@ export default {
         // 获取并更新表格数据
         this.getList().then(result => {
             this.setListData(result);
-        }).catch(error => {
-        });
+        }).catch(error => {});
     }
 }
 </script>

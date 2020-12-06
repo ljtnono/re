@@ -22,11 +22,13 @@
             </i-col>
         </Row>
         <Row :gutter="20" style="margin-top: 10px;">
+            <!-- 内存监控图 -->
             <i-col :md="24" :lg="8" style="margin-bottom: 20px;">
                 <Card shadow>
                     <memory-monitor style="height: 310px;" :memory-data="memoryData"/>
                 </Card>
             </i-col>
+            <!-- 系统信息 -->
             <i-col :md="24" :lg="16" style="margin-bottom: 20px;">
                 <span>hello</span>
             </i-col>
@@ -37,14 +39,14 @@
 <script>
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
-import {ChartPie, ChartBar} from '_c/charts'
+import {ChartPie, ChartBar} from '_c/common/charts'
 import MemoryMonitor from '_c/echarts/MemoryMonitor.vue'
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 import Cookies from "js-cookie";
 
 export default {
-    name: 'home',
+    name: 'Home',
     components: {
         InforCard,
         CountTo,

@@ -53,3 +53,33 @@ export const logicDelete = ({idList}) => {
         }
     });
 }
+
+/**
+ * 修改用户信息
+ * @param id 用户id
+ * @param username 用户名
+ * @param password 用户密码
+ * @param phone 用户手机
+ * @param email 用户邮箱
+ * @param roleId 用户角色
+ */
+export const updateUser = ({id, username, password, phone, email, roleId}) => {
+    return http.put("/system/user", {
+        id, username, password, phone, email, roleId
+    });
+}
+
+/**
+ * 根据用户id获取用户信息
+ * @param id 用户id
+ */
+export const getUserById = (id) => {
+    return http.get("/system/user/" + id);
+}
+
+/**
+ * 获取用户根据角色分类统计饼状图
+ */
+export const roleNumPie = () => {
+    return http.get("/system/user/roleNumPie");
+}
