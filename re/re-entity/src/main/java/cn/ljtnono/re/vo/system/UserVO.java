@@ -1,15 +1,16 @@
-package cn.ljtnono.re.excel.system;
+package cn.ljtnono.re.vo.system;
 
 import lombok.Data;
 import lombok.ToString;
 
 /**
+ * 用户通用VO实体
  * @author Ling, Jiatong
- * Date: 2020/11/27 1:16
+ * Date: 2020/12/6 22:41
  */
 @Data
 @ToString
-public class UserExcelData {
+public class UserVO {
 
     /** 用户id */
     private Integer id;
@@ -22,5 +23,11 @@ public class UserExcelData {
 
     /** 用户手机号码 */
     private String phone;
+
+    /** 用户角色id */
+    private Integer roleId;
+
+    /** 用户角色名 */
+    private String roleName;
 
 }

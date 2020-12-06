@@ -5,18 +5,14 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 /**
+ * <p>HTTP Restful Api 统一返回值封装</p>
  * @author Ling, Jiatong
  * Date: 2020/7/12 23:53 下午
- * Description: HTTP Restful Api 统一返回值封装
  */
 @Data
 @ToString
-public class JsonResultVO<T> implements Serializable {
-
-    private static final long serialVersionUID = 7266682980444049698L;
+public class JsonResultVO<T> {
 
     public static final Integer CODE_SUCCESS = 0;
 

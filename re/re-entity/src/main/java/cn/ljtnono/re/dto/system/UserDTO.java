@@ -8,10 +8,9 @@ import lombok.ToString;
 import java.util.List;
 
 /**
+ * <p>通用用户DTO对象</p>
  * @author Ling, Jiatong
  * Date: 2020/7/13 23:26 下午
- * Description: 用户前端传输对象封装
- *
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

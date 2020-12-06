@@ -24,13 +24,14 @@ import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
 import cn.ljtnono.re.vo.system.UserListVO;
 import cn.ljtnono.re.vo.system.UserLoginVO;
+import cn.ljtnono.re.vo.system.UserRoleNumPieVO;
+import cn.ljtnono.re.vo.system.UserVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,9 +50,9 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * <p>用户Service层</p>
  * @author Ling, Jiatong
  * Date: 2020/8/2 0:50
- * Description: 用户Service类
  */
 @Slf4j
 @Service
@@ -60,36 +61,39 @@ public class UserService implements UserDetailsService {
 
     @Resource
     private UserMapper userMapper;
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private RolePermissionService rolePermissionService;
-    @Autowired
-    private ReSecurityProperties reSecurityProperties;
-    @Autowired
-    private UserRoleService userRoleService;
-    @Autowired
-    private ConfigService configService;
+    private final RedisUtil redisUtil;
+    private final JwtUtil jwtUtil;
+    private final RoleService roleService;
+    private final RolePermissionService rolePermissionService;
+    private final ReSecurityProperties reSecurityProperties;
+    private final UserRoleService userRoleService;
+    private final ConfigService configService;
+
+    public UserService(RedisUtil redisUtil, JwtUtil jwtUtil, RoleService roleService, RolePermissionService rolePermissionService, ReSecurityProperties reSecurityProperties, UserRoleService userRoleService, ConfigService configService) {
+        this.redisUtil = redisUtil;
+        this.jwtUtil = jwtUtil;
+        this.roleService = roleService;
+        this.rolePermissionService = rolePermissionService;
+        this.reSecurityProperties = reSecurityProperties;
+        this.userRoleService = userRoleService;
+        this.configService = configService;
+    }
 
     //*********************************** 接口方法 ***********************************//
 
     /**
-     * 用户登录
-     * @param userDTO 参数封装
-     * @return ReUserLoginVO
+     * <p>用户登录，分为强行登录和普通登录，强行登录需要校验forceLogin字段为1</p>
+     * @param dto 用户通用DTO对象 {@link UserDTO}
+     * @return 用户登录返回VO对象 {@link UserLoginVO}
      * @author Ling, Jiatong
      */
-    public UserLoginVO login(UserDTO userDTO) {
-        Optional.ofNullable(userDTO)
+    public UserLoginVO login(UserDTO dto) {
+        Optional.ofNullable(dto)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 登陆校验用户名密码
-        User user = loginCheckUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
+        User user = loginCheckUsernameAndPassword(dto.getUsername(), dto.getPassword());
         // 校验验证码
-        verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
+        verifyCodeValidate(dto.getVerifyCodeId(), dto.getVerifyCode());
         // 用户角色校验
         Role role = roleService.getRoleIdAndNameByUserId(user.getId());
         // 用户权限异常
@@ -98,7 +102,7 @@ public class UserService implements UserDetailsService {
         user.setRoleId(role.getId());
         user.setRoleName(role.getName());
         // 如果是强行登录
-        if (userDTO.getForceLogin() != null && userDTO.getForceLogin() == 1) {
+        if (dto.getForceLogin() != null && dto.getForceLogin() == 1) {
             // 下线原来的账号
             deleteUserInfoCache(user.getId(), user.getUsername());
         } else {
@@ -123,7 +127,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 用户登出
+     * <p>用户登出（删除redis缓存）</p>
      * @param user 当前用户
      * @author Ling, Jiatong
      */
@@ -137,49 +141,45 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 新增用户接口
-     * @param userDTO 用户参数封装
-     * @see UserDTO
+     * <p>新增用户接口</p>
+     * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
-    public void addUser(UserDTO userDTO) {
-        Optional.ofNullable(userDTO)
+    public void addUser(UserDTO dto) {
+        Optional.ofNullable(dto)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
-        userDtoBaseValidate(userDTO);
+        userDtoBaseValidate(dto);
         // 用户名重复校验
-        if (isUsernameExist(userDTO.getUsername())) {
+        if (isUsernameExist(dto.getUsername())) {
             throw new ResourceAlreadyExistException(GlobalErrorEnum.USERNAME_ALREADY_EXIST);
         }
         // 验证码校验
-        verifyCodeValidate(userDTO.getVerifyCodeId(), userDTO.getVerifyCode());
+        verifyCodeValidate(dto.getVerifyCodeId(), dto.getVerifyCode());
         // 检查角色是否存在
-        boolean roleExist = roleService.isExistById(userDTO.getRoleId());
-        if (!roleExist) {
-            // 角色不存在
-            throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
-        }
+        roleService.checkExist(dto.getRoleId());
         // 构建用户实体和角色实体，插入到相应的表中去
         User user = new User();
-        BeanUtils.copyProperties(userDTO, user);
-        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(userDTO.getPassword()));
+        BeanUtils.copyProperties(dto, user);
+        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(dto.getPassword()));
         user.setDeleted(StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
-        setCreateTimeAndModifyTimeNow(user);
+        user.setCreateTime(new Date());
+        user.setModifyTime(new Date());
         // 插入相关数据
         int insert = userMapper.insert(user);
         if (insert <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
-        userDTO.setId(user.getId());
-        int result = userMapper.insertUserRole(userDTO);
+        dto.setId(user.getId());
+        int result = userMapper.insertUserRole(dto);
         if (result <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
     }
 
     /**
-     * 逻辑删除用户
-     * @param dto 参数封装
+     * <p>逻辑删除用户（不删除用户角色关联表数据），用户处于已经删除状态（is_deleted=1）会抛出异常</p>
+     * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
     public void logicDelete(UserDTO dto) {
@@ -208,63 +208,47 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 修改用户信息
-     * @param userDTO 用户参数封装
-     * @see UserDTO
+     * <p>修改用户信息，修改后会导致原用户下线（删除用户缓存记录）</p>
+     * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
-    public void updateUser(UserDTO userDTO) {
-        Optional.ofNullable(userDTO)
+    public void updateUser(UserDTO dto) {
+        Optional.ofNullable(dto)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 基础校验
-        userDtoBaseValidate(userDTO);
+        userDtoBaseValidate(dto);
         // 是否存在此用户
-        boolean userExist = isExistById(userDTO.getId());
-        if (!userExist) {
-            throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
-        }
+        User oldUser = checkExist(dto.getId());
         // 检查角色是否存在
-        boolean roleExist = roleService.isExistById(userDTO.getRoleId());
-        if (!roleExist) {
-            throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
-        }
+        roleService.checkExist(dto.getRoleId());
         // 更新用户
-        User user = new User();
-        BeanUtils.copyProperties(userDTO, user);
-        user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(userDTO.getPassword()));
-        user.setModifyTime(new Date());
+        User newUser = new User();
+        BeanUtils.copyProperties(dto, newUser);
+        newUser.setPassword(EncryptUtil.getInstance().getMd5LowerCase(dto.getPassword()));
+        newUser.setModifyTime(new Date());
         // 更新用户角色表
-        userRoleService.updateRoleIdByUserId(user.getId(), user.getRoleId());
+        userRoleService.updateRoleIdByUserId(newUser.getId(), newUser.getRoleId());
         // 更新用户表
-        int update = userMapper.updateById(user);
+        int update = userMapper.updateById(newUser);
         if (update <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
-        // 重新生成token
-        String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRoleId());
         // 删除之前的用户信息
-        deleteUserInfoCache(user.getId(), user.getUsername());
-        // 重新缓存用户信息
-        // 重新登录认证
-        authenticate(user);
-        setUserInfoCache(user, token);
+        deleteUserInfoCache(oldUser.getId(), oldUser.getUsername());
     }
 
-
     /**
-     * 分页获取用户列表
-     * @param dto 参数封装
-     * @return 用户列表查询VO分页包装对象
-     * @see UserListVO
+     * <p>分页获取用户列表</p>
+     * @param dto 用户列表查询DTO对象 {@link UserListQueryDTO}
+     * @return 用户列表查询VO分页包装对象 {@link UserListVO}
      * @author Ling, Jiatong
-     *
      */
     @Transactional(readOnly = true)
     public IPage<UserListVO> getList(UserListQueryDTO dto) {
         Optional.ofNullable(dto)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 校验请求参数
-        Page<User> page = new Page<>(dto.getPageNum(), dto.getPageSize());
+        Page<?> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         // 生成排序参数
         try {
             dto.generateSortCondition();
@@ -274,16 +258,24 @@ public class UserService implements UserDetailsService {
         return userMapper.getList(page, dto);
     }
 
+    /**
+     * <p>获取用户根据角色分类统计饼状图</p>
+     * @return 用户根据角色分类统计饼状图VO对象 {@link UserRoleNumPieVO}
+     * @author Ling, Jiatong
+     */
+    public List<UserRoleNumPieVO> roleNumPie() {
+        return userMapper.roleNumPie();
+    }
+
     //*********************************** 私有方法 ***********************************//
 
 
     /**
-     * 缓存用户信息
-     * @param user 用户对象
+     * <p>缓存用户信息，根据用户对象生成一个 {@link UserInfoCache} 对象缓存到redis中<br/>
+     * 缓存时间为token过期时间</p>
+     * @param user 用户对象 {@link User}
      * @param token 用户token
-     * @see User
      * @author Ling, Jiatong
-     *
      */
     private void setUserInfoCache(User user, final String token) {
         UserInfoCache userInfoCache = new UserInfoCache();
@@ -300,11 +292,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 删除用户redis登录缓存信息
+     * <p>删除用户redis登录缓存信息</p>
      * @param id 用户id
      * @param username 用户名
      * @author Ling, Jiatong
-     *
      */
     private void deleteUserInfoCache(Integer id, String username) {
         redisUtil.delete(RedisKeyEnum.USER_INFO_KEY.getValue()
@@ -313,10 +304,11 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据用户对象，生成返回页面的vo对象
-     * @param user 用户对象
+     * <p>根据用户对象，生成返回页面的vo对象</p>
+     * @param user 用户对象 {@link User}
      * @param token token
-     * @return ReUserLoginVO
+     * @param permission 用户角色所具有的权限id列表
+     * @return 用户登录VO对象 {@link UserLoginVO}
      */
     private UserLoginVO generateUserLoginVO(User user, String token, List<Integer> permission) {
         UserLoginVO vo = new UserLoginVO();
@@ -329,29 +321,19 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 设置创建时间和最后修改时间
-     * @param user 设置创建时间和最后修改时间为现在时间
+     * <p>用户DTO基础校验，主要用于用户注册和添加用户时的校验</p>
+     * @param dto 用户通用DTO对象 {@link UserDTO}
      */
-    private void setCreateTimeAndModifyTimeNow(User user) {
-        Date now = new Date();
-        user.setCreateTime(now);
-        user.setModifyTime(now);
+    private void userDtoBaseValidate(UserDTO dto) {
+        checkUsernameAndPassword(dto.getUsername(), dto.getPassword());
+        checkEmailAndPhone(dto.getEmail(), dto.getPhone());
     }
 
     /**
-     * 用户DTO基础校验，主要用于用户注册和添加用户时的校验
-     * @param userDTO 参数封装
-     */
-    private void userDtoBaseValidate(UserDTO userDTO) {
-        checkUsernameAndPassword(userDTO.getUsername(), userDTO.getPassword());
-        checkEmailAndPhone(userDTO.getEmail(), userDTO.getPhone());
-    }
-
-    /**
-     * 登陆校验用户名和密码
+     * <p>登陆校验用户名和密码，校验错误会抛出异常</p>
      * @param username 用户名
      * @param password 密码
-     * @return ReUser 返回查询出来的用户名和免密
+     * @return 返回查询出来的用户对象
      */
     private User loginCheckUsernameAndPassword(final String username, final String password) {
         // 校验用户名和密码
@@ -377,8 +359,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 登陆认证
-     * @param user 用户对象
+     * <p>登陆认证</p>
+     * @param user 用户对象 {@link User}
      */
     private void authenticate(User user) {
         UsernamePasswordAuthenticationToken token =
@@ -387,11 +369,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 邮箱和手机号码校验
+     * <p>邮箱和手机号码校验</p>
      * @param email 邮箱
      * @param phone 手机号
      * @author Ling, Jiatong
-     *
      */
     private void checkEmailAndPhone(final String email, final String phone) {
         // 邮箱校验
@@ -407,7 +388,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 用户名和密码校验
+     * <p>用户名和密码校验</p>
      * @param username 用户名
      * @param password 用户密码
      * @author Ling, Jiatong
@@ -426,7 +407,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 验证码校验
+     * <p>验证码校验</p>
      * @param verifyCodeId 验证码在redis中的键
      * @param verifyCode 验证码的值
      */
@@ -449,27 +430,13 @@ public class UserService implements UserDetailsService {
 
     //*********************************** 公有方法 ***********************************//
 
-    /**
-     * 根据用户id获取角色信息
-     * @param id 用户id
-     * @return ReRole 用户所拥有的角色，如果没有返回null
-     */
-    public Role getRoleById(Integer id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
-        return userMapper.getRoleById(id);
-    }
-
-
 
     /**
-     * 校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象
+     * <p>校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象</p>
      * @param id 用户id
-     * @return User 用户实体对象
-     * @see User
+     * @return User 用户实体对象 {@link User}
      * @throws ResourceNotExistException 当用户不存在时抛出此异常
      * @author Ling, Jiatong
-     *
      */
     public User checkExist(Integer id) {
         Optional.ofNullable(id)
@@ -483,11 +450,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据id判断用户是否存在（不包括已经删除的用户信息）
+     * <p>根据id判断用户是否存在（不包括已经删除的用户信息）</p>
      * @param id 用户id
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
-     *
      */
     public boolean isExistById(Integer id) {
         Optional.ofNullable(id)
@@ -499,7 +465,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 判断用户名是否存在
+     * <p>判断用户名是否存在（不计算已经删除的用户）</p>
      * @param username 用户名
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
@@ -516,26 +482,22 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据id获取用户信息
+     * <p>根据id获取用户信息。<br/>
+     * 只获取username、id、email、phone、roleId、roleName字段</p>
      * @param id 用户id
-     * @return ReUser 用户实体, 如果该用户不存在则返回NULL
+     * @return 用户通用VO对象 {@link UserVO}
      */
     @Transactional(readOnly = true)
-    public User getUserById(Integer id) {
-        boolean exist = isExistById(id);
-        if (!exist) {
-            throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
-        }
-        return userMapper.selectOne(new LambdaQueryWrapper<User>()
-                // 除去密码
-                .select(User.class, i -> !i.getProperty().startsWith("password"))
-                .eq(User::getId, id)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+    public UserVO getUserById(Integer id) {
+        // 校验用户是否存在，如果不存在，那么抛出异常
+        checkExist(id);
+        return userMapper.getUserById(id);
     }
 
     /**
-     * 根据用户id检查用户是否登录
+     * <p>根据用户id和用户名检查用户是否登录</p>
      * @param id 用户id
+     * @param username 用户名
      * @return 已经登录返回true，没有登陆返回false
      * @author Ling, Jiatong
      */

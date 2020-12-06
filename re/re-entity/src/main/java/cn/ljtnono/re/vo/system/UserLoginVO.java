@@ -9,9 +9,9 @@ import lombok.ToString;
 import java.util.List;
 
 /**
+ * <p>用户登录返回VO对象</p>
  * @author Ling, Jiatong
  * Date: 2020/8/15 22:29
- * Description: 用户登录VO
  */
 @Data
 @ToString(callSuper = true)

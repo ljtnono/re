@@ -25,9 +25,9 @@ import java.util.Properties;
 import java.util.concurrent.*;
 
 /**
+ * <p>SpringBean配置类</p>
  * @author Ling, Jiatong
  * Date: 2020/8/9 18:25
- * Description: bean配置类
  */
 @Configuration
 public class SpringBeanConfig {
