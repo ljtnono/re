@@ -1,9 +1,11 @@
 package cn.ljtnono.re.common.util.redis;
 
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -60,4 +62,15 @@ public class RedisUtil {
         redisTemplate.delete(keys);
     }
 
+    /**
+     * <p>根据正则表达式获取键集合</p>
+     * @param pattern 正则表达式
+     * @return 符合正则表达式的键集合 {@link Set}，不存在时返回空集合
+     * @author Ling, Jiatong
+     */
+    public Set<String> keys(final String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        return Optional.ofNullable(keys)
+                .orElseGet(Sets::newHashSet);
+    }
 }

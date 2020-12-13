@@ -24,20 +24,9 @@ import java.util.List;
 @RequestMapping("/api/v1/system/role")
 public class RoleController {
 
-    @Autowired
-    private RoleService roleService;
-
-    /**
-     * <p>根据角色id获取角色信息</p>
-     * @param id 角色id
-     * @return 角色VO对象 {@link RoleVO}
-     * @author Ling, Jiatong
-     */
-    @GetMapping("/{id:\\d+}")
-    @PreAuthorize("hasAnyAuthority('system:role:view')")
-    public JsonResultVO<RoleVO> getRoleById(@PathVariable Integer id) {
-        log.info("[re-system -> ReRoleController -> getRoleById()] 获取角色信息，角色id：{}", id);
-        return JsonResultVO.success(roleService.getRoleById(id));
+    private final RoleService roleService;
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
     }
 
     /**
@@ -53,8 +42,21 @@ public class RoleController {
     }
 
     /**
+     * <p>根据角色id获取角色信息</p>
+     * @param id 角色id
+     * @return 角色VO对象 {@link RoleVO}
+     * @author Ling, Jiatong
+     */
+    @GetMapping("/{id:\\d+}")
+    @PreAuthorize("hasAnyAuthority('system:role:view')")
+    public JsonResultVO<RoleVO> getRoleById(@PathVariable Integer id) {
+        log.info("[re-system -> ReRoleController -> getRoleById()] 获取角色信息，角色id：{}", id);
+        return JsonResultVO.success(roleService.getRoleById(id));
+    }
+
+    /**
      * <p>新增角色</p>
-     * @param dto 角色DTO对象 {@link RoleDTO}
+     * @param dto 角色通用DTO对象 {@link RoleDTO}
      * @return 通用返回消息对象
      * @author Ling, Jiatong
      */
@@ -85,7 +87,7 @@ public class RoleController {
      * @return 通用返回消息对象
      * @author Ling, Jiatong
      */
-    @DeleteMapping("/logic")
+    @DeleteMapping("/delete/logic")
     @PreAuthorize("hasAnyAuthority('system:role:delete')")
     public JsonResultVO<?> logicDeleteById(RoleDTO dto) {
         log.info("[re-system -> ReRoleController -> logicDeleteById()] 逻辑删除角色，参数：{}", dto);
@@ -94,16 +96,16 @@ public class RoleController {
     }
 
     /**
-     * 更新角色信息
-     * @param roleDTO 参数封装
+     * <p>更新角色信息</p>
+     * @param dto 参数封装
+     * @return 通用角色返回对象
      * @author Ling, Jiatong
-     *
      */
     @PutMapping
     @PreAuthorize("hasAnyAuthority('system:role:update')")
-    public JsonResultVO<?> updateRole(@RequestBody RoleDTO roleDTO) {
-        log.info("[re-system -> ReRoleController -> updateRole()] 更新角色，参数：{}", roleDTO);
-        roleService.updateRole(roleDTO);
+    public JsonResultVO<?> updateRole(@RequestBody RoleDTO dto) {
+        log.info("[re-system -> ReRoleController -> updateRole()] 更新角色，参数：{}", dto);
+        roleService.updateRole(dto);
         return JsonResultVO.success();
     }
 

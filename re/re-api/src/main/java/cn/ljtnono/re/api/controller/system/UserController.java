@@ -6,10 +6,7 @@ import cn.ljtnono.re.dto.system.UserDTO;
 import cn.ljtnono.re.dto.system.UserListQueryDTO;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.service.system.UserService;
-import cn.ljtnono.re.vo.system.UserListVO;
-import cn.ljtnono.re.vo.system.UserLoginVO;
-import cn.ljtnono.re.vo.system.UserRoleNumPieVO;
-import cn.ljtnono.re.vo.system.UserVO;
+import cn.ljtnono.re.vo.system.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -136,5 +133,15 @@ public class UserController {
     public JsonResultVO<List<UserRoleNumPieVO>> roleNumPie() {
         log.info("[re-system -> UserController -> roleNumPie()] 获取用户根据角色分类统计饼状图");
         return JsonResultVO.success(userService.roleNumPie());
+    }
+
+    /**
+     * <p>获取在线用户统计信息</p>
+     * @author Ling, Jiatong
+     */
+    @GetMapping("/online")
+    public JsonResultVO<UserOnlineVO> online() {
+        log.info("[re-system -> UserController -> online()] 获取在线用户统计");
+        return JsonResultVO.success(userService.online());
     }
 }

@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * <p>角色列表查询DTO对象</p>
  * @author Ling, Jiatong
  * Date: 2020/11/25 0:21
  */

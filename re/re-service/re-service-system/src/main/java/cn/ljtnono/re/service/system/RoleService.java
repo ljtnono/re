@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,9 +33,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
+ * <p>角色service层</p>
  * @author Ling, Jiatong
  * Date: 2020/8/9 16:30
- * Description: 角色Service类
  */
 @Slf4j
 @Service
@@ -45,10 +44,13 @@ public class RoleService {
 
     @Resource
     private RoleMapper roleMapper;
-    @Autowired
-    private PermissionService permissionService;
-    @Autowired
-    private RolePermissionService rolePermissionService;
+    private final PermissionService permissionService;
+    private final RolePermissionService rolePermissionService;
+
+    public RoleService(PermissionService permissionService, RolePermissionService rolePermissionService) {
+        this.permissionService = permissionService;
+        this.rolePermissionService = rolePermissionService;
+    }
 
     //*********************************** 接口方法 ***********************************//
 
@@ -260,17 +262,19 @@ public class RoleService {
      * <p>检查角色是否存在，如果不存在那么抛出异常</p>
      * @param id 角色id
      * @throws ResourceNotExistException 当角色不存在时，抛出此异常
+     * @return 如果角色存在，那么返回该角色实体 {@link Role}
      * @author Ling, Jiatong
      */
-    public void checkExist(Integer id) {
+    @Transactional(readOnly = true)
+    public Role checkExist(Integer id) {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .eq(Role::getId, id)
                 .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
-        if (role == null) {
-            throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
-        }
+        Optional.ofNullable(role)
+                .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST));
+        return role;
     }
 
     /**

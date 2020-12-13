@@ -22,10 +22,7 @@ import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
-import cn.ljtnono.re.vo.system.UserListVO;
-import cn.ljtnono.re.vo.system.UserLoginVO;
-import cn.ljtnono.re.vo.system.UserRoleNumPieVO;
-import cn.ljtnono.re.vo.system.UserVO;
+import cn.ljtnono.re.vo.system.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -47,6 +44,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -508,6 +506,22 @@ public class UserService implements UserDetailsService {
                 .replace("username", username));
         return userInfoCache != null;
     }
+
+    /**
+     * <p>获取在线用户统计信息</p>
+     * @return 在线用户统计VO对象 {@link UserOnlineVO}
+     * @author Ling, Jiatong
+     */
+    public UserOnlineVO online() {
+        UserOnlineVO vo = new UserOnlineVO();
+        Set<String> keys = redisUtil.keys("re:system:user:");
+        if (!CollectionUtils.isEmpty(keys)) {
+            // TODO 解析相关
+        }
+        return vo;
+    }
+
+
 
     //*********************************** 其他方法 ***********************************//
 
