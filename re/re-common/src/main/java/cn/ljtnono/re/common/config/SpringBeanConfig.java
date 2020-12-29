@@ -20,6 +20,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.Properties;
 import java.util.concurrent.*;
@@ -143,5 +149,19 @@ public class SpringBeanConfig {
     public ConcurrentHashMap<String, User> webSocketOnlineMap() {
         // 在线列表，key为用户名，User为用户对象
         return new ConcurrentHashMap<>(10);
+    }
+
+    @Bean
+    public Docket buildDocket() {
+        // 创建swagger Docket
+        ApiInfo apiInfo = new ApiInfoBuilder()
+                .title("根元素博客接口文档")
+                .version("v1")
+                .build();
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("cn.ljtnono.re.api"))
+                .build();
     }
 }

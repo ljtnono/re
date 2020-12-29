@@ -7,21 +7,24 @@ import cn.ljtnono.re.service.system.RoleService;
 import cn.ljtnono.re.vo.system.RoleListVO;
 import cn.ljtnono.re.vo.system.RoleVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * <p>角色接口</p>
+ * 角色模块接口
+ *
  * @author Ling, Jiatong
  * Date 2020/7/16 1:19 上午
  */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/role")
+@Api(value = "/api/v1/system/role", tags = "角色模块接口")
 public class RoleController {
 
     private final RoleService roleService;
@@ -36,6 +39,7 @@ public class RoleController {
      */
     @GetMapping("/select")
     @PreAuthorize("hasAnyAuthority('system:role:view')")
+    @ApiOperation(value = "获取角色下拉列表", httpMethod = "GET")
     public JsonResultVO<List<RoleVO>> select() {
         log.info("[re-system -> ReRoleController -> select()] 获取角色下拉列表");
         return JsonResultVO.success(roleService.select());

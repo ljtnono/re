@@ -25,6 +25,9 @@ re:
       - /api/v1/system/user/login
       - /api/v1/system/verifyCode
       - /message/**
+      - /swagger-ui/**
+      - /v2/**
+      - /swagger-resources/**
 
 # rest
 rest:

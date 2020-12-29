@@ -47,6 +47,7 @@
         <easyexcel.version>2.1.7</easyexcel.version>
         <oshi.version>5.3.5</oshi.version>
         <jna.version>5.5.0</jna.version>
+        <swagger.version>3.0.0</swagger.version>
     </properties>
     <!-- 依赖统一管理 -->
     <dependencyManagement>
@@ -107,6 +108,12 @@
                 <groupId>net.java.dev.jna</groupId>
                 <artifactId>jna-platform</artifactId>
                 <version>${jna.version}</version>
+            </dependency>
+            <!-- swagger相关 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

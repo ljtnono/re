@@ -2,11 +2,13 @@ package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.system.SystemException;
+import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.common.util.UUIDUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import com.google.code.kaptcha.Producer;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,26 +20,31 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 验证码模块接口
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/9 18:56
- * Description: 验证码Controller
  */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/verifyCode")
+@Api(value = "/api/v1/system/verifyCode", tags = "验证码模块接口")
 public class VerifyCodeController {
 
-    @Autowired
-    private Producer captchaProducer;
-    @Autowired
-    private RedisUtil redisUtil;
+    private final Producer captchaProducer;
+    private final RedisUtil redisUtil;
+    public VerifyCodeController(Producer captchaProducer, RedisUtil redisUtil) {
+        this.captchaProducer = captchaProducer;
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 获取验证码
-     * @param response 响应对象
      */
     @GetMapping
-    public void getVerifyCode(HttpServletResponse response) {
+    @ApiOperation("获取验证码图片")
+    public void getVerifyCode() {
+        HttpServletResponse response = SpringBeanUtil.getCurrentRes();
         log.info("[re-system -> VerifyCodeController -> getVerifyCode()] 获取验证码");
         response.setContentType("image/jpeg");
         String capText = captchaProducer.createText();

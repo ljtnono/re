@@ -89,8 +89,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(reSecurityProperties.getWhiteUrl().toArray(new String[]{}))
                 .permitAll()
-                .and()
-                .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 .and()

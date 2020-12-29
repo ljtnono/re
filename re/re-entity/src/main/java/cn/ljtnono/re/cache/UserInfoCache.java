@@ -8,9 +8,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
+ * 用户在redis中的缓存对象
+ *
  * @author Ling, Jiatong
  * Date: 2020/10/6 21:17
- * Description: 用户在redis中的缓存对象
  */
 @Data
 @ToString

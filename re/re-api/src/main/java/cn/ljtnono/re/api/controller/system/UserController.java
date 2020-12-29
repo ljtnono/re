@@ -8,6 +8,7 @@ import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.service.system.UserService;
 import cn.ljtnono.re.vo.system.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +16,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * <p>用户controller层</p>
+ * 用户模块接口
+ *
  * @author Ling, Jiatong
  * Date 2020/7/16 1:19 上午
  */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/user")
+@Api(value = "/api/v1/system/user", tags = "用户模块接口")
 public class UserController {
 
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -37,7 +39,8 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @PostMapping("/login")
-    public JsonResultVO<UserLoginVO> login(@RequestBody UserDTO dto) {
+    @ApiOperation(value = "用户登录")
+    public JsonResultVO<UserLoginVO> login(@RequestBody @ApiParam(required = true) UserDTO dto) {
         log.info("[re-system -> UserController -> login()] 用户登录，登录参数：{}", dto);
         return JsonResultVO.success(userService.login(dto));
     }
@@ -49,6 +52,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/logout")
+    @ApiOperation("用户登出")
     public JsonResultVO<?> logout(@LoginUser User user) {
         log.info("[re-system -> UserController -> logout()] 用户登出，参数：{}", user);
         userService.logout(user);
@@ -63,7 +67,8 @@ public class UserController {
      */
     @PostMapping
     @PreAuthorize("hasAnyAuthority('system:user:add')")
-    public JsonResultVO<?> addUser(@RequestBody UserDTO dto) {
+    @ApiOperation("新增用户")
+    public JsonResultVO<?> addUser(@RequestBody @ApiParam(required = true) UserDTO dto) {
         log.info("[re-system -> UserController -> addUser()] 新增用户：{}", dto);
         userService.addUser(dto);
         return JsonResultVO.success();
@@ -76,6 +81,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/{id:\\d+}")
+    @ApiOperation("根据id获取用户")
     @PreAuthorize("hasAnyAuthority('system:user', 'system:user:view')")
     public JsonResultVO<UserVO> getUserById(@PathVariable Integer id) {
         log.info("[re-system -> UserController -> getUserById()] 获取用户信息，用户id：{}", id);
@@ -89,6 +95,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @DeleteMapping("/logic")
+    @ApiOperation("根据id逻辑删除用户")
     @PreAuthorize("hasAnyAuthority('system:user:delete')")
     public JsonResultVO<?> logicDeleteById(@RequestBody UserDTO dto) {
         log.info("[re-system -> UserController -> logicDeleteById()] 逻辑删除用户，用户id：{}", dto);
@@ -103,6 +110,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @PutMapping
+    @ApiOperation("更新用户")
     @PreAuthorize("hasAnyAuthority('system:user:update')")
     public JsonResultVO<?> updateUser(@RequestBody UserDTO dto) {
         log.info("[re-system -> UserController -> updateUser()] 更新用户，参数：{}", dto);
@@ -117,6 +125,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/list")
+    @ApiOperation("分页获取用户")
     @PreAuthorize("hasAnyAuthority('system:user', 'system:user:view')")
     public JsonResultVO<IPage<UserListVO>> list(UserListQueryDTO dto) {
         log.info("[re-system -> UserController -> list()] 分页获取用户信息，参数：{}", dto);
@@ -129,6 +138,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/roleNumPie")
+    @ApiOperation("获取用户根据角色分类统计饼状图")
     @PreAuthorize("hasAnyAuthority('system:user', 'system:user:view')")
     public JsonResultVO<List<UserRoleNumPieVO>> roleNumPie() {
         log.info("[re-system -> UserController -> roleNumPie()] 获取用户根据角色分类统计饼状图");
@@ -140,6 +150,7 @@ public class UserController {
      * @author Ling, Jiatong
      */
     @GetMapping("/online")
+    @ApiOperation("获取在线用户统计信息")
     public JsonResultVO<UserOnlineVO> online() {
         log.info("[re-system -> UserController -> online()] 获取在线用户统计");
         return JsonResultVO.success(userService.online());
