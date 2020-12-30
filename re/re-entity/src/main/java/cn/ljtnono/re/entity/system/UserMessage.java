@@ -7,20 +7,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 /**
+ * 用户消息实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/30 0:56
- * Desciription: 用户消息实体
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_user_message")
-public class UserMessage extends BaseEntity implements Serializable {
+public class UserMessage extends BaseEntity {
 
-    private static final long serialVersionUID = 6450065004950075220L;
 
     /** 所属用户id */
     private Integer userId;

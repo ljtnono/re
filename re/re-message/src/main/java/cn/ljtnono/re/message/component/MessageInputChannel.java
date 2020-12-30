@@ -2,7 +2,6 @@ package cn.ljtnono.re.message.component;
 
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.security.util.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
@@ -15,21 +14,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.security.Principal;
 
 /**
+ * 消息认证拦截器
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/14 1:01
- * Description:
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class MessageInputChannel implements ChannelInterceptor {
 
-    @Autowired
-    private JwtUtil jwtUtil;
     @Resource
     private UserDetailsService userDetailsService;
+    private final JwtUtil jwtUtil;
+    public MessageInputChannel(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     /**
      * 发送消息拦截器

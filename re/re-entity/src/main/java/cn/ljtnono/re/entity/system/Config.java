@@ -8,9 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * 全局配置实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/6 23:32
- * Description:
  */
 @Data
 @TableName("sys_config")

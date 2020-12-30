@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.common.enumeration.StatusEnum;
+import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
@@ -63,7 +63,7 @@ public class RoleService {
     public List<RoleVO> select() {
         List<Role> roleList = roleMapper.selectList(new LambdaQueryWrapper<Role>()
                 .select(Role::getId, Role::getName)
-                .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         if (!CollectionUtils.isEmpty(roleList)) {
             return roleList.parallelStream()
                     .map(role -> {
@@ -92,7 +92,7 @@ public class RoleService {
         // 插入角色表
         Role role = new Role();
         BeanUtils.copyProperties(dto, role);
-        role.setDeleted(StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
+        role.setDeleted(EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         setCreateTimeAndModifyTimeNow(role);
         int insert = roleMapper.insert(role);
         if (insert <= 0) {
@@ -125,7 +125,7 @@ public class RoleService {
             idList.parallelStream()
                     .forEach(this::checkExist);
             roleMapper.update(null, new LambdaUpdateWrapper<Role>()
-                    .set(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
+                    .set(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_DELETED.getValue())
                     .set(Role::getModifyTime, new Date())
                     .in(Role::getId, idList));
         }
@@ -237,7 +237,7 @@ public class RoleService {
         Role reRole = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .select(Role::getName)
                 .eq(Role::getName, name)
-                .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reRole != null;
     }
 
@@ -254,7 +254,7 @@ public class RoleService {
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .eq(Role::getId, id)
-                .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return role != null;
     }
 
@@ -271,7 +271,7 @@ public class RoleService {
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .eq(Role::getId, id)
-                .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         Optional.ofNullable(role)
                 .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST));
         return role;
@@ -288,7 +288,7 @@ public class RoleService {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
-                .eq(Role::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         if (role != null) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(role, roleVO);

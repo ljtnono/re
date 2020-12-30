@@ -8,7 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
- * <p>角色实体</p>
+ * 角色实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/12 22:23 下午
  */

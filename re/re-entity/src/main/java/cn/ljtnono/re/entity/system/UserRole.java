@@ -7,9 +7,10 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * 用户角色表实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/10/6 21:54
- * Description:
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

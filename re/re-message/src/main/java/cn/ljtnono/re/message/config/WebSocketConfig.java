@@ -11,17 +11,20 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
+ * websocket配置类
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/14 0:48
- * Description:
  */
 @Slf4j
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    @Autowired
-    private MessageInputChannel messageInputChannel;
+    private final MessageInputChannel messageInputChannel;
+    public WebSocketConfig(MessageInputChannel messageInputChannel) {
+        this.messageInputChannel = messageInputChannel;
+    }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {

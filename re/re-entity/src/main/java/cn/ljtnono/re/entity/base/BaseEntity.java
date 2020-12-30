@@ -10,9 +10,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
+ * 实体基类
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/11 23:56 下午
- * Description:
  */
 @Data
 @ToString

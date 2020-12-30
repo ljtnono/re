@@ -1,13 +1,13 @@
 package cn.ljtnono.re.common.constant.message;
 
 /**
+ * 消息类型枚举
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/14 23:25
- * Description: 消息类型枚举
  */
 public enum MessageTypeEnum {
 
-    
     /** 系统监控型消息 */
     SERVER_MONITOR(100, "系统监控消息", "/topic/server/monitor"),
 

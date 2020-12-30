@@ -4,7 +4,6 @@ import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
 import cn.ljtnono.re.entity.system.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationListener;
 import org.springframework.messaging.Message;
@@ -13,21 +12,22 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 
-import java.security.Principal;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * stomp连接监听器
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/15 0:22
- * Description:
  */
 @Slf4j
 @Component
 public class StompConnectListener implements ApplicationListener<SessionConnectedEvent> {
 
-    @Autowired
-    @Qualifier("websocketOnlineMap")
-    private ConcurrentHashMap<String, User> onlineMap;
+    private final ConcurrentHashMap<String, User> onlineMap;
+    public StompConnectListener(@Qualifier("websocketOnlineMap") ConcurrentHashMap<String, User> onlineMap) {
+        this.onlineMap = onlineMap;
+    }
 
     @Override
     public void onApplicationEvent(SessionConnectedEvent sessionConnectedEvent) {

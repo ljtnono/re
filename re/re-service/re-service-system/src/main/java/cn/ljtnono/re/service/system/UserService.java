@@ -4,7 +4,7 @@ import cn.ljtnono.re.cache.UserInfoCache;
 import cn.ljtnono.re.common.constant.system.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
-import cn.ljtnono.re.common.enumeration.StatusEnum;
+import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
@@ -160,7 +160,7 @@ public class UserService implements UserDetailsService {
         User user = new User();
         BeanUtils.copyProperties(dto, user);
         user.setPassword(EncryptUtil.getInstance().getMd5LowerCase(dto.getPassword()));
-        user.setDeleted(StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
+        user.setDeleted(EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         user.setCreateTime(new Date());
         user.setModifyTime(new Date());
         // 插入相关数据
@@ -190,7 +190,7 @@ public class UserService implements UserDetailsService {
         // 校验每个用户是否存在，如果不存在那么抛出异常
         idList.parallelStream().forEach(this::checkExist);
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
-                .set(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_DELETED.getValue())
+                .set(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_DELETED.getValue())
                 .set(User::getModifyTime, new Date())
                 .in(User::getId, idList));
         if (update <= 0) {
@@ -344,7 +344,7 @@ public class UserService implements UserDetailsService {
         // 检验是否存在该用户名和密码
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         // 用户不存在
         if (user == null) {
             throw new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST);
@@ -441,7 +441,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getId, id)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         Optional.ofNullable(user)
                 .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST));
         return user;
@@ -458,7 +458,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
         User user = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getId, id)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return user != null;
     }
 
@@ -475,7 +475,7 @@ public class UserService implements UserDetailsService {
         }
         User reUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         return reUser != null;
     }
 
@@ -534,7 +534,7 @@ public class UserService implements UserDetailsService {
         }
         User reUser = userMapper.selectOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username)
-                .eq(User::getDeleted, StatusEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
+                .eq(User::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         // 用户不存在
         Optional.ofNullable(reUser)
                 .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.USER_NOT_EXIST));

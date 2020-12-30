@@ -7,20 +7,17 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.io.Serializable;
-
 /**
+ * 权限实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/12 22:23 下午
- * Description: 权限实体
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @TableName("sys_permission")
-public class Permission extends BaseEntity implements Serializable {
-
-    private static final long serialVersionUID = -152690006554286058L;
+public class Permission extends BaseEntity {
 
     /** 权限名 */
     private String name;

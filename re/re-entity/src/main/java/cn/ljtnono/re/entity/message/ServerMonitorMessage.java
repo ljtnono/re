@@ -6,9 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * 系统监控消息实体
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/15 13:02
- * Description:
  */
 @Data
 @ToString(callSuper = true)
