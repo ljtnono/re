@@ -7,15 +7,17 @@ import qs from "qs";
  * @param password 密码
  * @param verifyCodeId 验证码id
  * @param verifyCode 验证码
+ * @param forceLogin 是否强制登陆 1 强制登陆 2 不强制登陆
  * @returns {AxiosPromise<any>}
  */
-export const login = (username, password, verifyCodeId, verifyCode) => {
-    return http.post("/system/user/login", {
-        username: username,
-        password: password,
-        verifyCodeId: verifyCodeId,
-        verifyCode: verifyCode
-    });
+export const login = (username, password, verifyCodeId, verifyCode, forceLogin) => {
+  return http.post("/system/user/login", {
+    username: username,
+    password: password,
+    verifyCodeId: verifyCodeId,
+    verifyCode: verifyCode,
+    forceLogin: forceLogin
+  });
 };
 
 /**
@@ -23,7 +25,7 @@ export const login = (username, password, verifyCodeId, verifyCode) => {
  * @return {AxiosPromise<any>}
  */
 export const logout = () => {
-    return http.get("/system/user/logout");
+  return http.get("/system/user/logout");
 }
 
 /**
@@ -37,8 +39,15 @@ export const logout = () => {
  * @return {AxiosPromise<any>}
  */
 export const getList = ({searchCondition, roleId, sortFieldList, sortTypeList, pageNum, pageSize}) => {
-    let params = qs.stringify({searchCondition, roleId, sortFieldList, sortTypeList, pageNum, pageSize}, { arrayFormat: 'repeat' })
-    return http.get("/system/user/list?" + params);
+  let params = qs.stringify({
+    searchCondition,
+    roleId,
+    sortFieldList,
+    sortTypeList,
+    pageNum,
+    pageSize
+  }, {arrayFormat: 'repeat'})
+  return http.get("/system/user/list?" + params);
 }
 
 /**
@@ -47,11 +56,11 @@ export const getList = ({searchCondition, roleId, sortFieldList, sortTypeList, p
  * @return {AxiosPromise}
  */
 export const logicDelete = ({idList}) => {
-    return http.delete("/system/user/logic", {
-        data: {
-            idList
-        }
-    });
+  return http.delete("/system/user/logic", {
+    data: {
+      idList
+    }
+  });
 }
 
 /**
@@ -64,9 +73,9 @@ export const logicDelete = ({idList}) => {
  * @param roleId 用户角色
  */
 export const updateUser = ({id, username, password, phone, email, roleId}) => {
-    return http.put("/system/user", {
-        id, username, password, phone, email, roleId
-    });
+  return http.put("/system/user", {
+    id, username, password, phone, email, roleId
+  });
 }
 
 /**
@@ -74,12 +83,12 @@ export const updateUser = ({id, username, password, phone, email, roleId}) => {
  * @param id 用户id
  */
 export const getUserById = (id) => {
-    return http.get("/system/user/" + id);
+  return http.get("/system/user/" + id);
 }
 
 /**
  * 获取用户根据角色分类统计饼状图
  */
 export const roleNumPie = () => {
-    return http.get("/system/user/roleNumPie");
+  return http.get("/system/user/roleNumPie");
 }
