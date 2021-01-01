@@ -92,3 +92,10 @@ export const getUserById = (id) => {
 export const roleNumPie = () => {
   return http.get("/system/user/roleNumPie");
 }
+
+/**
+ * 获取当前在线用户统计图
+ */
+export const onlineNumPie = () => {
+  return http.get("/system/user/onlineNumPie")
+}

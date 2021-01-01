@@ -79,7 +79,7 @@ export default {
             return this.$store.state.app.tagRouter;
         },
         userAvatar() {
-            return Cookies.getJSON("userInfo").avatarImage
+            return Cookies.getJSON("userInfo").avatarUrl
         },
         cacheList() {
             const list = ["ParentView", ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []];

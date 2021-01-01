@@ -34,20 +34,15 @@
         </Card>
       </Col>
       <Col span="7" offset="1">
-        <!--  -->
+        <!-- 在线用户统计 -->
         <Card shadow>
-          <p slot="title">Use a card with a shadow effect</p>
-          <p>Content of card</p>
-          <p>Content of card</p>
-          <p>Content of card</p>
+          <pie style="height: 200px;" :value="onlineNumPieData" text="在线用户统计"/>
         </Card>
       </Col>
       <Col span="7" offset="2">
+        <!-- 在线用户统计 -->
         <Card shadow>
-          <p slot="title">Use a card with a shadow effect</p>
-          <p>Content of card</p>
-          <p>Content of card</p>
-          <p>Content of card</p>
+          <pie style="height: 200px;" :value="roleNumPieData" text="在线用户统计"/>
         </Card>
       </Col>
     </Row>
@@ -100,8 +95,9 @@
 </template>
 
 <script>
-import {getList, logicDelete, roleNumPie} from "@/api/system/user";
-import {UserAddForm, UserEditForm} from "@/components/system/user"
+import {getList, logicDelete, roleNumPie, onlineNumPie} from "@/api/system/user";
+import UserEditForm from "_c/system/user/UserEditForm"
+import UserAddForm from "_c/system/user/UserAddForm";
 import {Pie} from "_c/common/charts"
 
 export default {
@@ -159,7 +155,8 @@ export default {
       editFormSwitch: false,
       addFormSwitch: false,
       editFormUserId: null,
-      roleNumPieData: []
+      roleNumPieData: [],
+      onlineNumPieData: []
     }
   },
   methods: {
@@ -295,6 +292,22 @@ export default {
         }
       }).catch(error => {
       });
+    },
+    // 获取在线用户统计饼状图
+    onlineNumPie() {
+      onlineNumPie().then(result => {
+        let data = result.data;
+        if (data.code === 0 && data.message === "success") {
+          let value = data.data;
+          // value.forEach((v) => {
+          //   this.roleNumPieData.push({
+          //     name: v.roleName,
+          //     value: v.num
+          //   });
+          // });
+        }
+      }).catch(error => {
+      })
     }
   },
   mounted() {

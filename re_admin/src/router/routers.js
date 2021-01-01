@@ -26,29 +26,20 @@ export default [
     component: Main,
     children: [
       {
-        path: 'blog-list',
-        name: 'blog-list',
+        path: 'editor',
+        name: 'editor',
         meta: {
-          title: '博客列表'
+          title: '编辑博客'
         },
-        component: () => import('@/view/blog/blog-list')
+        component: () => import('@/view/blog/Editor')
       },
       {
-        path: 'blog-detail',
-        name: 'blog-detail',
+        path: 'article',
+        name: 'article',
         meta: {
-          title: '博客详情',
-          hideInMenu: true
+          title: '文章管理'
         },
-        component: () => import('@/view/blog/blog-detail')
-      },
-      {
-        path: 'blog-edit',
-        name: 'blog-edit',
-        meta: {
-          title: '博客编辑'
-        },
-        component: () => import('@/view/blog/blog-edit')
+        component: () => import('@/view/blog/Article')
       }
     ]
   },

@@ -1,10 +1,12 @@
 <template>
-$END$
+  <div ref="dom" class="charts chart-pie"/>
 </template>
 
 <script>
+import echarts from 'echarts'
+
 export default {
-name: "NumPie"
+  name: "NumPie"
 }
 </script>
 

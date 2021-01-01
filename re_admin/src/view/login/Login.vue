@@ -87,7 +87,7 @@ export default {
         email: data.email,
         phone: data.phone,
         deleted: data.deleted,
-        avatarImage: data.avatarImage
+        avatarUrl: data.avatarUrl
       }, {expires: USERINFO_EXPIRE});
     }
   }

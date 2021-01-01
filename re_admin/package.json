@@ -11,6 +11,8 @@
         "test:e2e": "vue-cli-service test:e2e"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^24.0.0",
+        "@ckeditor/ckeditor5-vue2": "^1.0.5",
         "axios": "^0.18.1",
         "countup": "^1.8.2",
         "echarts": "^4.7.0",
