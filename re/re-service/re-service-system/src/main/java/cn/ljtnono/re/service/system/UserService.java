@@ -5,6 +5,7 @@ import cn.ljtnono.re.common.constant.system.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
 import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
+import cn.ljtnono.re.common.enumeration.system.RoleEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
@@ -16,12 +17,12 @@ import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.dto.system.UserDTO;
 import cn.ljtnono.re.dto.system.UserListQueryDTO;
-import cn.ljtnono.re.entity.system.Config;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
+import cn.ljtnono.re.service.resource.ImageService;
 import cn.ljtnono.re.vo.system.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -29,6 +30,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,6 +41,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -48,7 +51,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>用户Service层</p>
+ * 用户模块Service层
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/2 0:50
  */
@@ -66,8 +70,11 @@ public class UserService implements UserDetailsService {
     private final ReSecurityProperties reSecurityProperties;
     private final UserRoleService userRoleService;
     private final ConfigService configService;
+    private final ImageService imageService;
+    @Value("${spring.profiles.active}")
+    private String profile;
 
-    public UserService(RedisUtil redisUtil, JwtUtil jwtUtil, RoleService roleService, RolePermissionService rolePermissionService, ReSecurityProperties reSecurityProperties, UserRoleService userRoleService, ConfigService configService) {
+    public UserService(RedisUtil redisUtil, JwtUtil jwtUtil, RoleService roleService, RolePermissionService rolePermissionService, ReSecurityProperties reSecurityProperties, UserRoleService userRoleService, ConfigService configService, ImageService imageService) {
         this.redisUtil = redisUtil;
         this.jwtUtil = jwtUtil;
         this.roleService = roleService;
@@ -75,12 +82,15 @@ public class UserService implements UserDetailsService {
         this.reSecurityProperties = reSecurityProperties;
         this.userRoleService = userRoleService;
         this.configService = configService;
+        this.imageService = imageService;
     }
 
     //*********************************** 接口方法 ***********************************//
 
     /**
-     * <p>用户登录，分为强行登录和普通登录，强行登录需要校验forceLogin字段为1</p>
+     * 用户登录
+     * 分为强行登录和普通登录，强行登录需要校验forceLogin字段为1
+     *
      * @param dto 用户通用DTO对象 {@link UserDTO}
      * @return 用户登录返回VO对象 {@link UserLoginVO}
      * @author Ling, Jiatong
@@ -125,7 +135,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>用户登出（删除redis缓存）</p>
+     * 用户登出（删除redis缓存）
+     *
      * @param user 当前用户
      * @author Ling, Jiatong
      */
@@ -139,7 +150,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>新增用户接口</p>
+     * 新增用户接口
+     *
      * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
@@ -176,7 +188,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>逻辑删除用户（不删除用户角色关联表数据），用户处于已经删除状态（is_deleted=1）会抛出异常</p>
+     * 逻辑删除用户（不删除用户角色关联表数据）
+     * 用户处于已经删除状态（is_deleted=1）会抛出异常
+     *
      * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
@@ -206,7 +220,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>修改用户信息，修改后会导致原用户下线（删除用户缓存记录）</p>
+     * 修改用户信息
+     * 修改后会导致原用户下线（删除用户缓存记录）
+     *
      * @param dto 用户通用DTO对象 {@link UserDTO}
      * @author Ling, Jiatong
      */
@@ -236,7 +252,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>分页获取用户列表</p>
+     * 分页获取用户列表
+     *
      * @param dto 用户列表查询DTO对象 {@link UserListQueryDTO}
      * @return 用户列表查询VO分页包装对象 {@link UserListVO}
      * @author Ling, Jiatong
@@ -257,7 +274,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>获取用户根据角色分类统计饼状图</p>
+     * 获取用户根据角色分类统计饼状图
+     *
      * @return 用户根据角色分类统计饼状图VO对象 {@link UserRoleNumPieVO}
      * @author Ling, Jiatong
      */
@@ -265,12 +283,38 @@ public class UserService implements UserDetailsService {
         return userMapper.roleNumPie();
     }
 
+
+    /**
+     * 上传用户头像
+     *
+     * @param multipartFile 用户头像文件对象
+     * @param id 用户id
+     * @author Ling, Jiatong
+     */
+    public void uploadAvatarImage(MultipartFile multipartFile, Integer id) {
+        // 校验用户是否存在
+        checkExist(id);
+        if (multipartFile == null) {
+            return;
+        }
+        String savePath = imageService.upload(multipartFile);
+        if (savePath != null) {
+            userMapper.update(null, new LambdaUpdateWrapper<User>()
+                    .set(User::getAvatarUrl, savePath)
+                    .set(User::getModifyTime, new Date())
+                    .eq(User::getId, id));
+        } else {
+            throw new BusinessException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
+        }
+    }
+
     //*********************************** 私有方法 ***********************************//
 
 
     /**
-     * <p>缓存用户信息，根据用户对象生成一个 {@link UserInfoCache} 对象缓存到redis中<br/>
-     * 缓存时间为token过期时间</p>
+     * 缓存用户信息
+     * 根据用户对象生成一个 {@link UserInfoCache} 对象缓存到redis中，缓存时间为token过期时间
+     *
      * @param user 用户对象 {@link User}
      * @param token 用户token
      * @author Ling, Jiatong
@@ -290,7 +334,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>删除用户redis登录缓存信息</p>
+     * 删除用户redis登录缓存信息
+     *
      * @param id 用户id
      * @param username 用户名
      * @author Ling, Jiatong
@@ -302,7 +347,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>根据用户对象，生成返回页面的vo对象</p>
+     * 根据用户对象
+     * 生成返回页面的vo对象
+     *
      * @param user 用户对象 {@link User}
      * @param token token
      * @param permission 用户角色所具有的权限id列表
@@ -313,13 +360,17 @@ public class UserService implements UserDetailsService {
         BeanUtils.copyProperties(user, vo);
         vo.setPermissionIdList(permission);
         vo.setToken(token);
-        Config avatarImage = configService.getConfigByKey("avatarImage");
-        vo.setAvatarImage(avatarImage.getValue());
+//        Config avatarImage = configService.getConfigByKey("avatarImage");
+//        vo.setAvatarImage(avatarImage.getValue());
+        // 测试环境，直接拿默认URL当做头像
+
         return vo;
     }
 
     /**
-     * <p>用户DTO基础校验，主要用于用户注册和添加用户时的校验</p>
+     * 用户DTO基础校验
+     * 主要用于用户注册和添加用户时的校验
+     *
      * @param dto 用户通用DTO对象 {@link UserDTO}
      */
     private void userDtoBaseValidate(UserDTO dto) {
@@ -328,7 +379,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>登陆校验用户名和密码，校验错误会抛出异常</p>
+     * 登陆校验用户名和密码
+     * 校验错误会抛出异常
+     *
      * @param username 用户名
      * @param password 密码
      * @return 返回查询出来的用户对象
@@ -357,7 +410,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>登陆认证</p>
+     * 登陆认证
+     *
      * @param user 用户对象 {@link User}
      */
     private void authenticate(User user) {
@@ -367,7 +421,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>邮箱和手机号码校验</p>
+     * 邮箱和手机号码校验
+     *
      * @param email 邮箱
      * @param phone 手机号
      * @author Ling, Jiatong
@@ -386,7 +441,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>用户名和密码校验</p>
+     * 用户名和密码校验
+     *
      * @param username 用户名
      * @param password 用户密码
      * @author Ling, Jiatong
@@ -405,7 +461,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>验证码校验</p>
+     * 验证码校验
+     *
      * @param verifyCodeId 验证码在redis中的键
      * @param verifyCode 验证码的值
      */
@@ -430,7 +487,8 @@ public class UserService implements UserDetailsService {
 
 
     /**
-     * <p>校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象</p>
+     * 校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象
+     *
      * @param id 用户id
      * @return User 用户实体对象 {@link User}
      * @throws ResourceNotExistException 当用户不存在时抛出此异常
@@ -448,7 +506,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>根据id判断用户是否存在（不包括已经删除的用户信息）</p>
+     * 根据id判断用户是否存在（不包括已经删除的用户信息）
+     *
      * @param id 用户id
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
@@ -463,7 +522,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>判断用户名是否存在（不计算已经删除的用户）</p>
+     * 判断用户名是否存在（不计算已经删除的用户）
+     *
      * @param username 用户名
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
@@ -480,8 +540,9 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>根据id获取用户信息。<br/>
-     * 只获取username、id、email、phone、roleId、roleName字段</p>
+     * 根据id获取用户信息
+     * 只获取username、id、email、phone、roleId、roleName字段
+     *
      * @param id 用户id
      * @return 用户通用VO对象 {@link UserVO}
      */
@@ -493,7 +554,8 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>根据用户id和用户名检查用户是否登录</p>
+     * 根据用户id和用户名检查用户是否登录
+     *
      * @param id 用户id
      * @param username 用户名
      * @return 已经登录返回true，没有登陆返回false
@@ -508,19 +570,30 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * <p>获取在线用户统计信息</p>
+     * 获取在线用户统计信息
+     *
      * @return 在线用户统计VO对象 {@link UserOnlineVO}
      * @author Ling, Jiatong
      */
     public UserOnlineVO online() {
         UserOnlineVO vo = new UserOnlineVO();
         Set<String> keys = redisUtil.keys("re:system:user:");
-        if (!CollectionUtils.isEmpty(keys)) {
-            // TODO 解析相关
+        if (CollectionUtils.isEmpty(keys)) {
+            return vo;
         }
+        keys.forEach(key -> {
+            UserInfoCache cache = (UserInfoCache) redisUtil.get(key);
+            if (RoleEnum.ADMIN.getId().equals(cache.getRoleId())) {
+                vo.setAdminNum(vo.getAdminNum() + 1);
+            } else if (RoleEnum.TEST.getId().equals(cache.getRoleId())) {
+                vo.setTestNum(vo.getTestNum() + 1);
+            } else if (RoleEnum.TOURIST.getId().equals(cache.getRoleId())) {
+                vo.setTouristNum(vo.getTouristNum() + 1);
+            }
+        });
+        vo.setTotalNum(keys.size());
         return vo;
     }
-
 
 
     //*********************************** 其他方法 ***********************************//
@@ -542,5 +615,4 @@ public class UserService implements UserDetailsService {
         reUser.setAuthorities(permission);
         return reUser;
     }
-
 }
