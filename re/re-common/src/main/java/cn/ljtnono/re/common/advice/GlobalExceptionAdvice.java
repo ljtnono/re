@@ -23,12 +23,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 /**
+ * 全局异常处理器
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/9 16:36
- * Description: 异常处理器
  */
 @Slf4j
-@RestControllerAdvice(basePackages = "cn.ljtnono.re")
+@RestControllerAdvice
 public class GlobalExceptionAdvice {
 
     /**

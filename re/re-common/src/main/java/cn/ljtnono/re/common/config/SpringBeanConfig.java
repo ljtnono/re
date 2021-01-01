@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -31,7 +32,8 @@ import java.util.Properties;
 import java.util.concurrent.*;
 
 /**
- * <p>SpringBean配置类</p>
+ * SpringBean配置类
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/9 18:25
  */
@@ -82,17 +84,20 @@ public class SpringBeanConfig {
         // kaptcha.session.key	session key	KAPTCHA_SESSION_KEY
         // kaptcha.session.date	session date	KAPTCHA_SESSION_DATE
         properties.setProperty(Constants.KAPTCHA_BORDER, "yes");
-        properties.setProperty(Constants.KAPTCHA_BORDER_COLOR, "220,220,220");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_COLOR, "38,29,12");
         properties.setProperty(Constants.KAPTCHA_IMAGE_WIDTH, "90");
         properties.setProperty(Constants.KAPTCHA_IMAGE_HEIGHT, "34");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_SIZE, "25");
         properties.setProperty(Constants.KAPTCHA_SESSION_KEY, "code");
+        properties.setProperty(Constants.KAPTCHA_BORDER_COLOR, "LIGHT_GRAY");
+        properties.setProperty(Constants.KAPTCHA_BACKGROUND_CLR_FROM, "WHITE");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, "Arial");
         properties.setProperty(Constants.KAPTCHA_NOISE_COLOR, "164,128,55");
+        properties.setProperty(Constants.KAPTCHA_SESSION_CONFIG_KEY, "checkCode");
+        properties.setProperty(Constants.KAPTCHA_NOISE_IMPL, "com.google.code.kaptcha.impl.NoNoise");
         properties.setProperty(Constants.KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.ShadowGimpy");
-        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_STRING, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_STRING, "0123456789");
         Config config = new Config(properties);
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
@@ -152,6 +157,7 @@ public class SpringBeanConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "re.swagger-ui-open", havingValue = "true")
     public Docket buildDocket() {
         // 创建swagger Docket
         ApiInfo apiInfo = new ApiInfoBuilder()

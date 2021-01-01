@@ -1,4 +1,4 @@
-package cn.ljtnono.re.common.constant.message;
+package cn.ljtnono.re.common.enumeration.message;
 
 /**
  * 消息类型枚举

@@ -16,21 +16,34 @@ import lombok.ToString;
 @ApiModel(description = "用户在线统计VO对象")
 public class UserOnlineVO {
 
-    /** 总在线人数 */
+    /**
+     * 总在线人数
+     */
     @ApiModelProperty("用户在线总人数")
     private Integer totalNum;
 
-    /** 超级管理员数 */
+    /**
+     * 超级管理员数
+     */
     @ApiModelProperty("超级管理员在线人数")
     private Integer adminNum;
 
-    /** 游客数量 */
+    /**
+     * 游客数量
+     */
     @ApiModelProperty("游客在线人数")
     private Integer touristNum;
+
+    /**
+     * 测试数量
+     */
+    @ApiModelProperty("测试在线人数")
+    private Integer testNum;
 
     public UserOnlineVO() {
         totalNum = 0;
         touristNum = 0;
         adminNum = 0;
+        testNum = 0;
     }
 }

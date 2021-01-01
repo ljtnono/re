@@ -52,4 +52,4 @@ public class Log extends BaseEntity {
      * 客户端浏览器详情
      */
     private String browser;
-}
+  }

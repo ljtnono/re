@@ -68,7 +68,7 @@ public class UserLoginVO extends BaseVO {
      * 用户头像图片路径
      */
     @ApiModelProperty("用户头像路径")
-    private String avatarImage;
+    private String avatarUrl;
 
     /**
      * menu菜单的结构

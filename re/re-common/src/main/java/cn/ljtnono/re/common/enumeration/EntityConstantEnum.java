@@ -8,14 +8,14 @@ package cn.ljtnono.re.common.enumeration;
  */
 public enum EntityConstantEnum {
 
-    //********** 通用实体 **********//
+    //******************** 通用实体 ********************//
 
     /** 实体类是否删除   未删除 */
     ENTITY_IS_DELETED_NOT_DELETED(0),
     /** 实体类是否删除   已删除 */
     ENTITY_IS_DELETED_DELETED(1),
 
-    //********** 系统日志 **********//
+    //******************** 系统日志 ********************//
     /** 系统日志操作结果  成功 */
     LOG_RESULT_SUCCESS(1),
     /** 系统日志操作结果  失败*/

@@ -12,6 +12,7 @@ import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,7 +34,8 @@ public class UserController {
     }
 
     /**
-     * <p>用户登录接口</p>
+     * 用户登录接口
+     *
      * @param dto 通用用户DTO对象 {@link UserDTO}
      * @return 用户登录VO对象 {@link UserLoginVO}
      * @author Ling, Jiatong
@@ -46,7 +48,8 @@ public class UserController {
     }
 
     /**
-     * <p>用户登出（需要用户处于登陆状态）</p>
+     * 用户登出（需要用户处于登陆状态）
+     *
      * @param user 当前用户 {@link User}
      * @return 成功返回普通成功消息，失败抛出异常消息
      * @author Ling, Jiatong
@@ -60,7 +63,8 @@ public class UserController {
     }
 
     /**
-     * <p>新增用户接口</p>
+     * 新增用户接口
+     *
      * @param dto 通用用户DTO对象 {@link UserDTO}
      * @return 通用返回VO对象
      * @author Ling, Jiatong
@@ -75,7 +79,8 @@ public class UserController {
     }
 
     /**
-     * <p>根据用户id获取用户信息</p>
+     * 根据用户id获取用户信息
+     *
      * @param id 用户id
      * @return 通用返回VO对象
      * @author Ling, Jiatong
@@ -89,7 +94,9 @@ public class UserController {
     }
 
     /**
-     * <p>根据用户id列表批量删除用户，逻辑删除</p>
+     * 根据用户id列表批量删除用户
+     * 逻辑删除
+     *
      * @param dto 通用用户DTO对象 {@link UserDTO}
      * @return 通用返回VO对象
      * @author Ling, Jiatong
@@ -104,7 +111,8 @@ public class UserController {
     }
 
     /**
-     * <p>更新用户信息</p>
+     * 更新用户信息
+     *
      * @param dto 通用用户DTO对象 {@link UserDTO}
      * @return 通用返回VO对象
      * @author Ling, Jiatong
@@ -119,7 +127,8 @@ public class UserController {
     }
 
     /**
-     * <p>分页获取用户信息</p>
+     * 分页获取用户信息
+     *
      * @param dto 通用用户DTO对象 {@link UserDTO}
      * @return 用户列表查询VO对象 {@link UserListVO}
      * @author Ling, Jiatong
@@ -133,7 +142,8 @@ public class UserController {
     }
 
     /**
-     * <p>获取用户根据角色分类统计饼状图</p>
+     * 获取用户根据角色分类统计饼状图
+     *
      * @return 用户根据角色分类统计饼状图VO对象列表 {@link UserRoleNumPieVO}
      * @author Ling, Jiatong
      */
@@ -146,10 +156,31 @@ public class UserController {
     }
 
     /**
-     * <p>获取在线用户统计信息</p>
+     * 上传用户头像
+     *
+     * @param multipartFile 用户头像文件对象
+     * @param id 用户id
      * @author Ling, Jiatong
      */
-    @GetMapping("/online")
+    @ApiOperation("上传用户头像")
+    @PostMapping("/{id:\\d+}/uploadAvatar")
+    @PreAuthorize("hasAnyAuthority('system:user:update')")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "multipartFile", paramType = "form", dataType = "org.springframework.web.multipart.MultipartFile"),
+            @ApiImplicitParam(name = "id", required = true, paramType = "path", dataType = "java.lang.Integer")
+    })
+    public JsonResultVO<?> uploadAvatarImage(MultipartFile multipartFile, @PathVariable("id") Integer id) {
+        log.info("[re-system -> UserController -> uploadAvatarImage()] 上传用户头像，用户id：{}", id);
+        userService.uploadAvatarImage(multipartFile, id);
+        return JsonResultVO.success();
+    }
+
+    /**
+     * 获取在线用户统计信息
+     *
+     * @author Ling, Jiatong
+     */
+    @GetMapping("/onlineNumPie")
     @ApiOperation("获取在线用户统计信息")
     public JsonResultVO<UserOnlineVO> online() {
         log.info("[re-system -> UserController -> online()] 获取在线用户统计");

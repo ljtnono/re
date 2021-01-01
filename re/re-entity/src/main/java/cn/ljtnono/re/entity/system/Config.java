@@ -31,4 +31,9 @@ public class Config extends BaseEntity {
     @TableField("`value`")
     private String value;
 
+    /**
+     * 配置项描述
+     */
+    @TableField("description")
+    private String description;
 }

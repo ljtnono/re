@@ -15,9 +15,10 @@ import javax.annotation.Resource;
 import java.util.Optional;
 
 /**
+ * 全局配置模块service层
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/6 23:31
- * Description:
  */
 @Service
 @Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
@@ -30,7 +31,7 @@ public class ConfigService {
     /**
      * 根据id获取配置项
      * @param key 配置项key
-     * @return Config 配置实体类，如果不存在返回null
+     * @return Config 配置实体类，如果不存在返回{@literal null}
      * @author Ling, Jiatong
      *
      */

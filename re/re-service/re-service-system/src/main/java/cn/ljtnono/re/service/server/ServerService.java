@@ -1,6 +1,6 @@
 package cn.ljtnono.re.service.server;
 
-import cn.ljtnono.re.common.constant.message.MessageTypeEnum;
+import cn.ljtnono.re.common.enumeration.message.MessageTypeEnum;
 import cn.ljtnono.re.entity.message.ServerMonitorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,9 +10,10 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
 /**
+ *
+ *
  * @author Ling, Jiatong
  * Date: 2020/11/15 14:22
- * Description:
  */
 @Slf4j
 @Service

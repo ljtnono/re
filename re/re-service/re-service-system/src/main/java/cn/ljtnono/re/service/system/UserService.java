@@ -2,9 +2,11 @@ package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.cache.UserInfoCache;
 import cn.ljtnono.re.common.constant.system.UserValidatePatternConstant;
-import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
-import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
 import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
+import cn.ljtnono.re.common.enumeration.ProfileEnum;
+import cn.ljtnono.re.common.enumeration.RedisKeyEnum;
+import cn.ljtnono.re.common.enumeration.system.ConfigKeyEnum;
 import cn.ljtnono.re.common.enumeration.system.RoleEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
@@ -73,7 +75,10 @@ public class UserService implements UserDetailsService {
     private final ImageService imageService;
     @Value("${spring.profiles.active}")
     private String profile;
-
+    @Value("${server.port}")
+    private String port;
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
     public UserService(RedisUtil redisUtil, JwtUtil jwtUtil, RoleService roleService, RolePermissionService rolePermissionService, ReSecurityProperties reSecurityProperties, UserRoleService userRoleService, ConfigService configService, ImageService imageService) {
         this.redisUtil = redisUtil;
         this.jwtUtil = jwtUtil;
@@ -175,6 +180,8 @@ public class UserService implements UserDetailsService {
         user.setDeleted(EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue());
         user.setCreateTime(new Date());
         user.setModifyTime(new Date());
+        // 设置默认avatar
+        user.setAvatarUrl(configService.getConfigByKey(ConfigKeyEnum.DEFAULT_AVATAR_URL.name()).getValue());
         // 插入相关数据
         int insert = userMapper.insert(user);
         if (insert <= 0) {
@@ -360,10 +367,10 @@ public class UserService implements UserDetailsService {
         BeanUtils.copyProperties(user, vo);
         vo.setPermissionIdList(permission);
         vo.setToken(token);
-//        Config avatarImage = configService.getConfigByKey("avatarImage");
-//        vo.setAvatarImage(avatarImage.getValue());
-        // 测试环境，直接拿默认URL当做头像
-
+        // 开发环境直接设置为static里面的默认环境
+        if (ProfileEnum.DEV.name().equalsIgnoreCase(profile)) {
+            vo.setAvatarUrl("http://localhost" + ":" + port + contextPath + "/static/avatar.png");
+        }
         return vo;
     }
 

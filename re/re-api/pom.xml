@@ -45,7 +45,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定全局唯一入口 -->
-                    <mainClass>cn.ljtnono.re.api.ReApiApplication</mainClass>
+                    <mainClass>cn.ljtnono.re.ReApiApplication</mainClass>
                     <layout>ZIP</layout>
                 </configuration>
                 <executions>

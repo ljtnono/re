@@ -29,33 +29,55 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseEntity implements UserDetails {
 
-    /** 用户名 */
+    /**
+     * 用户名
+     */
     private String username;
 
-    /** 用户密码 */
+    /**
+     * 用户密码
+     */
     private String password;
 
-    /** 手机号码 */
+    /**
+     * 手机号码
+     */
     private String phone;
 
-    /** 用户邮箱 */
+    /**
+     * 用户邮箱
+     */
     private String email;
 
-    /** 角色id */
+    /**
+     * 角色id
+     */
     @TableField(exist = false)
     private Integer roleId;
 
-    /** 角色名 */
+    /**
+     * 角色名
+     */
     @TableField(exist = false)
     private String roleName;
 
-    /** 是否删除 1 删除 0 正常 */
+    /**
+     * 是否删除 1 删除 0 正常
+     */
     @TableField("is_deleted")
     private Integer deleted;
 
-    /** 用户权限列表 */
+    /**
+     * 用户权限列表
+     */
     @TableField(exist = false)
     private List<Permission> authorities;
+
+    /**
+     * 用户头像访问
+     * 如果没有，设置为默认头像
+     */
+    private String avatarUrl;
 
     @Override
     @JsonIgnore

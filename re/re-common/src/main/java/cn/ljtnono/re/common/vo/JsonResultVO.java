@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.ToString;
 
 /**
- * <p>HTTP Restful Api 统一返回值封装</p>
+ * HTTP Restful Api 统一返回值封装
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/12 23:53 下午
  */

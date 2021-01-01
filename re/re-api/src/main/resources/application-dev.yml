@@ -11,8 +11,26 @@ spring:
     host: 192.168.1.10
     password: re#redis2020
 
+# 本项目相关配置
+re:
+  security:
+    # 配置jwt过期时间 单位 小时
+    token-expire: 12
+    # 配置jwt秘钥
+    token-secret-key: ROOTELEMENT
+    # url白名单
+    white-url:
+      - /api/v1/system/user/login
+      - /api/v1/system/verifyCode
+      - /message/**
+      - /swagger-ui/**
+      - /v2/**
+      - /swagger-resources/**
+      - /static/**
+  swagger-ui-open: true
+  static-file-base-path: E:\\re\\re\\re-api\\src\\main\\resources\\static
+# 配置logging等级
 logging:
   level:
     root: info
     cn.ljtnono.re.api: info
-# 配置logging等级

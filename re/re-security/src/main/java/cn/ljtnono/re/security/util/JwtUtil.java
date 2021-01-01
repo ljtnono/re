@@ -17,17 +17,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * jwt工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/8 8:43 上午
- * Description: jwt工具类
  */
 @Component
 public class JwtUtil {
 
-    @Autowired
-    private ReSecurityProperties reSecurityProperties;
-    @Autowired
-    private RedisUtil redisUtil;
+    private final ReSecurityProperties reSecurityProperties;
+    private final RedisUtil redisUtil;
+    public JwtUtil(ReSecurityProperties reSecurityProperties, RedisUtil redisUtil) {
+        this.reSecurityProperties = reSecurityProperties;
+        this.redisUtil = redisUtil;
+    }
 
     /**
      * 对秘钥进行base64

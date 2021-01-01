@@ -2,7 +2,9 @@ package cn.ljtnono.re.common.util.redis;
 
 import com.google.common.collect.Sets;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -13,7 +15,6 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Ling, Jiatong
  * Date: 2020/8/9 18:59
- *
  */
 @Component
 public class RedisUtil {
@@ -27,17 +28,24 @@ public class RedisUtil {
 
     /**
      * 设置string类型缓存
+     *
      * @param key 键
      * @param value 值
      * @param timeout 过期时间
-     * @param unit 时间单位
+     * @param timeUnit 时间单位
      */
-    public void set(String key, Object value, long timeout, TimeUnit unit) {
-        redisTemplate.opsForValue().set(key, value, timeout, unit);
+    public <T> void set(String key, T value, long timeout, TimeUnit timeUnit) {
+        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
+        if (timeout != -1) {
+            opsForValue.set(key, value, timeout, timeUnit);
+        } else {
+            opsForValue.set(key, value);
+        }
     }
 
     /**
      * 获取string类型的值
+     *
      * @param key 键
      * @return Object
      */
@@ -61,11 +69,14 @@ public class RedisUtil {
      */
     public void deleteByPattern(final String pattern) {
         Set<String> keys = redisTemplate.keys(pattern);
-        redisTemplate.delete(keys);
+        if (!CollectionUtils.isEmpty(keys)) {
+            redisTemplate.delete(keys);
+        }
     }
 
     /**
-     * <p>根据正则表达式获取键集合</p>
+     * 根据正则表达式获取键集合
+     *
      * @param pattern 正则表达式
      * @return 符合正则表达式的键集合 {@link Set}，不存在时返回空集合
      * @author Ling, Jiatong

@@ -13,22 +13,6 @@ spring:
       enabled: true
       force: true
 
-# 本项目相关配置
-re:
-  security:
-    # 配置jwt过期时间 单位 小时
-    token-expire: 12
-    # 配置jwt秘钥
-    token-secret-key: ROOTELEMENT
-    # url白名单
-    white-url:
-      - /api/v1/system/user/login
-      - /api/v1/system/verifyCode
-      - /message/**
-      - /swagger-ui/**
-      - /v2/**
-      - /swagger-resources/**
-
 # rest
 rest:
   read-timeout: 100
@@ -43,3 +27,4 @@ mybatis-plus:
 # 日志配置
 logging:
   config: classpath:log/logback-${spring.profiles.active}.xml
+  level: info

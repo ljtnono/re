@@ -13,6 +13,15 @@
     <artifactId>re-service-resource</artifactId>
 
     <dependencies>
-
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.ljtnono</groupId>
+            <artifactId>re-mapper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

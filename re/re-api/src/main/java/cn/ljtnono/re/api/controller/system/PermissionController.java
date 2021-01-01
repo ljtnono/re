@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(value = "/api/v1/system/permission", tags = "权限模块接口")
 public class PermissionController {
 
-    @Autowired
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
+    public PermissionController(PermissionService permissionService) {
+        this.permissionService = permissionService;
+    }
 
 
 }

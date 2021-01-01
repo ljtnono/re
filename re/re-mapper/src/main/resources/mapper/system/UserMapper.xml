@@ -106,13 +106,16 @@
     <!-- 获取用户根据角色分类统计饼状图 -->
     <select id="roleNumPie" resultType="cn.ljtnono.re.vo.system.UserRoleNumPieVO">
         SELECT
-            sr.name AS role_name,
-            COUNT(DISTINCT su.id) AS num
-        FROM sys_user su
-        LEFT JOIN sys_user_role sur ON sur.user_id = su.id
-        LEFT JOIN sys_role sr ON sr.id = sur.role_id
+            sr.NAME AS role_name,
+            IFNULL( COUNT( DISTINCT su.id ), 0 ) AS num
+        FROM
+            sys_role sr
+            LEFT JOIN sys_user_role sur ON sur.role_id = sr.id
+            LEFT JOIN sys_user su ON su.id = sur.user_id
         WHERE
             su.is_deleted = 0
+            AND sr.is_deleted = 0
+            OR su.id IS NULL
         GROUP BY
             sr.id
     </select>

@@ -9,9 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
+ * Jackson工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/2 0:53
- * Description: Jackson工具类
  */
 @Component
 public class JacksonUtil {
