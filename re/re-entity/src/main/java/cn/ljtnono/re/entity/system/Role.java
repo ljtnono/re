@@ -19,13 +19,19 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class Role extends BaseEntity {
 
-    /** 角色名 */
+    /**
+     * 角色名
+     */
     private String name;
 
-    /** 角色描述 */
+    /**
+     * 角色描述
+     */
     private String description;
 
-    /** 是否删除 1 删除 0 正常 */
+    /**
+     * 是否删除 1 删除 0 正常
+     */
     @TableField("is_deleted")
     private Integer deleted;
 

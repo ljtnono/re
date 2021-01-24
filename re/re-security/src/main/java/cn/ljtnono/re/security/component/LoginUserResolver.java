@@ -15,9 +15,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 /**
+ * LoginUser注解处理器
+ *
  * @author Ling, Jiatong
  * Date: 2020/10/8 0:49
- * Description:
  */
 @Component
 public class LoginUserResolver implements HandlerMethodArgumentResolver {

@@ -5,9 +5,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
+ * spring security相关工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/10/7 17:59
- * Description:
  */
 public class SecurityUtil {
 

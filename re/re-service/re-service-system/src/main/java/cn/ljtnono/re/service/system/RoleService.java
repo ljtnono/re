@@ -1,17 +1,17 @@
 package cn.ljtnono.re.service.system;
 
-import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
+import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
 import cn.ljtnono.re.common.exception.system.DataBaseException;
-import cn.ljtnono.re.dto.system.RoleDTO;
-import cn.ljtnono.re.dto.system.RoleListQueryDTO;
+import cn.ljtnono.re.dto.system.role.RoleDTO;
+import cn.ljtnono.re.dto.system.role.RoleListQueryDTO;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.mapper.system.RoleMapper;
-import cn.ljtnono.re.vo.system.RoleListVO;
-import cn.ljtnono.re.vo.system.RoleVO;
+import cn.ljtnono.re.vo.system.role.RoleListVO;
+import cn.ljtnono.re.vo.system.role.RoleVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -20,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -33,13 +31,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * <p>角色service层</p>
+ * 角色模块service层
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/9 16:30
  */
 @Slf4j
 @Service
-@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class}, isolation = Isolation.DEFAULT)
 public class RoleService {
 
     @Resource
@@ -55,11 +53,11 @@ public class RoleService {
     //*********************************** 接口方法 ***********************************//
 
     /**
-     * <p>获取角色下拉列表</p>
-     * @return 角色VO列表数据 {@link RoleVO}
+     * 获取角色下拉列表
+     *
+     * @return 角色VO列表数据
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
     public List<RoleVO> select() {
         List<Role> roleList = roleMapper.selectList(new LambdaQueryWrapper<Role>()
                 .select(Role::getId, Role::getName)
@@ -76,14 +74,14 @@ public class RoleService {
     }
 
     /**
-     * <p>新增角色</p>
-     * @param dto 角色DTO对象 {@link RoleDTO}
+     * 新增角色
+     *
+     * @param dto 角色DTO对象
      * @throws ResourceAlreadyExistException 当角色名与现有角色重复时，会抛出此异常
      * @throws ResourceNotExistException 当角色的权限id列表存在错误值时，会抛出此异常
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addRole(RoleDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 校验角色名是否重复
         boolean roleAlreadyExist = isExistByName(dto.getName());
         if (roleAlreadyExist) {
@@ -111,14 +109,13 @@ public class RoleService {
     }
 
     /**
-     * <p>根据角色id列表逻辑删除角色，当角色不存在时，会抛出异常信息</p>
-     * @param dto 角色DTO对象 {@link RoleDTO}
+     * 根据角色id列表逻辑删除角色，当角色不存在时，会抛出异常信息
+     *
+     * @param dto 角色DTO对象
      * @throws ResourceNotExistException 当角色不存在时抛出此异常
      * @author Ling, Jiatong
      */
     public void logicDelete(RoleDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         List<Integer> idList = dto.getIdList();
         if (!CollectionUtils.isEmpty(idList)) {
             // 校验角色是否存在
@@ -133,24 +130,23 @@ public class RoleService {
 
     /**
      * 修改角色
+     *
      * @param dto 参数封装
      * @author Ling, Jiatong
-     *
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateRole(RoleDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 检测该角色是否存在
-        boolean existById = isExistById(dto.getId());
-        if (!existById) {
+        Role check = isExistById(dto.getId());
+        if (check == null) {
             throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
         }
         // 检查用户名是否除了本角色之外存在与其他现存角色名重复
-        Role reRole = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
+        Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .select(Role::getName)
                 .eq(Role::getName, dto.getName())
                 .ne(Role::getId, dto.getId()));
-        Optional.ofNullable(reRole)
+        Optional.ofNullable(role)
                 .orElseThrow(() -> new ResourceAlreadyExistException(GlobalErrorEnum.ROLE_ALREADY_EXIST));
         // 插入角色表
         int update = roleMapper.update(null, new LambdaUpdateWrapper<Role>()
@@ -175,16 +171,14 @@ public class RoleService {
     }
 
     /**
-     * <p>分页获取角色列表</p>
+     * 分页获取角色列表
+     *
      * @param dto 角色列表查询DTO对象
-     * @return 角色列表VO对象列表 {@link RoleListVO}
+     * @return 角色列表VO对象列表
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
     public IPage<RoleListVO> getList(RoleListQueryDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
-        Page<Role> page = new Page<>(dto.getPageNum(), dto.getPageSize());
+        Page<?> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         try {
             dto.generateSortCondition();
         } catch (IllegalArgumentException e) {
@@ -197,14 +191,15 @@ public class RoleService {
     //*********************************** 私有方法 ***********************************//
 
     /**
-     * @param reRole 角色对象
-     * @author Ling, Jiatong
+     * 设置创建时间和最后修改时间为当前时间
      *
+     * @param role 角色对象
+     * @author Ling, Jiatong
      */
-    private void setCreateTimeAndModifyTimeNow(Role reRole) {
+    private void setCreateTimeAndModifyTimeNow(Role role) {
         Date now = new Date();
-        reRole.setCreateTime(now);
-        reRole.setModifyTime(now);
+        role.setCreateTime(now);
+        role.setModifyTime(now);
     }
 
     //*********************************** 公共方法 ***********************************//
@@ -214,9 +209,7 @@ public class RoleService {
      * @param userId 用户id
      * @return ReRole 角色对象
      * @author Ling, Jiatong
-     *
      */
-    @Transactional(readOnly = true)
     public Role getRoleIdAndNameByUserId(Integer userId) {
         Optional.ofNullable(userId)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.USER_ID_NULL_ERROR));
@@ -225,10 +218,10 @@ public class RoleService {
 
     /**
      * 根据角色名判断角色是否存在
+     *
      * @param name 角色名
      * @return 已经存在返回true，不存在返回false
      */
-    @Transactional(readOnly = true)
     public boolean isExistByName(final String name) {
         // 检查名字
         if (StringUtils.isEmpty(name)) {
@@ -243,30 +236,27 @@ public class RoleService {
 
     /**
      * 根据id检查该角色是否存在
-     * @param id 角色id
-     * @return 存在返回true，不存在返回false
-     * @author Ling, Jiatong
      *
+     * @param id 角色id
+     * @return 存在返回该角色实体对象，不存在返回{@literal null}
+     * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
-    public boolean isExistById(Integer id) {
+    public Role isExistById(Integer id) {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
-        Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
+        return roleMapper.selectOne(new LambdaQueryWrapper<Role>()
                 .eq(Role::getId, id)
                 .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
-        return role != null;
     }
 
     /**
-     * <p>检查角色是否存在，如果不存在那么抛出异常</p>
+     * 检查角色是否存在，如果不存在那么抛出异常
+     *
      * @param id 角色id
      * @throws ResourceNotExistException 当角色不存在时，抛出此异常
-     * @return 如果角色存在，那么返回该角色实体 {@link Role}
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
-    public Role checkExist(Integer id) {
+    public void checkExist(Integer id) {
         Optional.ofNullable(id)
                 .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
         Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
@@ -274,27 +264,23 @@ public class RoleService {
                 .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
         Optional.ofNullable(role)
                 .orElseThrow(() -> new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST));
-        return role;
     }
 
     /**
-     * <p>根据id获取角色相关信息</p>
+     * 根据id获取角色相关信息
+     *
      * @param id 角色id
-     * @return 角色VO对象 {@link RoleVO}
+     * @return 角色VO对象
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
     public RoleVO getRoleById(Integer id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.ROLE_ID_NULL_ERROR));
-        Role role = roleMapper.selectOne(new LambdaQueryWrapper<Role>()
-                .eq(Role::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()));
-        if (role != null) {
-            RoleVO roleVO = new RoleVO();
-            BeanUtils.copyProperties(role, roleVO);
-            return roleVO;
+        Role role = isExistById(id);
+        if (role == null) {
+            throw new ResourceNotExistException(GlobalErrorEnum.ROLE_NOT_EXIST);
         }
-        return null;
+        RoleVO roleVO = new RoleVO();
+        BeanUtils.copyProperties(role, roleVO);
+        return roleVO;
     }
 
     //*********************************** 其他方法 ***********************************//

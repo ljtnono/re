@@ -2,8 +2,8 @@ package cn.ljtnono.re.api.controller.system;
 
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.system.SystemException;
+import cn.ljtnono.re.common.util.RandomUtil;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
-import cn.ljtnono.re.common.util.UUIDUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.Api;
@@ -42,13 +42,13 @@ public class VerifyCodeController {
      * 获取验证码
      */
     @GetMapping
-    @ApiOperation("获取验证码图片")
+    @ApiOperation(value = "获取验证码图片", httpMethod = "GET")
     public void getVerifyCode() {
         HttpServletResponse response = SpringBeanUtil.getCurrentRes();
         log.info("[re-system -> VerifyCodeController -> getVerifyCode()] 获取验证码");
         response.setContentType("image/jpeg");
         String capText = captchaProducer.createText();
-        String codeId = "verifyCodeId:" + UUIDUtil.generateUUID();
+        String codeId = "verifyCodeId:" + RandomUtil.getInstance().generateUUID();
         response.addHeader("VerifyCodeId", codeId);
         BufferedImage bi = captchaProducer.createImage(capText);
         try {

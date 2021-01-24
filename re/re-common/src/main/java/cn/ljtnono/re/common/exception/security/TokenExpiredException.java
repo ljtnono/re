@@ -6,9 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 /**
+ * token过期异常
+ *
  * @author Ling, Jiatong
  * Date: 2020/9/22 0:43
- * Description: token过期异常
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

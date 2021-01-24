@@ -15,7 +15,7 @@
     </select>
 
     <!-- 分页获取角色列表 -->
-    <select id="getList" resultType="cn.ljtnono.re.vo.system.RoleListVO">
+    <select id="getList" resultType="cn.ljtnono.re.vo.system.role.RoleListVO">
         SELECT
             sr.id,
             sr.name,

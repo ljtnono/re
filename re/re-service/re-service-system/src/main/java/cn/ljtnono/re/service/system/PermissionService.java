@@ -4,14 +4,11 @@ import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.mapper.system.PermissionMapper;
-import cn.ljtnono.re.vo.system.UserLoginVO;
+import cn.ljtnono.re.vo.system.user.UserLoginVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.Lists;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class PermissionService {
 
     @Resource
@@ -47,7 +43,6 @@ public class PermissionService {
      * @author Ling, Jiatong
      *
      */
-    @Transactional(readOnly = true)
     public boolean isPermissionExist(List<Integer> idList) {
         if (!CollectionUtils.isEmpty(idList)) {
             Integer count = permissionMapper.selectCount(new LambdaQueryWrapper<Permission>()
@@ -64,7 +59,6 @@ public class PermissionService {
      * @param roleId 角色id
      * @return List<MenuItem> 菜单树
      */
-    @Transactional(readOnly = true)
     public List<UserLoginVO.MenuItem> generateMenu(Integer roleId) {
         List<Integer> permissionIdList = rolePermissionService.getPermissionIdListByRoleId(roleId);
         if (!CollectionUtils.isEmpty(permissionIdList)) {

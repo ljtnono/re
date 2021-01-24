@@ -12,20 +12,19 @@ import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.ResourceAlreadyExistException;
 import cn.ljtnono.re.common.exception.ResourceNotExistException;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
-import cn.ljtnono.re.common.exception.security.UserPermissionException;
 import cn.ljtnono.re.common.exception.system.DataBaseException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
-import cn.ljtnono.re.dto.system.UserDTO;
-import cn.ljtnono.re.dto.system.UserListQueryDTO;
+import cn.ljtnono.re.dto.system.user.*;
+import cn.ljtnono.re.dto.system.userrole.UserRoleAddDTO;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
 import cn.ljtnono.re.service.resource.ImageService;
-import cn.ljtnono.re.vo.system.*;
+import cn.ljtnono.re.vo.system.user.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -38,8 +37,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -60,7 +57,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
-@Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class}, isolation = Isolation.DEFAULT)
 public class UserService implements UserDetailsService {
 
     @Resource
@@ -96,22 +92,17 @@ public class UserService implements UserDetailsService {
      * 用户登录
      * 分为强行登录和普通登录，强行登录需要校验forceLogin字段为1
      *
-     * @param dto 用户通用DTO对象 {@link UserDTO}
-     * @return 用户登录返回VO对象 {@link UserLoginVO}
+     * @param dto 用户登录DTO对象
+     * @return 用户登录返回VO对象
      * @author Ling, Jiatong
      */
-    public UserLoginVO login(UserDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
+    public UserLoginVO login(UserLoginDTO dto) {
         // 登陆校验用户名密码
         User user = loginCheckUsernameAndPassword(dto.getUsername(), dto.getPassword());
         // 校验验证码
         verifyCodeValidate(dto.getVerifyCodeId(), dto.getVerifyCode());
         // 用户角色校验
         Role role = roleService.getRoleIdAndNameByUserId(user.getId());
-        // 用户权限异常
-        Optional.ofNullable(role)
-                .orElseThrow(() -> new UserPermissionException(GlobalErrorEnum.USER_PERMISSION_ERROR));
         user.setRoleId(role.getId());
         user.setRoleName(role.getName());
         // 如果是强行登录
@@ -157,12 +148,11 @@ public class UserService implements UserDetailsService {
     /**
      * 新增用户接口
      *
-     * @param dto 用户通用DTO对象 {@link UserDTO}
+     * @param dto 用户新增DTO对象
      * @author Ling, Jiatong
      */
-    public void addUser(UserDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
+    @Transactional(rollbackFor = Exception.class)
+    public void addUser(UserAddDTO dto) {
         // 基础校验
         userDtoBaseValidate(dto);
         // 用户名重复校验
@@ -187,8 +177,10 @@ public class UserService implements UserDetailsService {
         if (insert <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
-        dto.setId(user.getId());
-        int result = userMapper.insertUserRole(dto);
+        UserRoleAddDTO userRoleAddDTO = new UserRoleAddDTO();
+        userRoleAddDTO.setUserId(user.getId());
+        userRoleAddDTO.setRoleId(dto.getRoleId());
+        int result = userMapper.insertUserRole(userRoleAddDTO);
         if (result <= 0) {
             throw new DataBaseException(GlobalErrorEnum.DATABASE_OPERATION_ERROR);
         }
@@ -196,18 +188,15 @@ public class UserService implements UserDetailsService {
 
     /**
      * 逻辑删除用户（不删除用户角色关联表数据）
-     * 用户处于已经删除状态（is_deleted=1）会抛出异常
      *
-     * @param dto 用户通用DTO对象 {@link UserDTO}
+     * @param dto 用户批量删除DTO对象
      * @author Ling, Jiatong
      */
-    public void logicDelete(UserDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
-        if (CollectionUtils.isEmpty(dto.getIdList())) {
+    public void logicDelete(UserDeleteBatchDTO dto) {
+        if (CollectionUtils.isEmpty(dto.getBatchKey())) {
             return;
         }
-        List<Integer> idList = dto.getIdList();
+        List<Integer> idList = dto.getBatchKey();
         // 校验每个用户是否存在，如果不存在那么抛出异常
         idList.parallelStream().forEach(this::checkExist);
         int update = userMapper.update(null, new LambdaUpdateWrapper<User>()
@@ -230,12 +219,11 @@ public class UserService implements UserDetailsService {
      * 修改用户信息
      * 修改后会导致原用户下线（删除用户缓存记录）
      *
-     * @param dto 用户通用DTO对象 {@link UserDTO}
+     * @param dto 用户更新DTO对象
      * @author Ling, Jiatong
      */
-    public void updateUser(UserDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUser(UserUpdateDTO dto) {
         // 基础校验
         userDtoBaseValidate(dto);
         // 是否存在此用户
@@ -261,14 +249,11 @@ public class UserService implements UserDetailsService {
     /**
      * 分页获取用户列表
      *
-     * @param dto 用户列表查询DTO对象 {@link UserListQueryDTO}
-     * @return 用户列表查询VO分页包装对象 {@link UserListVO}
+     * @param dto 用户列表查询DTO对象
+     * @return 用户列表查询VO分页包装对象
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
     public IPage<UserListVO> getList(UserListQueryDTO dto) {
-        Optional.ofNullable(dto)
-                .orElseThrow(() -> new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR));
         // 校验请求参数
         Page<?> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         // 生成排序参数
@@ -283,13 +268,12 @@ public class UserService implements UserDetailsService {
     /**
      * 获取用户根据角色分类统计饼状图
      *
-     * @return 用户根据角色分类统计饼状图VO对象 {@link UserRoleNumPieVO}
+     * @return 用户根据角色分类统计饼状图VO对象
      * @author Ling, Jiatong
      */
     public List<UserRoleNumPieVO> roleNumPie() {
         return userMapper.roleNumPie();
     }
-
 
     /**
      * 上传用户头像
@@ -298,6 +282,7 @@ public class UserService implements UserDetailsService {
      * @param id 用户id
      * @author Ling, Jiatong
      */
+    @Transactional(rollbackFor = Exception.class)
     public void uploadAvatarImage(MultipartFile multipartFile, Integer id) {
         // 校验用户是否存在
         checkExist(id);
@@ -322,7 +307,7 @@ public class UserService implements UserDetailsService {
      * 缓存用户信息
      * 根据用户对象生成一个 {@link UserInfoCache} 对象缓存到redis中，缓存时间为token过期时间
      *
-     * @param user 用户对象 {@link User}
+     * @param user 用户对象
      * @param token 用户token
      * @author Ling, Jiatong
      */
@@ -357,19 +342,21 @@ public class UserService implements UserDetailsService {
      * 根据用户对象
      * 生成返回页面的vo对象
      *
-     * @param user 用户对象 {@link User}
+     * @param user 用户对象
      * @param token token
      * @param permission 用户角色所具有的权限id列表
-     * @return 用户登录VO对象 {@link UserLoginVO}
+     * @return 用户登录VO对象
      */
     private UserLoginVO generateUserLoginVO(User user, String token, List<Integer> permission) {
         UserLoginVO vo = new UserLoginVO();
         BeanUtils.copyProperties(user, vo);
         vo.setPermissionIdList(permission);
         vo.setToken(token);
-        // 开发环境直接设置为static里面的默认环境
+        // 开发环境直接设置为static里面的默认图片
         if (ProfileEnum.DEV.name().equalsIgnoreCase(profile)) {
             vo.setAvatarUrl("http://localhost" + ":" + port + contextPath + "/static/avatar.png");
+        } else {
+            vo.setAvatarUrl(user.getAvatarUrl());
         }
         return vo;
     }
@@ -378,9 +365,9 @@ public class UserService implements UserDetailsService {
      * 用户DTO基础校验
      * 主要用于用户注册和添加用户时的校验
      *
-     * @param dto 用户通用DTO对象 {@link UserDTO}
+     * @param dto 用户新增和更新基类DTO对象
      */
-    private void userDtoBaseValidate(UserDTO dto) {
+    private void userDtoBaseValidate(UserAddAndUpdateBaseDTO dto) {
         checkUsernameAndPassword(dto.getUsername(), dto.getPassword());
         checkEmailAndPhone(dto.getEmail(), dto.getPhone());
     }
@@ -419,7 +406,7 @@ public class UserService implements UserDetailsService {
     /**
      * 登陆认证
      *
-     * @param user 用户对象 {@link User}
+     * @param user 用户对象
      */
     private void authenticate(User user) {
         UsernamePasswordAuthenticationToken token =
@@ -497,7 +484,7 @@ public class UserService implements UserDetailsService {
      * 校验用户是否存在，如果不存在那么抛出异常，如果存在返回用户实体对象
      *
      * @param id 用户id
-     * @return User 用户实体对象 {@link User}
+     * @return User 用户实体对象
      * @throws ResourceNotExistException 当用户不存在时抛出此异常
      * @author Ling, Jiatong
      */
@@ -535,7 +522,6 @@ public class UserService implements UserDetailsService {
      * @return 存在返回true，不存在返回false
      * @author Ling, Jiatong
      */
-    @Transactional(readOnly = true)
     public boolean isUsernameExist(final String username) {
         if (StringUtils.isEmpty(username)) {
             throw new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR);
@@ -551,10 +537,9 @@ public class UserService implements UserDetailsService {
      * 只获取username、id、email、phone、roleId、roleName字段
      *
      * @param id 用户id
-     * @return 用户通用VO对象 {@link UserVO}
+     * @return 用户通用VO对象
      */
-    @Transactional(readOnly = true)
-    public UserVO getUserById(Integer id) {
+    public UserDetailVO getUserById(Integer id) {
         // 校验用户是否存在，如果不存在，那么抛出异常
         checkExist(id);
         return userMapper.getUserById(id);
@@ -579,7 +564,7 @@ public class UserService implements UserDetailsService {
     /**
      * 获取在线用户统计信息
      *
-     * @return 在线用户统计VO对象 {@link UserOnlineVO}
+     * @return 在线用户统计VO对象
      * @author Ling, Jiatong
      */
     public UserOnlineVO online() {
@@ -606,7 +591,6 @@ public class UserService implements UserDetailsService {
     //*********************************** 其他方法 ***********************************//
 
     @Override
-    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String username) {
         // 根据用户名查出用户所有权限
         if (StringUtils.isEmpty(username)) {

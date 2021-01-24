@@ -16,19 +16,27 @@ import lombok.ToString;
 @ApiModel(description = "用户数据导出对象")
 public class UserExcelData {
 
-    /** 用户id */
+    /**
+     * 用户id
+     */
     @ApiModelProperty("id")
     private Integer id;
 
-    /** 用户名 */
+    /**
+     * 用户名
+     */
     @ApiModelProperty("用户名")
     private String username;
 
-    /** 用户邮箱 */
+    /**
+     * 用户邮箱
+     */
     @ApiModelProperty("用户邮箱")
     private String email;
 
-    /** 用户手机号码 */
+    /**
+     * 用户手机号码
+     */
     @ApiModelProperty("用户手机号码")
     private String phone;
 

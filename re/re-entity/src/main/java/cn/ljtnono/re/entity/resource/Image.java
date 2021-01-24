@@ -13,8 +13,8 @@ import lombok.ToString;
  * Date: 2020/7/30 1:04
  */
 @Data
-@ToString(callSuper = true)
 @TableName("rs_image")
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Image extends BaseEntity {
 

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  * Description: 角色权限Service类
  */
 @Service
-@Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class RolePermissionService {
 
     @Resource
@@ -42,7 +41,6 @@ public class RolePermissionService {
      * @param userId 用户id
      * @return List<Integer> 用户权限id列表
      */
-    @Transactional(readOnly = true)
     public List<Integer> getPermissionIdListByUserId(Integer userId) {
         Integer roleId = userRoleService.getRoleIdByUserId(userId);
         return rolePermissionMapper.selectList(new LambdaQueryWrapper<RolePermission>()

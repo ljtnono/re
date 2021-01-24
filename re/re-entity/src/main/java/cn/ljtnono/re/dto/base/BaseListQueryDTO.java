@@ -19,32 +19,40 @@ import java.util.stream.IntStream;
  */
 @Data
 @ToString(callSuper = true)
-@ApiModel(description = "列表查询DTO对象基类")
 @EqualsAndHashCode(callSuper = true)
-public class BaseListQueryDTO extends BaseDTO{
+@ApiModel(description = "列表查询DTO对象基类")
+public class BaseListQueryDTO extends BaseDTO {
 
-    /** 排序类型列表 1 表示自然排序（升序） 2 表示降序 */
+    /**
+     * 排序类型列表 1 表示自然排序（升序） 2 表示降序
+     */
     @ApiModelProperty(value = "排序类型列表", notes = "1 表示自然排序（升序） 2 表示降序")
     private List<Integer> sortTypeList;
 
-    /** 前端传递排序字段列表 */
+    /**
+     * 前端传递排序字段列表
+     */
     @ApiModelProperty(value = "排序字段列表")
     private List<String> sortFieldList;
 
-    /** 允许的排序字段列表，这是一个不可变列表，子类重写此字段 */
+    /**
+     * 允许的排序字段列表，这是一个不可变列表，子类重写此字段
+     */
     @ApiModelProperty(value = "允许的排序字段列表", notes = "这是一个不可变列表，子类重写此字段")
     private List<String> sortFieldValueList;
 
-    /** 拼接出来的排序条件 */
+    /**
+     * 拼接出来的排序条件
+     */
     @ApiModelProperty(value = "拼接出来的排序条件", notes = "前端不可传递此字段")
     private String sortCondition;
 
     /**
      * 根据排序字段列表和排序方式列表生成最终的排序字符串，方便xml中直接用于拼接
      * 如果传了排序字段，但是没有传排序类型，那么默认为升序排序
+     *
      * @throws IllegalArgumentException 当排序字段不对，或者排序类型不对时抛出此异常
      * @author Ling, Jiatong
-     *
      */
     public void generateSortCondition() {
         if (!CollectionUtils.isEmpty(sortFieldList)) {

@@ -23,9 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * token过滤器
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/11 23:23 下午
- * Description: token过滤器
  */
 @Slf4j
 @Component

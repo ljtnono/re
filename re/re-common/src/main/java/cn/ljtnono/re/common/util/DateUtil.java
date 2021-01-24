@@ -4,9 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * 日期工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/2 1:10
- * Description: 日期工具类
  */
 public class DateUtil {
 

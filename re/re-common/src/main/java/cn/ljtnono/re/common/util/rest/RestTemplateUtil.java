@@ -17,25 +17,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * http请求客户端
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/18 22:09 下午
- * Description: http请求客户端
- * {@link RestTemplate(Class)}
  */
 @Component
 @ConfigurationProperties(prefix = "rest")
 public class RestTemplateUtil {
 
-    /** 连接超时时间 单位 秒*/
+    /**
+     * 连接超时时间 单位 秒
+     */
     private int connectTimeout;
 
-    /** 读取超时时间 单位 秒 */
+    /**
+     * 读取超时时间 单位 秒
+     */
     private int readTimeout;
 
     private final RestTemplate template;
 
     public RestTemplateUtil() {
-        template= new RestTemplateBuilder()
+        template = new RestTemplateBuilder()
                 .setConnectTimeout(Duration.ofMillis(connectTimeout * 1000))
                 .setReadTimeout(Duration.ofMillis(readTimeout * 1000))
                 .requestFactory(SimpleClientHttpRequestFactory.class)
@@ -74,22 +78,34 @@ public class RestTemplateUtil {
     @ToString
     public static class Builder {
 
-        /** 请求url */
+        /**
+         * 请求url
+         */
         private String url = "";
 
-        /** 请求参数 */
+        /**
+         * 请求参数
+         */
         private Map<String, Object> params = new HashMap<>();
 
-        /** 请求头 */
+        /**
+         * 请求头
+         */
         private Map<String, Object> headers = new HashMap<>();
 
-        /** 请求方式, 默认get */
+        /**
+         * 请求方式, 默认get
+         */
         private Method method = Method.GET;
 
-        /** 是否开启 PathVariable形式 */
+        /**
+         * 是否开启 PathVariable形式
+         */
         private boolean enablePathVariable = false;
 
-        /** 是否开启使用手机User-Agent发送请求 */
+        /**
+         * 是否开启使用手机User-Agent发送请求
+         */
         private boolean enableMobile = false;
 
         public enum Method {
@@ -168,9 +184,10 @@ public class RestTemplateUtil {
 
     /**
      * 基本参数校验方法
+     *
      * @param builder 请求构建器
-     * @param type 响应类型
-     * @param <T> 响应类型泛型
+     * @param type    响应类型
+     * @param <T>     响应类型泛型
      */
     private <T> void baseCheckParam(Builder builder, Class<T> type) {
         if (builder == null) {
@@ -187,10 +204,11 @@ public class RestTemplateUtil {
 
     /**
      * 通用执行方法
-     * @param builder 请求构建器
-     * @param type 响应类型
+     *
+     * @param builder    请求构建器
+     * @param type       响应类型
      * @param enableWrap 响应结果是否使用ResponseEntity包装
-     * @param <T> 响应泛型
+     * @param <T>        响应泛型
      * @return T type类型对象
      */
     public <T> Object execute(Builder builder, Class<T> type, boolean enableWrap) {
@@ -216,17 +234,16 @@ public class RestTemplateUtil {
     }
 
 
-
-
     //============================ GET =============================//
 
     /**
      * 发送get请求，并将结果格式化为type类型
+     *
      * @param builder 请求建造器
-     * @param type 响应类型
-     * @param <T> 响应泛型
-     * @see RestTemplate#getForObject(String, Class, Object...)
+     * @param type    响应类型
+     * @param <T>     响应泛型
      * @return T type类型对象
+     * @see RestTemplate#getForObject(String, Class, Object...)
      */
     public <T> T getForObject(Builder builder, Class<T> type) {
         baseCheckParam(builder, type);
@@ -238,12 +255,13 @@ public class RestTemplateUtil {
 
     /**
      * 发送get请求，并将结果格式化为ResponseEntity<T>类型
+     *
      * @param builder 请求建造器
-     * @param type 响应类型
-     * @param <T> 响应泛型
+     * @param type    响应类型
+     * @param <T>     响应泛型
+     * @return T ResponseEntity对象
      * @see RestTemplate#getForEntity(String, Class, Object...)
      * @see ResponseEntity
-     * @return T ResponseEntity对象
      */
     public <T> ResponseEntity<T> getForEntity(Builder builder, Class<T> type) {
         baseCheckParam(builder, type);
@@ -258,9 +276,10 @@ public class RestTemplateUtil {
 
     /**
      * 发送Post请求，并将结果格式化为指定对象类型
+     *
      * @param builder 请求构造器
-     * @param type 响应类型
-     * @param <T> 响应泛型
+     * @param type    响应类型
+     * @param <T>     响应泛型
      * @return T type类型对象
      */
     public <T> T postForObject(Builder builder, Class<T> type) {
@@ -274,8 +293,6 @@ public class RestTemplateUtil {
 
 
     //============================ PUT =============================//
-
-
 
 
     //============================ DELETE =============================//

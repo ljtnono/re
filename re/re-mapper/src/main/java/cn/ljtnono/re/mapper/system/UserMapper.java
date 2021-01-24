@@ -1,13 +1,13 @@
 package cn.ljtnono.re.mapper.system;
 
-import cn.ljtnono.re.dto.system.UserDTO;
-import cn.ljtnono.re.dto.system.UserListQueryDTO;
+import cn.ljtnono.re.dto.system.user.UserListQueryDTO;
+import cn.ljtnono.re.dto.system.userrole.UserRoleAddDTO;
 import cn.ljtnono.re.entity.system.Permission;
 import cn.ljtnono.re.entity.system.Role;
 import cn.ljtnono.re.entity.system.User;
-import cn.ljtnono.re.vo.system.UserListVO;
-import cn.ljtnono.re.vo.system.UserRoleNumPieVO;
-import cn.ljtnono.re.vo.system.UserVO;
+import cn.ljtnono.re.vo.system.user.UserListVO;
+import cn.ljtnono.re.vo.system.user.UserRoleNumPieVO;
+import cn.ljtnono.re.vo.system.user.UserDetailVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,7 +34,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param dto 参数封装
      * @return 影响的行数
      */
-    int insertUserRole(@Param("dto") UserDTO dto);
+    int insertUserRole(@Param("dto") UserRoleAddDTO dto);
 
     /**
      * <p>根据用户id获取角色</p>
@@ -56,10 +56,10 @@ public interface UserMapper extends BaseMapper<User> {
      * <p>根据用户id获取用户信息<br/>
      * 此函数只获取一部分字段，不会获取以删除用户，但是会获取已经删除的角色信息</p>
      * @param id 用户id
-     * @return 用户通用VO对象 {@link UserVO}
+     * @return 用户通用VO对象 {@link UserDetailVO}
      * @author Ling, Jiatong
      */
-    UserVO getUserById(@Param("id") Integer id);
+    UserDetailVO getUserById(@Param("id") Integer id);
 
     /**
      * <p>获取用户根据角色分类统计饼状图</p>

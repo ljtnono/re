@@ -1,9 +1,10 @@
 package cn.ljtnono.re.common.util;
 
 /**
+ * 加密工具
+ *
  * @author Ling, Jiatong
  * Date: 2020/7/8 9:49 上午
- * Description: 加密工具
  */
 public class EncryptUtil {
 

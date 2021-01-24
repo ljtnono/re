@@ -8,7 +8,7 @@ package cn.ljtnono.re.common.enumeration.message;
  */
 public enum MessageTypeEnum {
 
-    /** 系统监控型消息 */
+    // 系统监控型消息
     SERVER_MONITOR(100, "系统监控消息", "/topic/server/monitor"),
 
     ;

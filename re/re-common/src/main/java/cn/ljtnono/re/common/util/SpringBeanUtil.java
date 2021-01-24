@@ -11,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * spring bean工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/8 17:18
- * Description: spring bean工具类
  */
 @Component
 public class SpringBeanUtil implements ApplicationContextAware {

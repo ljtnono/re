@@ -27,6 +27,8 @@ re:
       - /v2/**
       - /swagger-resources/**
       - /static/**
+      - /*.html
+      - /webjars/**
   swagger-ui-open: true
   static-file-base-path: E:\\re\\re\\re-api\\src\\main\\resources\\static
 # 配置logging等级

@@ -1,7 +1,7 @@
 package cn.ljtnono.re.service.server;
 
 import cn.ljtnono.re.common.enumeration.message.MessageTypeEnum;
-import cn.ljtnono.re.entity.message.ServerMonitorMessage;
+import cn.ljtnono.re.bo.message.ServerMonitorMessageBOBO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
@@ -10,7 +10,7 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
 /**
- *
+ * 系统信息模块service层
  *
  * @author Ling, Jiatong
  * Date: 2020/11/15 14:22
@@ -32,8 +32,8 @@ public class ServerService {
      * @author Ling, Jiatong
      *
      */
-    public ServerMonitorMessage serverMonitorMessage() {
-        ServerMonitorMessage serverMonitorMessage = new ServerMonitorMessage();
+    public ServerMonitorMessageBOBO serverMonitorMessage() {
+        ServerMonitorMessageBOBO serverMonitorMessageBO = new ServerMonitorMessageBOBO();
         SystemInfo systemInfo = new SystemInfo();
         HardwareAbstractionLayer hardware = systemInfo.getHardware();
         GlobalMemory memory = hardware.getMemory();
@@ -41,19 +41,19 @@ public class ServerService {
         // 获取内存信息
         long available = memory.getAvailable();
         long total = memory.getTotal();
-        serverMonitorMessage.setMemoryAvailable(available);
-        serverMonitorMessage.setMemoryTotal(total);
+        serverMonitorMessageBO.setMemoryAvailable(available);
+        serverMonitorMessageBO.setMemoryTotal(total);
 
         // 系统信息
         OperatingSystem operatingSystem = systemInfo.getOperatingSystem();
         String systemName = operatingSystem.getManufacturer() + " " + operatingSystem.getFamily() + " " + operatingSystem.getVersionInfo();
-        serverMonitorMessage.setSystemName(systemName);
+        serverMonitorMessageBO.setSystemName(systemName);
 
-        serverMonitorMessage.setCode(MessageTypeEnum.SERVER_MONITOR.getCode());
-        serverMonitorMessage.setName(MessageTypeEnum.SERVER_MONITOR.getName());
-        serverMonitorMessage.setDestination(MessageTypeEnum.SERVER_MONITOR.getDestination());
-        serverMonitorMessage.setTimeStamp(System.currentTimeMillis());
+        serverMonitorMessageBO.setCode(MessageTypeEnum.SERVER_MONITOR.getCode());
+        serverMonitorMessageBO.setName(MessageTypeEnum.SERVER_MONITOR.getName());
+        serverMonitorMessageBO.setDestination(MessageTypeEnum.SERVER_MONITOR.getDestination());
+        serverMonitorMessageBO.setTimeStamp(System.currentTimeMillis());
 
-        return serverMonitorMessage;
+        return serverMonitorMessageBO;
     }
 }

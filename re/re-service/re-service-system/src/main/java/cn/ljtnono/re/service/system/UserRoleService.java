@@ -23,7 +23,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-@Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class UserRoleService {
 
     @Resource
@@ -41,7 +40,6 @@ public class UserRoleService {
      * @param userId 用户id
      * @return Integer 角色id
      */
-    @Transactional(readOnly = true)
     public Integer getRoleIdByUserId(Integer userId) {
         UserRole userRole = userRoleMapper.selectOne(new LambdaQueryWrapper<UserRole>()
                 .select(UserRole::getId, UserRole::getRoleId)

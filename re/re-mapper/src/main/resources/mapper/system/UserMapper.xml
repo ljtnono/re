@@ -27,7 +27,7 @@
     <!-- 插入用户角色表 -->
     <insert id="insertUserRole">
         INSERT INTO sys_user_role(user_id, role_id)
-        VALUES(#{dto.id}, #{dto.roleId})
+        VALUES(#{dto.userId}, #{dto.roleId})
     </insert>
 
     <!-- 根据用户id获取角色id和用户名 -->
@@ -49,7 +49,7 @@
     </select>
 
     <!-- 分页获取用户列表 -->
-    <select id="getList" resultType="cn.ljtnono.re.vo.system.UserListVO">
+    <select id="getList" resultType="cn.ljtnono.re.vo.system.user.UserListVO">
         SELECT
             su.id,
             su.username,
@@ -83,7 +83,7 @@
     </select>
 
     <!-- 根据用户id获取用户信息 -->
-    <select id="getUserById" resultType="cn.ljtnono.re.vo.system.UserVO">
+    <select id="getUserById" resultType="cn.ljtnono.re.vo.system.user.UserDetailVO">
         SELECT
             su.id,
             su.username,
@@ -104,7 +104,7 @@
     </select>
 
     <!-- 获取用户根据角色分类统计饼状图 -->
-    <select id="roleNumPie" resultType="cn.ljtnono.re.vo.system.UserRoleNumPieVO">
+    <select id="roleNumPie" resultType="cn.ljtnono.re.vo.system.user.UserRoleNumPieVO">
         SELECT
             sr.NAME AS role_name,
             IFNULL( COUNT( DISTINCT su.id ), 0 ) AS num

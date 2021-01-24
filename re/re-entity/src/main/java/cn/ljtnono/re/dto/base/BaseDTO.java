@@ -13,18 +13,24 @@ import lombok.ToString;
  */
 @Data
 @ToString
-@ApiModel(description = "DTO对象基类")
+@ApiModel(description = "DTO基类对象")
 public class BaseDTO {
 
-    /** id */
+    /**
+     * id
+     */
     @ApiModelProperty("id")
     private Integer id;
 
-    /** 分页页数 默认为1 */
+    /**
+     * 分页页数 默认为1
+     */
     @ApiModelProperty(value = "分页页数", example = "1")
     private Integer pageNum = 1;
 
-    /** 每页条数 默认为10 */
+    /**
+     * 每页条数 默认为10
+     */
     @ApiModelProperty(value = "每页条数", example = "10")
     private Integer pageSize = 10;
 }

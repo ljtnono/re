@@ -3,10 +3,12 @@ package cn.ljtnono.re.common.util.rest;
 import java.util.Random;
 
 /**
+ * 发送请求时的User-Agent池
+ * <p>
  * TODO 待添加池中的内容
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/1 17:46
- * Description: 发送请求时的User-Agent池
  */
 public class UserAgentPool {
 
@@ -43,6 +45,7 @@ public class UserAgentPool {
 
     /**
      * 随机获取一个User-Agent
+     *
      * @return 随机User-Agent
      */
     public static String randomUserAgent() {
@@ -52,6 +55,7 @@ public class UserAgentPool {
 
     /**
      * 随机获取一个手机端的User-Agent
+     *
      * @return 随机手机端User-Agent
      */
     public static String randomMobileUserAgent() {

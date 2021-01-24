@@ -32,9 +32,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
+ * 安全配置
+ *
  * @author Ling, Jiatong
  * Date: 202/7/11 23:24 下午
- * Description: 安全配置
  */
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, proxyTargetClass = true)

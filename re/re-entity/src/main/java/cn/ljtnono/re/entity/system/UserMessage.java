@@ -20,13 +20,19 @@ import lombok.ToString;
 public class UserMessage extends BaseEntity {
 
 
-    /** 所属用户id */
+    /**
+     * 所属用户id
+     */
     private Integer userId;
 
-    /** 消息内容 */
+    /**
+     * 消息内容
+     */
     private String message;
 
-    /** 消息状态 0 未读 1 已读 */
+    /**
+     * 消息状态 0 未读 1 已读
+     */
     private Integer status;
 
     @TableField("is_deleted")

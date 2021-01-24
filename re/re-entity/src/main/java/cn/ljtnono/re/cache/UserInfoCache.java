@@ -17,19 +17,29 @@ import java.util.Date;
 @ToString
 public class UserInfoCache {
 
-    /** 用户id */
+    /**
+     * 用户id
+     */
     private Integer userId;
 
-    /** 用户名 */
+    /**
+     * 用户名
+     */
     private String username;
 
-    /** 角色id */
+    /**
+     * 角色id
+     */
     private Integer roleId;
 
-    /** token */
+    /**
+     * token
+     */
     private String token;
 
-    /** 登陆时间 */
+    /**
+     * 登陆时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date loginDate;

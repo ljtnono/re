@@ -8,9 +8,7 @@ package cn.ljtnono.re.common.enumeration;
  */
 public enum RedisKeyEnum {
 
-    /**
-     * 用户存储在redis中的键
-     */
+    // 用户存储在redis中的键
     USER_INFO_KEY("re:system:user:id:username"),
 
     ;

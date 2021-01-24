@@ -8,6 +8,7 @@ package cn.ljtnono.re.common.enumeration;
 public enum GlobalErrorEnum {
 
     //**************************通用**************************//
+
     /** 请求参数错误 */
     REQUEST_PARAM_ERROR(400000, "请求参数错误"),
     /** 资源已经存在 */

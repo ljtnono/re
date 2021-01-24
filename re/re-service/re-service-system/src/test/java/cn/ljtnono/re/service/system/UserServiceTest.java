@@ -1,10 +1,7 @@
 package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.ReServiceSystemApplication;
-import cn.ljtnono.re.common.exception.GlobalException;
-import cn.ljtnono.re.dto.system.UserDTO;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,13 +21,7 @@ public class UserServiceTest {
 
     @Test
     public void login() {
-        // 判断是否能够
-        GlobalException globalException = Assertions.assertThrows(GlobalException.class, () -> {
-            UserDTO dto = new UserDTO();
-            dto.setUsername("admin");
-            dto.setPassword("ljtLJT715336");
-            userService.login(dto);
-        });
+
     }
 
     @Test

@@ -6,13 +6,9 @@ import cn.ljtnono.re.entity.system.Config;
 import cn.ljtnono.re.mapper.system.ConfigMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 /**
  * 全局配置模块service层
@@ -21,7 +17,6 @@ import java.util.Optional;
  * Date: 2020/11/6 23:31
  */
 @Service
-@Transactional(rollbackFor = Exception.class, isolation = Isolation.DEFAULT, propagation = Propagation.REQUIRED)
 public class ConfigService {
 
     @Resource

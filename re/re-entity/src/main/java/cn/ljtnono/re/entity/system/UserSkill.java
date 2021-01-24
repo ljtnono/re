@@ -20,13 +20,19 @@ import java.math.BigDecimal;
 @TableName("sys_user_skill")
 public class UserSkill extends BaseEntity {
 
-    /** 技能标题 */
+    /**
+     * 技能标题
+     */
     private String title;
 
-    /** 技能所属用户id */
+    /**
+     * 技能所属用户id
+     */
     private Integer userId;
 
-    /** 技能百分比 */
+    /**
+     * 技能百分比
+     */
     private BigDecimal percentage;
 
 }

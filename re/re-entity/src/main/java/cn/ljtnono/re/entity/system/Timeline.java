@@ -17,6 +17,8 @@ import lombok.ToString;
 public class Timeline extends BaseEntity {
 
 
-    /** 时间轴内容 */
+    /**
+     * 时间轴内容
+     */
     private String content;
 }

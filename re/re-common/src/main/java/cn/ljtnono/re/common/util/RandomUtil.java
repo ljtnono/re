@@ -1,11 +1,13 @@
 package cn.ljtnono.re.common.util;
 
 import java.util.Random;
+import java.util.UUID;
 
 /**
+ * 随机工具类
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/20 18:59
- * Description: 随机工具类
  */
 public class RandomUtil {
 
@@ -65,6 +67,23 @@ public class RandomUtil {
             builder.append(numberChar.charAt(random.nextInt(numberChar.length())));
         }
         return builder.toString();
+    }
+
+    /**
+     * 生成UUID
+     *
+     * @return UUID字符串
+     */
+    public String generateUUID() {
+        return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 生成简单UUID, 去除-
+     * @return UUID字符串
+     */
+    public String generateSimpleUUID() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
 }

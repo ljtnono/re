@@ -23,9 +23,9 @@ import java.util.List;
  * Date: 2020/7/12 22:23 下午
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
 @TableName("sys_user")
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends BaseEntity implements UserDetails {
 
