@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/permission")
-@Api(value = "/api/v1/system/permission", tags = "权限模块接口")
+@Api(tags = "权限模块接口")
 public class PermissionController {
 
     private final PermissionService permissionService;
     public PermissionController(PermissionService permissionService) {
         this.permissionService = permissionService;
     }
-
-
+    
 }

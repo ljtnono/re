@@ -1,5 +1,10 @@
 package cn.ljtnono.re.common.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.MessageDigest;
+
 /**
  * 加密工具
  *
@@ -11,7 +16,8 @@ public class EncryptUtil {
     /**
      * 工具类不允许实例化
      */
-    private EncryptUtil() {}
+    private EncryptUtil() {
+    }
 
     public static EncryptUtil getInstance() {
         return Holder.INSTANCE;
@@ -23,20 +29,23 @@ public class EncryptUtil {
 
     /**
      * 使用MD5对字符串进行加密
+     *
      * @param source 源字符串
      * @return MD5加密后的字符串
      */
     public String getMd5(String source) {
         return getMd5(source.getBytes());
     }
+
     /**
      * MD5加密算法
+     *
      * @param source 源字节数组
      * @return 加密后的字符串
      */
-    private String getMd5(byte[] source) {
+    public String getMd5(byte[] source) {
         String s = null;
-        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             byte[] tmp;
@@ -61,6 +70,7 @@ public class EncryptUtil {
 
     /**
      * MD5加密转小写
+     *
      * @param source 源字符串
      * @return MD5小写加密字符串
      */
@@ -70,6 +80,7 @@ public class EncryptUtil {
 
     /**
      * MD5加密转大写
+     *
      * @param source 源字符串
      * @return MD5大写加密
      */

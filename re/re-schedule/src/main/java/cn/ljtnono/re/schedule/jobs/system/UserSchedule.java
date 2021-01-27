@@ -1,11 +1,9 @@
-package cn.ljtnono.re.schedule.system;
+package cn.ljtnono.re.schedule.jobs.system;
 
 import cn.ljtnono.re.service.system.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Array;
 
 /**
  * @author Ling, Jiatong

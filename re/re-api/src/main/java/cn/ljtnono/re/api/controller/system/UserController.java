@@ -27,7 +27,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/user")
-@Api(value = "/api/v1/system/user", tags = "用户模块接口")
+@Api(tags = "用户模块接口")
 public class UserController {
 
     private final UserService userService;

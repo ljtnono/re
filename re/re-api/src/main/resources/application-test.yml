@@ -23,9 +23,8 @@ re:
       - /api/v1/system/user/login
       - /api/v1/system/verifyCode
       - /message/**
-      - /swagger-ui/**
-      - /v2/**
-      - /swagger-resources/**
+      - /v2/api-docs
+      - /static/**
   swagger-ui-open: true
   static-file-base-path: /re/static
 

@@ -23,14 +23,10 @@ re:
       - /api/v1/system/user/login
       - /api/v1/system/verifyCode
       - /message/**
-      - /swagger-ui/**
-      - /v2/**
-      - /swagger-resources/**
+      - /v2/api-docs
       - /static/**
-      - /*.html
-      - /webjars/**
   swagger-ui-open: true
-  static-file-base-path: E:\\re\\re\\re-api\\src\\main\\resources\\static
+  static-file-base-path: E:\re\re\project\static
 # 配置logging等级
 logging:
   level:

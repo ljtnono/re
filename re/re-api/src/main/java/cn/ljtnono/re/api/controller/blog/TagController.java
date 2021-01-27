@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Date: 2020/9/22 1:08
  */
 @RestController
-public class ArticleTagController {
+public class TagController {
 
 }

@@ -1,5 +1,6 @@
 package cn.ljtnono.re.security.config;
 
+import cn.ljtnono.re.common.properties.ReProperties;
 import cn.ljtnono.re.security.component.LoginUserResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -16,9 +18,12 @@ import java.util.List;
  * @author Ling, Jiatong
  * Date: 2020/10/8 0:40
  */
-@Configuration
 @EnableWebMvc
+@Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private ReProperties reProperties;
 
     private final LoginUserResolver loginUserResolver;
     public WebMvcConfig(LoginUserResolver loginUserResolver) {
@@ -38,10 +43,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 配置静态资源处理器
         registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
-        registry.addResourceHandler("doc.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+                .addResourceLocations("file:" + reProperties.getStaticFileBasePath() + File.separator);
+//        registry.addResourceHandler("doc.html")
+//                .addResourceLocations("classpath:/META-INF/resources/");
+//        registry.addResourceHandler("/webjars/**")
+//                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 }

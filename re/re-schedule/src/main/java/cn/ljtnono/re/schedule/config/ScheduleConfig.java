@@ -1,8 +1,6 @@
 package cn.ljtnono.re.schedule.config;
 
-import org.springframework.boot.task.TaskSchedulerCustomizer;
 import org.springframework.context.annotation.Configuration;
-
 
 /**
  *

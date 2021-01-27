@@ -1,6 +1,7 @@
 package cn.ljtnono.re.entity.resource;
 
 import cn.ljtnono.re.entity.base.BaseEntity;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,4 +41,31 @@ public class Image extends BaseEntity {
      * 字节大小
      */
     private Long size;
+
+    /**
+     * 图片存放路径
+     */
+    private String savePath;
+
+    /**
+     * 图片的MD5值
+     */
+    private String md5;
+
+    /**
+     * 是否删除 1 删除 0 正常
+     */
+    @TableField("is_deleted")
+    private Integer deleted;
+
+    /**
+     * 图片后缀名
+     */
+    private String suffix;
+
+    /**
+     * 图片类型
+     * 0
+     */
+    private Integer type;
 }

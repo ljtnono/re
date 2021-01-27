@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/verifyCode")
-@Api(value = "/api/v1/system/verifyCode", tags = "验证码模块接口")
+@Api(tags = "验证码模块接口")
 public class VerifyCodeController {
 
     private final Producer captchaProducer;

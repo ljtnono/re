@@ -25,7 +25,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/role")
-@Api(value = "/api/v1/system/role", tags = "角色模块接口")
+@Api(tags = "角色模块接口")
 public class RoleController {
 
     private final RoleService roleService;

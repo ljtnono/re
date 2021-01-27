@@ -1,4 +1,4 @@
-package cn.ljtnono.re.schedule.message;
+package cn.ljtnono.re.schedule.jobs.message;
 
 import cn.ljtnono.re.bo.message.ServerMonitorMessageBOBO;
 import cn.ljtnono.re.entity.system.User;

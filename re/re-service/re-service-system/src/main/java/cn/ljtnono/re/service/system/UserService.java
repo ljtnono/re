@@ -1,6 +1,7 @@
 package cn.ljtnono.re.service.system;
 
 import cn.ljtnono.re.cache.UserInfoCache;
+import cn.ljtnono.re.common.constant.resource.ImageTypeEnum;
 import cn.ljtnono.re.common.constant.system.UserValidatePatternConstant;
 import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
 import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
@@ -16,6 +17,7 @@ import cn.ljtnono.re.common.exception.system.DataBaseException;
 import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.EncryptUtil;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
+import cn.ljtnono.re.dto.resource.image.ImageUploadDTO;
 import cn.ljtnono.re.dto.system.user.*;
 import cn.ljtnono.re.dto.system.userrole.UserRoleAddDTO;
 import cn.ljtnono.re.entity.system.Permission;
@@ -24,6 +26,7 @@ import cn.ljtnono.re.entity.system.User;
 import cn.ljtnono.re.mapper.system.UserMapper;
 import cn.ljtnono.re.security.util.JwtUtil;
 import cn.ljtnono.re.service.resource.ImageService;
+import cn.ljtnono.re.vo.resource.image.ImageUploadVO;
 import cn.ljtnono.re.vo.system.user.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -289,10 +292,13 @@ public class UserService implements UserDetailsService {
         if (multipartFile == null) {
             return;
         }
-        String savePath = imageService.upload(multipartFile);
-        if (savePath != null) {
+        ImageUploadDTO dto = new ImageUploadDTO();
+        dto.setFile(multipartFile);
+        dto.setType(ImageTypeEnum.GLOBAL_SETTING.getCode());
+        ImageUploadVO vo = imageService.uploadImage(dto);
+        if (vo != null) {
             userMapper.update(null, new LambdaUpdateWrapper<User>()
-                    .set(User::getAvatarUrl, savePath)
+                    .set(User::getAvatarUrl, vo.getSavePath())
                     .set(User::getModifyTime, new Date())
                     .eq(User::getId, id));
         } else {

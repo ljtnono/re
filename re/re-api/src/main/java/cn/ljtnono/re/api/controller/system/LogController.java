@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/system/log")
-@Api(value = "/api/v1/system/log", tags = "系统日志模块")
+@Api(tags = "系统日志模块")
 public class LogController {
-
 
 }
