@@ -27,6 +27,12 @@ public class ImageUploadVO {
     private Integer result;
 
     /**
+     * 消息
+     */
+    @ApiModelProperty(value = "消息")
+    private String message;
+
+    /**
      * 图片id
      */
     @ApiModelProperty(value = "图片id")

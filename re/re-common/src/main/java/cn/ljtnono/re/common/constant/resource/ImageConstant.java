@@ -35,4 +35,5 @@ public class ImageConstant {
      * 图片访问域名，默认端口为80
      */
     public static final String ACCESS_HOST = "http://localhost";
+
 }

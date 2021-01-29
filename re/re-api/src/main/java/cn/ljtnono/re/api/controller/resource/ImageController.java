@@ -1,6 +1,8 @@
 package cn.ljtnono.re.api.controller.resource;
 
 import cn.ljtnono.re.common.vo.JsonResultVO;
+import cn.ljtnono.re.dto.resource.image.ImageDeleteBatchDTO;
+import cn.ljtnono.re.dto.resource.image.ImageDownloadBatchDTO;
 import cn.ljtnono.re.dto.resource.image.ImageListQueryDTO;
 import cn.ljtnono.re.dto.resource.image.ImageUploadDTO;
 import cn.ljtnono.re.service.resource.ImageService;
@@ -11,13 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.FileInputStream;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 图片模块接口
@@ -63,5 +59,45 @@ public class ImageController {
         return JsonResultVO.success(imageService.getList(dto));
     }
 
+    /**
+     * 批量逻辑删除图片
+     *
+     * @param dto 批量删除图片DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
+    @DeleteMapping("/logicDeleteBatch")
+    @ApiOperation(value = "批量逻辑删除图片", httpMethod = "DELETE")
+    public JsonResultVO<?> logicDeleteBatch(ImageDeleteBatchDTO dto) {
+        log.info("[re-system -> ImageController -> logicDeleteBatch()] 批量逻辑删除图片，参数：{}", dto);
+        imageService.logicDeleteBatch(dto.getBatchKey());
+        return JsonResultVO.success();
+    }
 
+    /**
+     * 批量物理删除图片
+     *
+     * @param dto 批量删除图片DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
+    @DeleteMapping("/physicDeleteBatch")
+    @ApiOperation(value = "批量物理删除图片")
+    public JsonResultVO<?> physicDeleteBatch(ImageDeleteBatchDTO dto) {
+        log.info("[re-system -> ImageController -> physicDeleteBatch()] 批量物理删除图片，参数：{}", dto);
+        imageService.physicDeleteBatch(dto.getBatchKey());
+        return JsonResultVO.success();
+    }
+
+    /**
+     * 批量下载图片
+     *
+     * @param dto 批量下载图片
+     * @author Ling, Jiatong
+     */
+    @GetMapping("/downloadImageBatch")
+    public void downloadImageBatch(ImageDownloadBatchDTO dto) {
+        log.info("[re-system -> ImageController -> downloadImageBatch()] 批量下载图片，参数：{}", dto);
+        imageService.downloadImageBatch(dto.getBatchKey(), dto.getCompressType());
+    }
 }

@@ -2,6 +2,7 @@ package cn.ljtnono.re.dto.base;
 
 import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
@@ -21,6 +22,7 @@ public class BaseBatchDTO<T> {
     /**
      * 批量操作时使用的key
      */
+    @ApiModelProperty(value = "批量操作键列表")
     private List<T> batchKey;
 
     public BaseBatchDTO() {

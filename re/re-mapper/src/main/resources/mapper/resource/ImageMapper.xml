@@ -6,6 +6,30 @@
 
     <!-- 分页获取图片列表 -->
     <select id="getList" resultType="cn.ljtnono.re.vo.resource.image.ImageListVO">
-
+        SELECT
+            rsi.id,
+            rsi.image_id,
+            rsi.origin_name,
+            rsi.url,
+            rsi.create_time,
+            rsi.modify_time,
+            rsi.size,
+            rsi.type
+        FROM rs_image rsi
+        <where>
+            rsi.is_deleted = 0
+            <!-- 图片类型筛选 -->
+            <if test="dto.type != null">
+                AND rsi.type = #{dto.type, javaType=Integer}
+            </if>
+            <!-- 图片名模糊查询 -->
+            <if test="dto.originName != null and dto.originName != ''">
+                AND rsi.origin_name LIKE CONCAT('%', #{dto.originName, javaType=String}, '%')
+            </if>
+        </where>
+        <!-- 排序字段 -->
+        <if test="dto.sortCondition != null and dto.sortCondition != ''">
+            ORDER BY ${dto.sortCondition}
+        </if>
     </select>
 </mapper>

@@ -18,12 +18,16 @@ import cn.ljtnono.re.entity.resource.Image;
 import cn.ljtnono.re.mapper.resource.ImageMapper;
 import cn.ljtnono.re.vo.resource.image.ImageListVO;
 import cn.ljtnono.re.vo.resource.image.ImageUploadVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
@@ -32,9 +36,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 图片模块service层
@@ -138,14 +146,13 @@ public class ImageService {
             // 计算文件MD5值，如果相同，那么校验成功，如果不相同，那么抛出上传失败异常，并且删除该图片
             String md5 = DigestUtils.md5DigestAsHex(new FileInputStream(saveFile));
             if (!dto.getMd5().equalsIgnoreCase(md5)) {
-                // TODO 删除文件异常
                 FileSystemUtils.deleteRecursively(new File(savePath));
                 throw new BusinessException(GlobalErrorEnum.IMAGE_MD5_VALIDATE_FAILED_ERROR);
             }
         } catch (IOException e) {
-            e.printStackTrace();
             ImageUploadVO imageUploadVO = new ImageUploadVO();
             imageUploadVO.setResult(ImageConstant.UPLOAD_FAILED_CODE);
+            imageUploadVO.setMessage(e.getMessage());
             return imageUploadVO;
         }
         // 图片数据入库
@@ -194,23 +201,76 @@ public class ImageService {
 
     /**
      * 批量下载图片
-     * 使用tar.gz格式返回一个图片压缩包
      *
+     * @param idList 图片id列表
+     * @param compressType 压缩类型
      * @author Ling, Jiatong
      */
-    public void downloadImageBatch() {
-
+    public void downloadImageBatch(List<Integer> idList, Integer compressType) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
+        List<String> savePathList = getSavePath(idList);
+        if (compressType == 1) {
+            // zip 压缩格式
+        }
     }
 
     /**
-     * 根据存储路径校验图片是否存在
+     * 根据存储路径校验完整性
+     * 如果是逻辑删除的图片会返回false
      *
      * @param savePath 文件存储路径
-     * @return 存在返回Image对象，不存在抛出异常
+     * @return 图片完整返回true，图片不完整或者图片被逻辑删除或者图片不存在返回false
      * @author Ling, Jiatong
      */
-    public Image checkExistBySavePath(String savePath) {
-        return null;
+    public boolean checkCompleteness(String savePath) throws IOException {
+        if (StringUtils.isEmpty(savePath)) {
+            return false;
+        }
+        File file = new File(savePath);
+        if (!file.exists()) {
+            return false;
+        }
+        String savedMd5 = getMd5(savePath);
+        if (StringUtils.isEmpty(savedMd5)) {
+            return false;
+        }
+        String md5 = DigestUtils.md5DigestAsHex(new FileInputStream(file));
+        return savedMd5.equalsIgnoreCase(md5);
+    }
+
+    /**
+     * 批量逻辑删除图片
+     *
+     * @param idList 图片id列表
+     * @author Ling, Jiatong
+     */
+    public void logicDeleteBatch(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
+        imageMapper.update(null, new LambdaUpdateWrapper<Image>()
+                .in(Image::getId, idList));
+    }
+
+    /**
+     * 批量物理删除图片
+     *
+     * @param idList 图片id列表
+     * @author Ling, Jiatong
+     */
+    public void physicDeleteBatch(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return;
+        }
+        List<String> savePathList = getSavePath(idList);
+        // 删除表数据
+        imageMapper.delete(new LambdaQueryWrapper<Image>().in(Image::getId, idList));
+        // 删除图片文件
+        savePathList
+                .parallelStream()
+                .forEach(savePath -> FileSystemUtils.deleteRecursively(new File(savePath)));
     }
 
     //*********************************** 私有方法 ***********************************//
@@ -235,8 +295,50 @@ public class ImageService {
         }
     }
 
+
     //*********************************** 公共方法 ***********************************//
 
+    /**
+     * 获取图片存储路径列表
+     *
+     * 不包含逻辑删除图片
+     *
+     * @param idList 图片id列表
+     * @return 图片存储路径列表
+     * @author Ling, Jiatong
+     */
+    public List<String> getSavePath(List<Integer> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return Lists.newArrayList();
+        }
+        return imageMapper.selectList(new LambdaQueryWrapper<Image>()
+                .select(Image::getSavePath)
+                .in(Image::getId, idList)
+                .eq(Image::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue()))
+                .stream()
+                .filter(Objects::nonNull)
+                .map(Image::getSavePath)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 根据图片存储路径获取数据库中存储的md5值
+     * 不包含逻辑删除过的图片
+     *
+     * @param savePath 图片存储路径
+     * @return 图片md5值
+     * @author Ling, Jiatong
+     */
+    public String getMd5(String savePath) {
+        if (StringUtils.isEmpty(savePath)) {
+            return null;
+        }
+        return imageMapper.selectOne(new LambdaQueryWrapper<Image>()
+                .eq(Image::getDeleted, EntityConstantEnum.ENTITY_IS_DELETED_NOT_DELETED.getValue())
+                .eq(Image::getSavePath, savePath))
+                .getMd5();
+    }
 
     //*********************************** 其他方法 ***********************************//
 
