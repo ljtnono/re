@@ -99,4 +99,10 @@ public class BaseListQueryDTO extends BaseDTO {
             sortCondition = builder.toString();
         }
     }
+
+
+    public BaseListQueryDTO() {
+        sortFieldList = Lists.newArrayList();
+        sortTypeList = Lists.newArrayList();
+    }
 }

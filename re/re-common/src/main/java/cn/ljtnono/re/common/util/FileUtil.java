@@ -1,6 +1,11 @@
 package cn.ljtnono.re.common.util;
 
 import java.io.*;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 文件工具类
@@ -65,6 +70,109 @@ public class FileUtil {
         } else {
             return fileName.matches("[^\\s\\\\/:\\*\\?\\\"<>\\|](\\x20|[^\\s\\\\/:\\*\\?\\\"<>\\|])*[^\\s\\\\/:\\*\\?\\\"<>\\|\\.]$");
         }
+    }
+
+    /**
+     * 压缩多个文件成一个zip文件
+     *
+     * @param fileList 源文件列表
+     * @param zipFile 压缩后的zip文件
+     * @author Ling, Jiatong
+     */
+    public void zipFiles(List<File> fileList, File zipFile) {
+        byte[] buf = new byte[1024];
+        try {
+            // 如果不存在，则创建新文件
+            if (!zipFile.exists()) {
+                zipFile.getParentFile().mkdirs();
+                zipFile.createNewFile();
+            }
+            ZipOutputStream outputStream = new ZipOutputStream(new FileOutputStream(zipFile));
+            for (File file : fileList) {
+                FileInputStream in = new FileInputStream(file);
+                outputStream.putNextEntry(new ZipEntry(file.getName()));
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.closeEntry();
+                in.close();
+            }
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 解压缩多个文件
+     *
+     * @param zipFile 需要解压缩的文件
+     * @param descDir 解压后的目标目录
+     */
+    public static void unZipFiles(File zipFile, String descDir) {
+        try {
+            ZipFile zf = new ZipFile(zipFile);
+            for (Enumeration entries = zf.entries(); entries.hasMoreElements();) {
+                ZipEntry entry = (ZipEntry) entries.nextElement();
+                String zipEntryName = entry.getName();
+                InputStream in = zf.getInputStream(entry);
+                OutputStream out = new FileOutputStream(descDir + zipEntryName);
+                byte[] buf1 = new byte[1024];
+                int len;
+                while ((len = in.read(buf1)) > 0) {
+                    out.write(buf1, 0, len);
+                }
+                in.close();
+                out.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param outputStream 文件输出流
+     * @param file 下载的文件
+     * @author Ling, Jiatong
+     */
+    public void downLoadFile(OutputStream outputStream, File file) {
+        byte[] buf = new byte[1024];
+        BufferedInputStream bufferedInputStream = null;
+        try {
+            bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
+            int readLength = 0;
+            while ((readLength = bufferedInputStream.read(buf)) > 0) {
+                outputStream.write(buf, 0, buf.length);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedInputStream != null) {
+                    bufferedInputStream.close();
+                }
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 将文件压缩为.tar.gz格式
+     *
+     * @param tarGzFile 压缩后的文件 .tar.gz 格式
+     * @param fileList 要压缩的文件列表
+     * @author Ling, Jiatong
+     */
+    public File tarGzFiles(List<File> fileList, File tarGzFile) {
+        File file = new File("");
+        return file;
     }
 
 }

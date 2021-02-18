@@ -48,6 +48,7 @@
         <oshi.version>5.3.5</oshi.version>
         <jna.version>5.5.0</jna.version>
         <swagger.version>3.0.0</swagger.version>
+        <commons-compress.version>1.19</commons-compress.version>
     </properties>
     <!-- 依赖统一管理 -->
     <dependencyManagement>
@@ -114,6 +115,12 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>${swagger.version}</version>
+            </dependency>
+            <!-- apache-common -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

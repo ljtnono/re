@@ -9,11 +9,14 @@ import cn.ljtnono.re.service.resource.ImageService;
 import cn.ljtnono.re.vo.resource.image.ImageListVO;
 import cn.ljtnono.re.vo.resource.image.ImageUploadVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 /**
  * 图片模块接口
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Slf4j
 @RestController
+@Api(tags = "图片模块接口")
 @RequestMapping("/api/v1/rs/image")
 public class ImageController {
 
@@ -96,7 +100,7 @@ public class ImageController {
      * @author Ling, Jiatong
      */
     @GetMapping("/downloadImageBatch")
-    public void downloadImageBatch(ImageDownloadBatchDTO dto) {
+    public void downloadImageBatch(ImageDownloadBatchDTO dto) throws IOException {
         log.info("[re-system -> ImageController -> downloadImageBatch()] 批量下载图片，参数：{}", dto);
         imageService.downloadImageBatch(dto.getBatchKey(), dto.getCompressType());
     }

@@ -12,6 +12,11 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+  # 文件上传不设置大小
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
 
 # rest
 rest:

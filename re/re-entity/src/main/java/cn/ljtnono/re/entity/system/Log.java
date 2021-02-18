@@ -3,7 +3,6 @@ package cn.ljtnono.re.entity.system;
 import cn.ljtnono.re.entity.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  * 系统日志实体
@@ -12,7 +11,6 @@ import lombok.ToString;
  * Date: 2020/12/30 23:05
  */
 @Data
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Log extends BaseEntity {
 

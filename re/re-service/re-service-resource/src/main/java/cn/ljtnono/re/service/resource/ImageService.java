@@ -1,6 +1,7 @@
 package cn.ljtnono.re.service.resource;
 
 import cn.ljtnono.re.common.constant.StaticFolderConstant;
+import cn.ljtnono.re.common.constant.resource.ImageCompressTypeEnum;
 import cn.ljtnono.re.common.constant.resource.ImageConstant;
 import cn.ljtnono.re.common.constant.resource.ImageTypeEnum;
 import cn.ljtnono.re.common.enumeration.EntityConstantEnum;
@@ -9,8 +10,10 @@ import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.exception.businese.BusinessException;
 import cn.ljtnono.re.common.exception.system.DataBaseException;
 import cn.ljtnono.re.common.properties.ReProperties;
+import cn.ljtnono.re.common.util.DateUtil;
 import cn.ljtnono.re.common.util.FileUtil;
 import cn.ljtnono.re.common.util.RandomUtil;
+import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.dto.resource.image.ImageListQueryDTO;
 import cn.ljtnono.re.dto.resource.image.ImageUploadBatchDTO;
 import cn.ljtnono.re.dto.resource.image.ImageUploadDTO;
@@ -34,9 +37,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -75,13 +78,17 @@ public class ImageService {
      * @author Ling, Jiatong
      */
     public IPage<ImageListVO> getList(ImageListQueryDTO dto) {
-        Page<?> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         try {
             dto.generateSortCondition();
+            // 默认按照上传时间降序
+            if (!dto.getSortFieldList().contains("create_time")) {
+                dto.getSortFieldList().add("create_time");
+                dto.getSortTypeList().add(2);
+            }
         } catch (IllegalArgumentException e) {
             throw new ParamException(GlobalErrorEnum.REQUEST_PARAM_ERROR);
         }
-        return imageMapper.getList(page, dto);
+        return imageMapper.getList(new Page<>(dto.getPageNum(), dto.getPageSize()), dto);
     }
 
     /**
@@ -180,16 +187,6 @@ public class ImageService {
     }
 
     /**
-     * 下载图片
-     *
-     * @param savePath 图片存储路径
-     * @author Ling, Jiatong
-     */
-    public void downloadImage(String savePath) {
-        // TODO 这里封装一个文件下载工具类
-    }
-
-    /**
      * 图片批量上传
      *
      * @param dto 图片批量删除DTO对象
@@ -206,13 +203,37 @@ public class ImageService {
      * @param compressType 压缩类型
      * @author Ling, Jiatong
      */
-    public void downloadImageBatch(List<Integer> idList, Integer compressType) {
+    public void downloadImageBatch(List<Integer> idList, Integer compressType) throws IOException {
+        HttpServletResponse response = SpringBeanUtil.getCurrentRes();
         if (CollectionUtils.isEmpty(idList)) {
+            response.setContentType("application/octet-stream");
+            // 写回一个0字节，前端可进行判断
+            response.getOutputStream().write(0);
             return;
         }
+        // 这里不用校验是否为空，默认入库数据不可能为空
         List<String> savePathList = getSavePath(idList);
-        if (compressType == 1) {
-            // zip 压缩格式
+        List<File> fileList = savePathList.stream()
+                .map(File::new)
+                .collect(Collectors.toList());
+        if (ImageCompressTypeEnum.ZIP.getCode().equals(compressType)) {
+            // 将文件打包成zip格式
+            String fileName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".zip";
+            File zipFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + fileName);
+            FileUtil.getInstance().zipFiles(fileList, zipFile);
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            FileUtil.getInstance().downLoadFile(response.getOutputStream(), zipFile);
+        } else if (ImageCompressTypeEnum.TAR_GZ.getCode().equals(compressType)) {
+            // 将文件打包成tar.gz格式
+            String fileName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".tar.gz";
+            File tarFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + fileName);
+            File file = FileUtil.getInstance().tarGzFiles(fileList, tarFile);
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.setContentType("application/octet-stream");
+            FileUtil.getInstance().downLoadFile(response.getOutputStream(), file);
+        } else {
+            // 将文件打包成rar格式
         }
     }
 
@@ -268,9 +289,7 @@ public class ImageService {
         // 删除表数据
         imageMapper.delete(new LambdaQueryWrapper<Image>().in(Image::getId, idList));
         // 删除图片文件
-        savePathList
-                .parallelStream()
-                .forEach(savePath -> FileSystemUtils.deleteRecursively(new File(savePath)));
+        savePathList.forEach(savePath -> FileSystemUtils.deleteRecursively(new File(savePath)));
     }
 
     //*********************************** 私有方法 ***********************************//

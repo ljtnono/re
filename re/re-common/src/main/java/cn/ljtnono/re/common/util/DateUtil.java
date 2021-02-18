@@ -31,9 +31,16 @@ public class DateUtil {
     public enum DateStyleEnum {
 
         /**
-         * 形如yyyy-MM-dd HH:mm:ss 例如
+         * 形如yyyy-MM-dd HH:mm:ss
          */
-        yyyy_MM_dd_HH_mm_ss("yyyy-MM-dd HH:mm:ss");
+        yyyy_MM_dd_HH_mm_ss("yyyy-MM-dd HH:mm:ss"),
+
+        /**
+         * 形如yyyyMMddHHmmss
+         */
+        yyyyMMddHHmmss("yyyyMMddHHmmss"),
+
+        ;
 
         /** 格式化风格的值 */
         private final String value;

@@ -18,9 +18,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * 权限模块service层
+ *
  * @author Ling, Jiatong
  * Date: 2020/8/9 17:06
- * Description: 权限Service类
  */
 @Slf4j
 @Service

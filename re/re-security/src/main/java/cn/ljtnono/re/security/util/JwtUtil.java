@@ -8,7 +8,6 @@ import cn.ljtnono.re.common.properties.ReSecurityProperties;
 import cn.ljtnono.re.common.util.redis.RedisUtil;
 import cn.ljtnono.re.entity.system.User;
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
