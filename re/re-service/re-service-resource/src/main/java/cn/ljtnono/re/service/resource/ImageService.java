@@ -226,12 +226,9 @@ public class ImageService {
             FileUtil.getInstance().downLoadFile(response.getOutputStream(), zipFile);
         } else if (ImageCompressTypeEnum.TAR_GZ.getCode().equals(compressType)) {
             // 将文件打包成tar.gz格式
-            String fileName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".tar.gz";
-            File tarFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + fileName);
-            File file = FileUtil.getInstance().tarGzFiles(fileList, tarFile);
-            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-            response.setContentType("application/octet-stream");
-            FileUtil.getInstance().downLoadFile(response.getOutputStream(), file);
+            String tarName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".tar";
+            File tarFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + tarName);
+            
         } else {
             // 将文件打包成rar格式
         }

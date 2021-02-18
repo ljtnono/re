@@ -1,5 +1,8 @@
 package cn.ljtnono.re.common.util;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
+
 import java.io.*;
 import java.util.Enumeration;
 import java.util.List;
@@ -164,15 +167,46 @@ public class FileUtil {
     }
 
     /**
-     * 将文件压缩为.tar.gz格式
+     * 将文件压缩为.tar格式
      *
-     * @param tarGzFile 压缩后的文件 .tar.gz 格式
+     * @param tarFile tar文件
      * @param fileList 要压缩的文件列表
      * @author Ling, Jiatong
      */
-    public File tarGzFiles(List<File> fileList, File tarGzFile) {
-        File file = new File("");
-        return file;
+    public File tarFiles(List<File> fileList, File tarFile) {
+        TarArchiveOutputStream tar = null;
+        try {
+            tar = new TarArchiveOutputStream(new FileOutputStream(tarFile));
+            for (File file : fileList) {
+                TarArchiveEntry archiveEntry = new TarArchiveEntry(file);
+                tar.putArchiveEntry(archiveEntry);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (tar != null) {
+                    tar.closeArchiveEntry();
+                    tar.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return tarFile;
+    }
+
+
+    /**
+     * 将文件列表压缩成gz格式
+     *
+     *
+     * @author Ling, Jiatong
+     *
+     */
+    public File gzFiles(List<File> fileList, File gzFile) {
+
+        return new File("");
     }
 
 }
