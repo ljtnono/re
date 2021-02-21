@@ -1,7 +1,6 @@
 package cn.ljtnono.re.bo.base;
 
 import lombok.Data;
-import lombok.ToString;
 
 /**
  * 基础消息实体类
@@ -10,7 +9,6 @@ import lombok.ToString;
  * Date: 2020/11/15 13:01
  */
 @Data
-@ToString
 public class BaseMessageBO {
 
     /**

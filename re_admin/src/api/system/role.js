@@ -5,5 +5,6 @@ import {http} from "@/config/axios"
  * @return {AxiosPromise<any>}
  */
 export const select = () => {
+
     return http.get("/system/role/select");
 }

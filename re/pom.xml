@@ -34,7 +34,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <re-version>0.0.1</re-version>
+        <re-version>1.1.3</re-version>
         <mybatis-plus.version>3.3.2</mybatis-plus.version>
         <mysql.version>8.0.20</mysql.version>
         <lombok.version>1.18.12</lombok.version>
@@ -44,7 +44,7 @@
         <jjwt.version>0.9.1</jjwt.version>
         <aliyun-oss.version>3.8.0</aliyun-oss.version>
         <kaptcha.version>2.3.2</kaptcha.version>
-        <easyexcel.version>2.1.7</easyexcel.version>
+        <easyexcel.version>2.2.7</easyexcel.version>
         <oshi.version>5.3.5</oshi.version>
         <jna.version>5.5.0</jna.version>
         <swagger.version>3.0.0</swagger.version>

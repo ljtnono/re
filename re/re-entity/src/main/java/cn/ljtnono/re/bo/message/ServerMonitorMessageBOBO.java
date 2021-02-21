@@ -3,7 +3,6 @@ package cn.ljtnono.re.bo.message;
 import cn.ljtnono.re.bo.base.BaseMessageBO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 /**
  * 系统监控消息实体
@@ -12,7 +11,6 @@ import lombok.ToString;
  * Date: 2020/11/15 13:02
  */
 @Data
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class ServerMonitorMessageBOBO extends BaseMessageBO {
 

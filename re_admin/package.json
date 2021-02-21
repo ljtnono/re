@@ -11,9 +11,11 @@
         "test:e2e": "vue-cli-service test:e2e"
     },
     "dependencies": {
+        "@babel/polyfill": "^7.12.1",
         "@ckeditor/ckeditor5-build-classic": "^24.0.0",
         "@ckeditor/ckeditor5-vue2": "^1.0.5",
         "axios": "^0.18.1",
+        "core-js": "^3.9.0",
         "countup": "^1.8.2",
         "echarts": "^4.7.0",
         "js-cookie": "^2.2.0",
@@ -28,6 +30,9 @@
         "webstomp-client": "^1.2.6"
     },
     "devDependencies": {
+        "@babel/cli": "^7.12.17",
+        "@babel/core": "^7.12.17",
+        "@babel/preset-env": "^7.12.17",
         "@vue/cli-plugin-babel": "^3.0.1",
         "@vue/cli-plugin-eslint": "^3.0.1",
         "@vue/cli-plugin-unit-mocha": "^3.0.1",

@@ -2,8 +2,8 @@ import Vue from "vue";
 import Router from "vue-router";
 import routes from "./routers";
 import Cookies from 'js-cookie';
-import {canTurnToPage} from "@/utils/permissionUtil";
-import {LOGIN_PAGE_NAME, FORBIDDEN_PAGE_NAME} from "@/constant/system/constant";
+import {canTurnToPage} from "../utils/system/permissionUtil";
+import {LOGIN_PAGE_NAME, FORBIDDEN_PAGE_NAME} from "../constant/system/constant";
 // 使用路由插件
 Vue.use(Router);
 // 创建路由对象
