@@ -11,7 +11,6 @@ import lombok.ToString;
  * Date: 2021/1/1 14:07
  */
 @Data
-@ToString
 @TableName("rs_link")
 public class Link {
 

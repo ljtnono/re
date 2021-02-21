@@ -23,8 +23,7 @@ public class ImageDownloadBatchDTO extends BaseBatchDTO<Integer> {
      * 文件压缩类型
      * 1 zip
      * 2 tar.gz
-     * 3 rar
      */
-    @ApiModelProperty(value = "压缩类型", example = "1 zip 2 tar.gz 3 rar")
+    @ApiModelProperty(value = "压缩类型", example = "1 zip 2 tar.gz")
     private Integer compressType;
 }

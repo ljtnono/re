@@ -1,14 +1,13 @@
 package cn.ljtnono.re.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
 import java.io.*;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
+import java.util.zip.*;
 
 /**
  * 文件工具类
@@ -16,6 +15,7 @@ import java.util.zip.ZipOutputStream;
  * @author Ling, Jiatong
  * Date: 2021/1/25 1:06
  */
+@Slf4j
 public class FileUtil {
 
     private FileUtil() {}
@@ -182,6 +182,7 @@ public class FileUtil {
                 tar.putArchiveEntry(archiveEntry);
             }
         } catch (IOException e) {
+            log.error("==========文件压缩为tar包失败，{}", e.getMessage());
             e.printStackTrace();
         } finally {
             try {
@@ -190,23 +191,46 @@ public class FileUtil {
                     tar.close();
                 }
             } catch (IOException e) {
+                log.error("==========文件压缩为tar包失败，{}", e.getMessage());
                 e.printStackTrace();
             }
         }
         return tarFile;
     }
 
-
     /**
      * 将文件列表压缩成gz格式
      *
-     *
+     * @param tarFile tar格式文件
+     * @param gzFile 目标gz格式文件
      * @author Ling, Jiatong
-     *
      */
-    public File gzFiles(List<File> fileList, File gzFile) {
-
-        return new File("");
+    public File gzFiles(File tarFile, File gzFile) {
+        FileInputStream fileInputStream = null;
+        GZIPOutputStream gzipOutputStream = null;
+        try {
+            fileInputStream = new FileInputStream(tarFile);
+            gzipOutputStream = new GZIPOutputStream(new FileOutputStream(gzFile));
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = fileInputStream.read(buf)) != -1) {
+                gzipOutputStream.write(buf, 0, len);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+                if (gzipOutputStream != null) {
+                    gzipOutputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return gzFile;
     }
 
 }

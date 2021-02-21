@@ -15,7 +15,6 @@ import cn.ljtnono.re.common.util.FileUtil;
 import cn.ljtnono.re.common.util.RandomUtil;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
 import cn.ljtnono.re.dto.resource.image.ImageListQueryDTO;
-import cn.ljtnono.re.dto.resource.image.ImageUploadBatchDTO;
 import cn.ljtnono.re.dto.resource.image.ImageUploadDTO;
 import cn.ljtnono.re.entity.resource.Image;
 import cn.ljtnono.re.mapper.resource.ImageMapper;
@@ -61,8 +60,6 @@ public class ImageService {
     private ImageMapper imageMapper;
     @Autowired
     private ReProperties reProperties;
-    @Value("${spring.profiles.active}")
-    private String profile;
     @Value("${server.port}")
     private Integer port;
     @Value("${server.servlet.context-path}")
@@ -187,16 +184,6 @@ public class ImageService {
     }
 
     /**
-     * 图片批量上传
-     *
-     * @param dto 图片批量删除DTO对象
-     * @author Ling, Jiatong
-     */
-    public void uploadImageBatch(ImageUploadBatchDTO dto) {
-
-    }
-
-    /**
      * 批量下载图片
      *
      * @param idList 图片id列表
@@ -219,18 +206,21 @@ public class ImageService {
         if (ImageCompressTypeEnum.ZIP.getCode().equals(compressType)) {
             // 将文件打包成zip格式
             String fileName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".zip";
-            File zipFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + fileName);
+            File zipFile = new File(reProperties.getStaticFileBasePath() + File.separator + "tmp" + File.separator + fileName);
             FileUtil.getInstance().zipFiles(fileList, zipFile);
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
             response.setContentType("application/octet-stream");
             FileUtil.getInstance().downLoadFile(response.getOutputStream(), zipFile);
-        } else if (ImageCompressTypeEnum.TAR_GZ.getCode().equals(compressType)) {
+        } else {
             // 将文件打包成tar.gz格式
             String tarName = DateUtil.formatDate(new Date(), DateUtil.DateStyleEnum.yyyyMMddHHmmss) + ".tar";
-            File tarFile = new File(reProperties.getStaticFileBasePath() + "tmp" + File.separator + tarName);
-            
-        } else {
-            // 将文件打包成rar格式
+            String gzName = tarName + ".gz";
+            // 将文件打包成tar格式
+            File tarFile = FileUtil.getInstance().tarFiles(fileList, new File(reProperties.getStaticFileBasePath() + File.separator + "tmp" + File.separator + tarName));
+            File gzFiles = FileUtil.getInstance().gzFiles(tarFile, new File(reProperties.getStaticFileBasePath() + File.separator + "tmp" + File.separator + gzName));
+            response.setHeader("Content-Disposition", "attachment;filename=" + gzName);
+            response.setContentType("application/octet-stream");
+            FileUtil.getInstance().downLoadFile(response.getOutputStream(), gzFiles);
         }
     }
 

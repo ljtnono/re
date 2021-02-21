@@ -12,8 +12,6 @@ public enum ImageCompressTypeEnum {
     ZIP(1),
     // tar.gz 格式
     TAR_GZ(2),
-    // rar格式
-    RAR(3)
     ;
 
 

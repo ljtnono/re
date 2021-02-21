@@ -29,6 +29,9 @@ public class ImageUploadDTO {
     @ApiModelProperty(value = "上传图片")
     private MultipartFile file;
 
-
+    /**
+     * 上传的图片类型
+     */
+    @ApiModelProperty(value = "图片类型", notes = "1 博客类型 2 全局配置")
     private Integer type;
 }
