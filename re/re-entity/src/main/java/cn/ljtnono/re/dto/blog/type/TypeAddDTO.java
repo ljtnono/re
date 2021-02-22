@@ -20,6 +20,9 @@ public class TypeAddDTO {
     @ApiModelProperty(value = "博客类型名", notes = "不超过20个字符")
     private String name;
 
-
-
+    /**
+     * 是否推荐类型
+     */
+    @ApiModelProperty(value = "是否推荐", notes = "0 是 1 不是")
+    private Integer recommend;
 }

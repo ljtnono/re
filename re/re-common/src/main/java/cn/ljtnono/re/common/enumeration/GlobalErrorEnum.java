@@ -82,6 +82,11 @@ public enum GlobalErrorEnum {
     IMAGE_NAME_ERROR(400501, "图片名异常"),
     IMAGE_SUFFIX_NOT_SUPPORT_ERROR(400502, "图片格式不支持"),
     IMAGE_MD5_VALIDATE_FAILED_ERROR(400502, "上传失败，图片md5校验异常"),
+
+    //**************************博客相关**************************//
+    BLOG_TYPE_ALREADY_EXIST_ERROR(400600, "博客类型已经存在"),
+    BLOG_TYPE_NOT_EXIST_ERROR(400601, "博客类型不存在"),
+
     //**************************系统异常相关**************************//
     // 系统异常
     SYSTEM_ERROR(500000, "系统异常"),
