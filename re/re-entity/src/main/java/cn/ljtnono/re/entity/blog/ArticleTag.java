@@ -8,15 +8,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 博客标签实体
+ * 博客标签关联表实体
  *
  * @author Ling, Jiatong
- * Date: 2020/7/30 1:03
+ * Date: 2021/2/24 1:07 上午
  */
 @Data
-@TableName("blog_tag")
-@ApiModel(description = "博客标签实体")
-public class Tag {
+@TableName("blog_article_tag")
+@ApiModel(description = "博客标签关联表实体")
+public class ArticleTag {
 
     /**
      * id
@@ -26,10 +26,14 @@ public class Tag {
     private Integer id;
 
     /**
-     * 标签名，不超过10个字符
+     * 文章id
      */
-    @ApiModelProperty(value = "标签名", notes = "不超过10个字符")
-    private String name;
+    @ApiModelProperty("文章id")
+    private Integer articleId;
+
+    /**
+     * 标签id
+     */
+    @ApiModelProperty("标签id")
+    private Integer tagId;
 }
-
-
