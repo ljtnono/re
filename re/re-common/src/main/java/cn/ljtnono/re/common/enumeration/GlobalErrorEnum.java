@@ -86,7 +86,7 @@ public enum GlobalErrorEnum {
     //**************************博客相关**************************//
     BLOG_TYPE_ALREADY_EXIST_ERROR(400600, "博客类型已经存在"),
     BLOG_TYPE_NOT_EXIST_ERROR(400601, "博客类型不存在"),
-
+    BLOG_TYPE_NAME_LENGTH_ERROR(400602, "博客类型名不超过6个字符"),
     //**************************系统异常相关**************************//
     // 系统异常
     SYSTEM_ERROR(500000, "系统异常"),

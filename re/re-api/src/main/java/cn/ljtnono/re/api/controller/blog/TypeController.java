@@ -1,13 +1,13 @@
 package cn.ljtnono.re.api.controller.blog;
 
 import cn.ljtnono.re.common.vo.JsonResultVO;
-import cn.ljtnono.re.dto.blog.type.TypeAddDTO;
-import cn.ljtnono.re.dto.blog.type.TypeListQueryDTO;
+import cn.ljtnono.re.dto.blog.type.*;
 import cn.ljtnono.re.service.blog.TypeService;
 import cn.ljtnono.re.vo.blog.type.TypeDetailVO;
 import cn.ljtnono.re.vo.blog.type.TypeListQueryVO;
 import cn.ljtnono.re.vo.blog.type.TypeSelectVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
+@Api(tags = "博客类型模块接口")
 @RequestMapping("/api/v1/blog/type")
 public class TypeController {
 
@@ -77,33 +78,69 @@ public class TypeController {
      * @author Ling, Jiatong
      */
     @GetMapping("/list")
+    @ApiOperation(value = "分页获取博客类型列表", httpMethod = "GET")
     public JsonResultVO<IPage<TypeListQueryVO>> getList(TypeListQueryDTO dto) {
-
-        return null;
+        log.info("[re-blog -> TypeController -> getList()] 分页获取博客类型列表，参数：{}", dto);
+        return JsonResultVO.success(typeService.getList(dto));
     }
 
-    @PutMapping("/{id}")
-    @ApiOperation(value = "更新博客类型", httpMethod = "PUT")
-    public JsonResultVO<?> updateType() {
-        return null;
-    }
-
+    /**
+     * 批量逻辑删除博客类型
+     *
+     * @param dto 博客类型批量删除DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
     @DeleteMapping("/logicDeleteBatch")
     @ApiOperation(value = "批量逻辑删除博客类型", httpMethod = "DELETE")
-    public JsonResultVO<?> logicDeleteBatch() {
-        return null;
+    public JsonResultVO<?> logicDeleteBatch(@RequestBody TypeDeleteBatchDTO dto) {
+        log.info("[re-blog -> TypeController -> logicDeleteBatch()] 批量逻辑删除博客类型，参数：{}", dto);
+        typeService.logicDeleteBatch(dto);
+        return JsonResultVO.success();
     }
 
+    /**
+     * 批量物理删除博客类型
+     *
+     * @param dto 博客类型批量删除DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
     @DeleteMapping("/physicDeleteBatch")
     @ApiOperation(value = "批量物理删除博客类型", httpMethod = "DELETE")
-    public JsonResultVO<?> physicDeleteBatch() {
-        return null;
+    public JsonResultVO<?> physicDeleteBatch(@RequestBody TypeDeleteBatchDTO dto) {
+        log.info("[re-blog -> TypeController -> physicDeleteBatch()] 批量物理删除博客类型，参数：{}", dto);
+        typeService.physicDeleteBatch(dto);
+        return JsonResultVO.success();
     }
 
+    /**
+     * 更新博客类型
+     *
+     * @param dto 更新博客类型DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
+    @PutMapping("/update")
+    @ApiOperation(value = "更新博客类型", httpMethod = "PUT")
+    public JsonResultVO<?> updateType(@RequestBody TypeUpdateDTO dto) {
+        log.info("[re-blog -> TypeController -> updateType()] 更新博客类型，参数：{}", dto);
+        typeService.updateType(dto);
+        return JsonResultVO.success();
+    }
+
+    /**
+     * 批量更新博客类型推荐状态
+     *
+     * @param dto 批量更新博客类型推荐状态DTO对象
+     * @return 通用消息返回对象
+     * @author Ling, Jiatong
+     */
     @PutMapping("/updateRecommendBatch")
-    @ApiOperation(value = "批量设置推荐状态", httpMethod = "PUT")
-    public JsonResultVO<?> updateRecommendBatch() {
-        return null;
+    @ApiOperation(value = "批量更新博客类型推荐状态", httpMethod = "PUT")
+    public JsonResultVO<?> updateRecommendBatch(@RequestBody TypeUpdateRecommendBatchDTO dto) {
+        log.info("[re-blog -> TypeController -> updateRecommendBatch()] 批量更新博客类型推荐状态，参数：{}", dto);
+        typeService.updateRecommendBatch(dto);
+        return JsonResultVO.success();
     }
-
 }

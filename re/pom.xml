@@ -49,6 +49,7 @@
         <jna.version>5.5.0</jna.version>
         <swagger.version>3.0.0</swagger.version>
         <commons-compress.version>1.19</commons-compress.version>
+        <github.version>2.1.5</github.version>
     </properties>
     <!-- 依赖统一管理 -->
     <dependencyManagement>
@@ -121,6 +122,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
                 <version>${commons-compress.version}</version>
+            </dependency>
+            <!-- github API -->
+            <dependency>
+                <groupId>org.eclipse.mylyn.github</groupId>
+                <artifactId>org.eclipse.egit.github.core</artifactId>
+                <version>${github.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

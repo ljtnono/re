@@ -12,5 +12,6 @@ public interface BlogConstant {
     Integer RECOMMEND = 0;
     // 不推荐
     Integer NOT_RECOMMEND = 1;
-
+    // 博客类型名最大字符数
+    Integer BLOG_TYPE_NAME_MAX_LENGTH = 6;
 }

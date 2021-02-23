@@ -86,7 +86,7 @@ public class ImageController {
      * @author Ling, Jiatong
      */
     @DeleteMapping("/physicDeleteBatch")
-    @ApiOperation(value = "批量物理删除图片")
+    @ApiOperation(value = "批量物理删除图片", httpMethod = "DELETE")
     public JsonResultVO<?> physicDeleteBatch(ImageDeleteBatchDTO dto) {
         log.info("[re-system -> ImageController -> physicDeleteBatch()] 批量物理删除图片，参数：{}", dto);
         imageService.physicDeleteBatch(dto.getBatchKey());
@@ -100,6 +100,7 @@ public class ImageController {
      * @author Ling, Jiatong
      */
     @GetMapping("/downloadImageBatch")
+    @ApiOperation(value = "批量下载图片", httpMethod = "GET")
     public void downloadImageBatch(ImageDownloadBatchDTO dto) throws IOException {
         log.info("[re-system -> ImageController -> downloadImageBatch()] 批量下载图片，参数：{}", dto);
         imageService.downloadImageBatch(dto.getBatchKey(), dto.getCompressType());
