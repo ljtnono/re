@@ -92,7 +92,13 @@ public enum GlobalErrorEnum {
     BLOG_TAG_NAME_EMPTY_ERROR(400701, "博客标签名不能为空"),
     BLOG_TAG_NAME_LENGTH_ERROR(400702, "博客标签名不超过10个字符"),
 
+    //**************************博客相关**************************//
+    BLOG_TITLE_EMPTY_ERROR(400801, "博客标题为不能为空"),
+    BLOG_TITLE_LENGTH_ERROR(400702, "博客标题为2-50个字符"),
+    BLOG_MARKDOWN_CONTENT_EMPTY_ERROR(400703, "博客内容不能为空"),
+    BLOG_ARTICLE_NOT_EXIST_ERROR(400704, "博客文章不存在或已删除"),
     //**************************系统异常相关**************************//
+
     // 系统异常
     SYSTEM_ERROR(500000, "系统异常"),
     // 数据库操作异常

@@ -16,4 +16,14 @@ public interface BlogConstant {
     Integer BLOG_TYPE_NAME_MAX_LENGTH = 6;
     // 博客标签名最大字符数
     Integer BLOG_TAG_NAME_MAX_LENGTH = 10;
+
+    // 博客标题最大字符数
+    Integer BLOG_TITLE_MAX_LENGTH = 50;
+    // 博客标题最小字符数
+    Integer BLOG_TITLE_MIN_LENGTH = 2;
+    // 博客是草稿
+    Integer BLOG_DRAFT = 0;
+    // 博客不是草稿
+    Integer BLOG_NOT_DRAFT = 1;
+
 }

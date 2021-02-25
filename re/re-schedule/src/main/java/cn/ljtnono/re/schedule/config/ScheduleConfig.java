@@ -3,7 +3,7 @@ package cn.ljtnono.re.schedule.config;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * 定时任务配置文件
  *
  * @author Ling, Jiatong
  * Date: 2021/1/24 17:22

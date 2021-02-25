@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * 用户相关定时任务
+ *
  * @author Ling, Jiatong
  * Date: 2020/10/8 2:20
- * Description: 用户相关定时任务
  */
 @Slf4j
 @Component
