@@ -3,6 +3,7 @@ package cn.ljtnono.re.api.controller.blog;
 import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.dto.blog.article.*;
 import cn.ljtnono.re.service.blog.ArticleService;
+import cn.ljtnono.re.vo.blog.article.ArticleDetailVO;
 import cn.ljtnono.re.vo.blog.article.ArticleDraftListVO;
 import cn.ljtnono.re.vo.blog.article.ArticleListVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -132,13 +133,15 @@ public class ArticleController {
     /**
      * 获取博客文章详情
      *
-     *
+     * @param dto 博客详情DTO对象
+     * @return 博客详情VO对象
      * @author Ling, Jiatong
      */
     @GetMapping("/detail")
     @ApiOperation(value = "获取博客详情", httpMethod = "GET")
-    public JsonResultVO<?> getDetail() {
-        return JsonResultVO.success();
+    public JsonResultVO<ArticleDetailVO> getDetail(ArticleDetailDTO dto) {
+        log.info("[re-blog -> ArticleController -> getDetail()] 获取博客详情，参数：{}", dto);
+        return JsonResultVO.success(articleService.getDetail(dto));
     }
 
 }

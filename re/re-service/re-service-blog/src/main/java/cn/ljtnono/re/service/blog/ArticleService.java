@@ -16,6 +16,7 @@ import cn.ljtnono.re.entity.blog.Tag;
 import cn.ljtnono.re.mapper.blog.ArticleMapper;
 import cn.ljtnono.re.service.system.ConfigService;
 import cn.ljtnono.re.service.system.UserService;
+import cn.ljtnono.re.vo.blog.article.ArticleDetailVO;
 import cn.ljtnono.re.vo.blog.article.ArticleListVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -192,6 +193,16 @@ public class ArticleService {
                 .in(Article::getId, idList));
     }
 
+    /**
+     * 获取博客详情
+     *
+     * @param dto 博客详情DTO对象
+     * @return 博客详情VO对象
+     * @author Ling, Jiatong
+     */
+    public ArticleDetailVO getDetail(ArticleDetailDTO dto) {
+        return null;
+    }
 
     //*********************************** 私有函数 ***********************************//
 
@@ -293,7 +304,6 @@ public class ArticleService {
         // 删除博客文章和标签对应关系
         articleTagService.deleteArticleTagByArticleIdList(idList);
     }
-
 
 
     //*********************************** 其他函数 ***********************************//
