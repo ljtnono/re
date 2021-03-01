@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.google.common.collect.Collections2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +29,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 博客文章模块service层
@@ -201,7 +198,16 @@ public class ArticleService {
      * @author Ling, Jiatong
      */
     public ArticleDetailVO getDetail(ArticleDetailDTO dto) {
-        return null;
+        // 校验是否存在
+        checkExist(dto.getId());
+        ArticleDetailVO vo = articleMapper.getDetail(dto);
+        // 获取博客的标签列表
+        List<Tag> tagList = tagService.getTagListByArticleId(vo.getId());
+        if (CollectionUtils.isEmpty(tagList)) {
+            tagList = List.of();
+        }
+        vo.setTagList(tagList);
+        return vo;
     }
 
     //*********************************** 私有函数 ***********************************//
@@ -216,7 +222,6 @@ public class ArticleService {
         if (StringUtils.isEmpty(dto.getTitle())) {
             throw new ParamException(GlobalErrorEnum.BLOG_TITLE_EMPTY_ERROR);
         }
-        // TODO 这里使用正则校验
         if (dto.getTitle().length() < BlogConstant.BLOG_TITLE_MIN_LENGTH || dto.getTitle().length() > BlogConstant.BLOG_TITLE_MAX_LENGTH) {
             throw new ParamException(GlobalErrorEnum.BLOG_TITLE_LENGTH_ERROR);
         }

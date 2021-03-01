@@ -17,7 +17,7 @@ public enum LogDetailEnum {
     USER_LOGIN_SUCCESS("USER_LOGIN_SUCCESS", "用户登陆，用户名：{username}，ip：{ip}"),
     USER_LOGIN_FAILED("USER_LOGIN_FAILED", "用户登陆失败，原因：{cause}"),
     USER_LOGOUT("USER_LOGOUT", "用户注销，用户名：{username}"),
-
+    
     //******************** 角色模块 ********************//
 
 

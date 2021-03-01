@@ -6,6 +6,58 @@
 
     <!-- 分页获取博客列表 -->
     <select id="getList" resultType="cn.ljtnono.re.vo.blog.article.ArticleListVO">
+        SELECT
+            ba.id,
+            ba.title,
+            ba.summary,
+            ba.create_time,
+            ba.modify_time,
+            su.username,
+            ba.view,
+            ba.favorite,
+            ba.is_recommend AS recommend
+        FROM blog_article ba
+        LEFT JOIN sys_user su ON su.id = ba.user_id
+        <where>
+            ba.is_deleted = 0
+            <!-- 博客标题模糊查询 -->
+            <if test="dto.title != null and dto.title != ''">
+                AND ba.title LIKE CONCAT('%', #{dto.title, jdbcType=VARCHAR}, '%')
+            </if>
+            <!-- 是否推荐字段筛选 -->
+            <if test="dto.recommend != null">
+                AND ba.is_recommend = #{dto.recommend, jdbcType=INTEGER}
+            </if>
+        </where>
+        <!-- 排序字段 -->
+        <if test="dto.sortCondition != null and dto.sortCondition != ''">
+            ORDER BY ${dto.sortCondition}
+        </if>
+    </select>
 
+    <!-- 获取博客详情 -->
+    <select id="getDetail" resultType="cn.ljtnono.re.vo.blog.article.ArticleDetailVO">
+        SELECT
+            ba.id,
+            su.username AS author,
+            ba.title,
+            ba.summary,
+            ba.markdown_content,
+            ba.type_id,
+            ba.create_time,
+            ba.modify_time,
+            ba.view,
+            ba.favorite,
+            ba.is_recommend AS recommend,
+            ba.is_draft AS draft,
+            ba.cover_url
+        FROM blog_article ba
+        LEFT JOIN sys_user su ON su.id = ba.user_id
+        <where>
+            ba.is_delete = 0
+            <if test="dto.id != null">
+                AND ba.id = #{dto.id, jdbcType=INTEGER}
+            </if>
+        </where>
     </select>
 </mapper>

@@ -25,10 +25,10 @@ public class ConfigService {
 
     /**
      * 根据id获取配置项
+     *
      * @param key 配置项key
      * @return Config 配置实体类，如果不存在返回{@literal null}
      * @author Ling, Jiatong
-     *
      */
     public Config getConfigByKey(String key) {
         if (StringUtils.isEmpty(key)) {
@@ -43,6 +43,5 @@ public class ConfigService {
     //*********************************** 公共方法 ***********************************//
 
     //*********************************** 其他方法 ***********************************//
-
 
 }

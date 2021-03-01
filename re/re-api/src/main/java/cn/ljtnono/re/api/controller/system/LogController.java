@@ -1,7 +1,12 @@
 package cn.ljtnono.re.api.controller.system;
 
+import cn.ljtnono.re.common.vo.JsonResultVO;
+import cn.ljtnono.re.service.system.LogService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,5 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "系统日志模块")
 @RequestMapping("/api/v1/system/log")
 public class LogController {
+
+    @Autowired
+    private LogService logService;
+
+
+    @GetMapping("/list")
+    @ApiOperation(value = "获取日志列表", httpMethod = "GET")
+    public JsonResultVO<?> getList() {
+        return JsonResultVO.success();
+    }
 
 }
