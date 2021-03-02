@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ljtnono.re.mapper.system.LogMapper">
+
+    <!-- 系统日志列表查询 -->
+    <select id="getList" resultType="cn.ljtnono.re.vo.system.log.LogListVO">
+
+    </select>
+    <!-- 系统日志操作前top10饼状图 -->
+    <select id="getLogOpTop10Pie" resultType="cn.ljtnono.re.statistic.system.log.LogOpTop10Pie">
+        
+    </select>
+    <!-- 系统日志操作者前top10饼状图 -->
+    <select id="getLogUserTop10Pie" resultType="cn.ljtnono.re.statistic.system.log.LogUserTop10Pie">
+
+    </select>
+</mapper>

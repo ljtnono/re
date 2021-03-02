@@ -117,10 +117,10 @@ public class RolePermissionService {
 
     /**
      * 根据角色id获取角色所拥有的权限id列表
-     * @param roleId 角色id
-     * @return List<Integer> 权限id列表
-     * @author Ling, Jiatong
      *
+     * @param roleId 角色id
+     * @return 权限id列表
+     * @author Ling, Jiatong
      */
     public List<Integer> getPermissionIdListByRoleId(Integer roleId) {
         Optional.ofNullable(roleId)

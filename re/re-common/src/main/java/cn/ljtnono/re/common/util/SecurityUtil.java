@@ -24,6 +24,7 @@ public class SecurityUtil {
 
     /**
      * 获取当前登录用户
+     *
      * @return Object 当前登录用户
      * @author Ling, Jiatong
      */
