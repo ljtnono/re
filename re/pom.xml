@@ -164,8 +164,6 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <!-- 生产环境使用jdk11编译 -->
-                    <executable>/home/software/jdk11.0.10/bin/javac</executable>
                 </configuration>
             </plugin>
             <plugin>
