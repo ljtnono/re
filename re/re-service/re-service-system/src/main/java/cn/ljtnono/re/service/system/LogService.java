@@ -4,7 +4,6 @@ import cn.ljtnono.re.common.enumeration.GlobalErrorEnum;
 import cn.ljtnono.re.common.exception.ParamException;
 import cn.ljtnono.re.common.util.IpUtil;
 import cn.ljtnono.re.common.util.SpringBeanUtil;
-import cn.ljtnono.re.common.vo.JsonResultVO;
 import cn.ljtnono.re.dto.system.log.LogDeleteBatchDTO;
 import cn.ljtnono.re.dto.system.log.LogListQueryDTO;
 import cn.ljtnono.re.entity.system.Log;
