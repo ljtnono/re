@@ -575,7 +575,7 @@ public class UserService implements UserDetailsService {
      */
     public UserOnlineVO online() {
         UserOnlineVO vo = new UserOnlineVO();
-        Set<String> keys = redisUtil.keys("re:system:user:");
+        Set<String> keys = redisUtil.keys("re:system:user:*");
         if (CollectionUtils.isEmpty(keys)) {
             return vo;
         }
