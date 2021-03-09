@@ -21,7 +21,7 @@
       v-model="addFormSwitch"
       class-name="vertical-center-modal">
       <!-- 控件 -->
-      <user-add-form/>
+      <user-add-form @closeModal="closeAddModal" :is-show="addFormSwitch"/>
       <template slot="footer">
         <div/>
       </template>
@@ -42,7 +42,7 @@
       <Col span="7" offset="2">
         <!-- 在线用户统计 -->
         <Card shadow>
-          <pie style="height: 200px;" :value="roleNumPieData" text="在线用户统计"/>
+          <pie style="height: 200px;" :value="onlineNumPieData" text="在线用户统计"/>
         </Card>
       </Col>
     </Row>
@@ -95,10 +95,10 @@
 </template>
 
 <script>
-import {getList, logicDelete, roleNumPie, onlineNumPie} from "@/api/system/user";
+import {getList, logicDelete, onlineNumPie, roleNumPie} from "@/api/system/user";
 import UserEditForm from "_c/system/user/UserEditForm"
 import UserAddForm from "_c/system/user/UserAddForm";
-import {Pie} from "_c/common/charts"
+import Pie from "_c/common/charts/Pie"
 
 export default {
   name: "User",
@@ -170,7 +170,8 @@ export default {
     // 调用获取用户列表接口返回其promise对象
     getList() {
       this.tableLoading = true;
-      return getList({...this.getListParam});
+      getList({...this.getListParam})
+      .then(result => this.setListData(result))
     },
     // 调用接口之后将接口返回的数据设置到data属性上
     setListData(result) {
@@ -234,6 +235,10 @@ export default {
     closeEditModal() {
       this.editFormSwitch = false;
     },
+    // 关闭编辑用户弹窗
+    closeAddModal() {
+      this.addFormSwitch = false;
+    },
     // 排序条件变化
     sortChange(row) {
       // 首先清除参数
@@ -290,8 +295,7 @@ export default {
             });
           });
         }
-      }).catch(error => {
-      });
+      })
     },
     // 获取在线用户统计饼状图
     onlineNumPie() {
@@ -299,14 +303,13 @@ export default {
         let data = result.data;
         if (data.code === 0 && data.message === "success") {
           let value = data.data;
-          // value.forEach((v) => {
-          //   this.roleNumPieData.push({
-          //     name: v.roleName,
-          //     value: v.num
-          //   });
-          // });
+          this.onlineNumPieData = [
+            {name: "总数", value: value.totalNum},
+            {name: "超级管理员数", value: value.adminNum},
+            {name: "测试数", value: value.testNum},
+            {name: "游客数", value: value.touristNum},
+          ];
         }
-      }).catch(error => {
       })
     }
   },
@@ -314,11 +317,9 @@ export default {
     // 先清除数据
     this.clearGetListParam();
     // 获取并更新表格数据
-    this.getList().then(result => {
-      this.setListData(result);
-    }).catch(error => {
-    });
+    this.getList();
     this.roleNumPie();
+    this.onlineNumPie();
   }
 }
 </script>

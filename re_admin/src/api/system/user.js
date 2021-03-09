@@ -58,7 +58,7 @@ export const getList = ({searchCondition, roleId, sortFieldList, sortTypeList, p
 export const logicDelete = ({idList}) => {
   return http.delete("/system/user/logic", {
     data: {
-      idList
+      batchKey: idList
     }
   });
 }
@@ -76,6 +76,21 @@ export const updateUser = ({id, username, password, phone, email, roleId}) => {
   return http.put("/system/user", {
     id, username, password, phone, email, roleId
   });
+}
+
+/**
+ * 新增用户
+ *
+ * @param username 用户名
+ * @param password 密码
+ * @param phone 手机号
+ * @param email 用户邮箱
+ * @param roleId 用户角色
+ */
+export const addUser = ({username, password, phone, email, roleId}) => {
+  return http.post("/system/user", {
+    username, password, phone, email, roleId
+  })
 }
 
 /**

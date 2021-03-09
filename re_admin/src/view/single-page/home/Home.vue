@@ -17,7 +17,7 @@
       </i-col>
       <i-col :md="24" :lg="16" style="margin-bottom: 20px;">
         <Card shadow>
-          <chart-bar style="height: 300px;" :value="barData" text="每周用户活跃量"/>
+          <bar style="height: 300px;" :value="barData" text="每周用户活跃量"/>
         </Card>
       </i-col>
     </Row>
@@ -39,7 +39,8 @@
 <script>
 import InforCard from '_c/info-card'
 import CountTo from '_c/count-to'
-import {Pie, ChartBar} from '_c/common/charts'
+import Pie from '_c/common/charts/Pie'
+import Bar from '_c/common/charts/Bar'
 import MemoryMonitor from '_c/echarts/MemoryMonitor.vue'
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
@@ -51,7 +52,7 @@ export default {
     InforCard,
     CountTo,
     Pie,
-    ChartBar,
+    Bar,
     MemoryMonitor
   },
   data() {

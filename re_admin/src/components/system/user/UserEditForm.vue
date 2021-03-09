@@ -48,9 +48,8 @@ export default {
         username: [{validator: this.validateUsername, required: true, trigger: 'message'}],
         email: [{validator: this.validateEmail,required: true, message: "邮箱不能为空"}],
         phone: [{validator: this.validatePhone,required: true, message: "手机号码不能为空"}],
-        roleId: [{required: true, message: "用户角色不能为空"}]
+        roleId: [{validator: this.validateRoleId, required: true, message: "用户角色不能为空"}]
       },
-
       roleSelectList: [],
       spinShow: false
     }
@@ -134,10 +133,20 @@ export default {
     // 校验用户名
     validateUsername() {
       let username = this.formData.username;
-      return true;
+      return !(username == null || username === "");
     },
     validateEmail() {
-      return true;
+      let email = this.formData.email;
+      return !(email === null || email === "");
+    },
+    validatePhone() {
+      let phone = this.formData.phone;
+      return !(phone === null || phone === "");
+    },
+    validateRoleId() {
+      let roleId = this.formData.roleId;
+      let roleIdList = this.roleSelectList.map(v => v.id);
+      return roleIdList.includes(roleId);
     }
   }
 }
