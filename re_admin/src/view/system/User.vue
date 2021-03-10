@@ -26,23 +26,23 @@
         <div/>
       </template>
     </modal>
-    <Row style="padding:20px; margin-bottom: 40px">
+    <Row :gutter="20" style="margin-bottom: 40px">
       <!-- 用户总数 -->
-      <Col span="7">
+      <Col span="8">
         <Card>
-          <pie style="height: 200px;" :value="roleNumPieData" text="用户角色统计"/>
+          <pie :value="roleNumPieData" text="用户角色统计"/>
         </Card>
       </Col>
-      <Col span="7" offset="1">
+      <Col span="8">
         <!-- 在线用户统计 -->
         <Card shadow>
-          <pie style="height: 200px;" :value="onlineNumPieData" text="在线用户统计"/>
+          <pie :value="onlineNumPieData" text="在线用户统计"/>
         </Card>
       </Col>
-      <Col span="7" offset="2">
+      <Col span="8">
         <!-- 在线用户统计 -->
         <Card shadow>
-          <pie style="height: 200px;" :value="onlineNumPieData" text="在线用户统计"/>
+          <pie :value="onlineNumPieData" text="在线用户统计"/>
         </Card>
       </Col>
     </Row>
@@ -164,14 +164,13 @@ export default {
     search() {
       this.getList().then(result => {
         this.setListData(result);
-      }).catch(error => {
-      });
+      })
     },
     // 调用获取用户列表接口返回其promise对象
     getList() {
       this.tableLoading = true;
       getList({...this.getListParam})
-      .then(result => this.setListData(result))
+        .then(result => this.setListData(result))
     },
     // 调用接口之后将接口返回的数据设置到data属性上
     setListData(result) {
@@ -202,11 +201,9 @@ export default {
               });
               that.getList().then(result => {
                 that.setListData(result);
-              }).catch(error => {
-              });
+              })
             }
-          }).catch(error => {
-          });
+          })
         },
         onCancel() {
           this.$Message.info({
@@ -221,8 +218,7 @@ export default {
       this.getListParam.roleId = row[0];
       this.getList().then(result => {
         this.setListData(result);
-      }).catch(error => {
-      });
+      })
       return true;
     },
     // 弹出modal
@@ -261,10 +257,7 @@ export default {
         }
       }
       // 重新请求一次
-      this.getList().then(result => {
-        this.setListData(result);
-      }).catch(error => {
-      });
+      this.getList();
     },
     // 清除获取列表的参数
     clearGetListParam() {

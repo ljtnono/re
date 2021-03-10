@@ -1,9 +1,10 @@
 <template>
-  <div ref="dom" class="charts chart-pie"/>
+  <div ref="dom" />
 </template>
 
 <script>
-import echarts from 'echarts'
+import * as echarts from 'echarts';
+import {off, on} from "@/libs/tools";
 
 export default {
   name: 'Pie',
@@ -26,75 +27,103 @@ export default {
         let legend = this.value.map(v => v.name);
         let option = {
           color: ["#63b2ee", "#76da91", "#f8cb7f", "#f89588", "#7cd6cf", "#9192ab", "#7898e1", "#efa666", "#eddd86", "#9987ce", "#63b2ee", "#765005"],
+          center: [50, 50],
           title: {
             text: this.text,
-            subtext: this.subtext,
-            x: 'center'
+            x: 'center',
+            textStyle: {
+              fontSize: '14',
+              color: "#63b2ee"
+            }
           },
           tooltip: {
             trigger: 'item',
-            formatter: '{b}:{c}'
+            formatter: '{b}:{c}',
           },
           legend: {
             orient: 'vertical',
-            left: 'left',
+            left: 'right',
             data: legend
           },
           series: [
             {
               type: 'pie',
-              radius: '55%',
-              center: ['50%', '60%'],
+              radius: ['50%', '70%'],
+              avoidLabelOverlap: false,
               data: this.value,
               label: {
                 normal: {
                   show: true,
                   textStyle: {
-                    fontWeight: 400,
-                    fontSize: 12
-                  },
-                  formatter: '{b} {c}'
+                    fontSize: '12'
+                  }
+                },
+                emphasis: {
+                  show: true,
+                  textStyle: {
+                    fontSize: '14',
+                    fontWeight: 'bold'
+                  }
                 }
               },
-              itemStyle: {
-                emphasis: {
-                  shadowBlur: 10,
-                  shadowOffsetX: 0,
-                  shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
+              labelLine: {
+                show: true
               }
             }
           ]
         };
-        this.dom = echarts.init(this.$refs.dom, 'tdTheme');
+        this.dom = echarts.init(this.$refs.dom);
         this.dom.setOption(option);
       });
     },
     setOption() {
       let legend = this.value.map(v => v.name);
       let option = {
+        color: ["#63b2ee", "#76da91", "#f8cb7f", "#f89588", "#7cd6cf", "#9192ab", "#7898e1", "#efa666", "#eddd86", "#9987ce", "#63b2ee", "#765005"],
+        title: {
+          text: this.text,
+          x: 'center',
+          textStyle: {
+            fontSize: '14',
+            color: "#63b2ee"
+          }
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{b}:{c}',
+        },
         legend: {
           orient: 'vertical',
-          left: 'left',
+          right: 0,
           data: legend
         },
-        series: [
-          {
-            type: 'pie',
-            radius: '55%',
-            center: ['50%', '60%'],
-            data: this.value,
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+        series: {
+          type: 'pie',
+          radius: ['50%', '70%'],
+          avoidLabelOverlap: false,
+          top: 50,
+          left: 0,
+          data: this.value,
+          label: {
+            normal: {
+              show: true,
+              textStyle: {
+                fontSize: '12'
+              }
+            },
+            emphasis: {
+              show: true,
+              textStyle: {
+                fontSize: '14',
+                fontWeight: 'bold'
               }
             }
-          }
-        ]
+          },
+          labelLine: {
+            show: true
+          },
+        }
       };
-      this.dom = echarts.init(this.$refs.dom, 'tdTheme');
       this.dom.setOption(option);
     }
   },
@@ -105,9 +134,15 @@ export default {
   },
   mounted() {
     this.init();
+    this.$nextTick(() => {
+      this.dom = echarts.init(this.$refs.dom);
+      this.dom.setOption(option);
+    });
   },
   beforeDestroy() {
-
   }
 }
 </script>
+
+<style lang="less" scoped>
+</style>

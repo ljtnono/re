@@ -1,38 +1,39 @@
 <template>
-    <Layout style="height: 100%" class="main">
-        <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider"
-               :style="{overflow: 'hidden'}">
-            <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed"
-                       @on-select="turnToPage"
-                       :menu-list="menuList">
-                <div class="logo-con">
-                    <img v-show="!collapsed" :src="maxLogo" key="max-logo"/>
-                    <img v-show="collapsed" :src="minLogo" key="min-logo"/>
-                </div>
-            </side-menu>
-        </Sider>
-        <Layout>
-            <Header class="header-con">
-                <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-                    <user :message-unread-count="unreadCount" :user-avatar="userAvatar" :username="username" :role-name="roleName"/>
-                    <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
-                </header-bar>
-            </Header>
-            <Content class="main-content-con">
-                <Layout class="main-layout-con">
-                    <div class="tag-nav-wrapper">
-                        <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
-                    </div>
-                    <Content class="content-wrapper">
-                        <keep-alive :include="cacheList">
-                            <router-view/>
-                        </keep-alive>
-                        <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper" />
-                    </Content>
-                </Layout>
-            </Content>
+  <Layout style="height: 100%" class="main">
+    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider"
+           :style="{overflow: 'hidden'}">
+      <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed"
+                 @on-select="turnToPage"
+                 :menu-list="menuList">
+        <div class="logo-con">
+          <img v-show="!collapsed" :src="maxLogo" key="max-logo"/>
+          <img v-show="collapsed" :src="minLogo" key="min-logo"/>
+        </div>
+      </side-menu>
+    </Sider>
+    <Layout>
+      <Header class="header-con">
+        <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
+          <user :message-unread-count="unreadCount" :user-avatar="userAvatar" :username="username"
+                :role-name="roleName"/>
+          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+        </header-bar>
+      </Header>
+      <Content class="main-content-con">
+        <Layout class="main-layout-con">
+          <div class="tag-nav-wrapper">
+            <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
+          </div>
+          <Content class="content-wrapper">
+            <keep-alive :include="cacheList">
+              <router-view/>
+            </keep-alive>
+            <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"/>
+          </Content>
         </Layout>
+      </Content>
     </Layout>
+  </Layout>
 </template>
 <script>
 import Cookies from "js-cookie";
@@ -51,141 +52,141 @@ import "./main.less";
 import {getList} from "@/api/system/user";
 
 export default {
-    name: "Main",
-    components: {
-        SideMenu,
-        HeaderBar,
-        TagsNav,
-        Fullscreen,
-        User,
-        ABackTop
+  name: "Main",
+  components: {
+    SideMenu,
+    HeaderBar,
+    TagsNav,
+    Fullscreen,
+    User,
+    ABackTop
+  },
+  data() {
+    return {
+      collapsed: false,
+      minLogo,
+      maxLogo,
+      isFullscreen: false
+    };
+  },
+  computed: {
+    ...mapGetters([
+      "errorCount"
+    ]),
+    tagNavList() {
+      return this.$store.state.app.tagNavList;
     },
-    data() {
-        return {
-            collapsed: false,
-            minLogo,
-            maxLogo,
-            isFullscreen: false
-        };
+    tagRouter() {
+      return this.$store.state.app.tagRouter;
     },
-    computed: {
-        ...mapGetters([
-            "errorCount"
-        ]),
-        tagNavList() {
-            return this.$store.state.app.tagNavList;
-        },
-        tagRouter() {
-            return this.$store.state.app.tagRouter;
-        },
-        userAvatar() {
-            return Cookies.getJSON("userInfo").avatarUrl
-        },
-        cacheList() {
-            const list = ["ParentView", ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []];
-            return list;
-        },
-        menuList() {
-            return this.$store.getters.menuList;
-        },
-        local() {
-            return this.$store.state.app.local;
-        },
-        hasReadErrorPage() {
-            return this.$store.state.app.hasReadErrorPage;
-        },
-        unreadCount() {
-            // TODO 未读消息
-            return 0;
-        },
-        username() {
-            return Cookies.getJSON("userInfo").username
-        },
-        roleName() {
-            return Cookies.getJSON("userInfo").roleName
-        }
+    userAvatar() {
+      return Cookies.getJSON("userInfo").avatarUrl
     },
-    methods: {
-        ...mapMutations([
-            "setBreadCrumb",
-            "setTagNavList",
-            "addTag",
-            "setLocal",
-            "setHomeRoute",
-            "closeTag"
-        ]),
-        ...mapActions([
-            "handleLogin",
-            "getUnreadMessageCount"
-        ]),
-        turnToPage(route) {
-            let {name, params, query} = {};
-            if (typeof route === "string") name = route;
-            else {
-                name = route.name;
-                params = route.params;
-                query = route.query;
-            }
-            if (name.indexOf("isTurnByHref_") > -1) {
-                window.open(name.split("_")[1]);
-                return;
-            }
-            this.$router.push({
-                name,
-                params,
-                query
-            });
-        },
-        handleCollapsedChange(state) {
-            this.collapsed = state;
-        },
-        handleCloseTag(res, type, route) {
-            if (type !== "others") {
-                if (type === "all") {
-                    this.turnToPage(this.$systemConstant.HOME_PAGE_NAME);
-                } else {
-                    if (routeEqual(this.$route, route)) {
-                        this.closeTag(route);
-                    }
-                }
-            }
-            this.setTagNavList(res);
-        },
-        handleClick(item) {
-            this.turnToPage(item);
-        }
+    cacheList() {
+      const list = ["ParentView", ...this.tagNavList.length ? this.tagNavList.filter(item => !(item.meta && item.meta.notCache)).map(item => item.name) : []];
+      return list;
     },
-    watch: {
-        "$route"(newRoute) {
-            const {name, query, params, meta} = newRoute;
-            this.addTag({
-                route: {name, query, params, meta},
-                type: "push"
-            });
-            this.setBreadCrumb(newRoute);
-            this.setTagNavList(getNewTagList(this.tagNavList, newRoute));
-            this.$refs.sideMenu.updateOpenName(newRoute.name);
-        }
+    menuList() {
+      return this.$store.getters.menuList;
     },
-    mounted() {
-        /**
-         * @description 初始化设置面包屑导航和标签导航
-         */
-        this.setTagNavList();
-        this.setHomeRoute(routers);
-        const {name, params, query, meta} = this.$route;
-        this.addTag({
-            route: {name, params, query, meta}
-        });
-        this.setBreadCrumb(this.$route);
-        // 如果当前打开页面不在标签栏中，跳到homeName页
-        if (!this.tagNavList.find(item => item.name === this.$route.name)) {
-            this.$router.push({
-                name: this.$systemConstant.HOME_PAGE_NAME
-            });
-        }
-        // 获取未读消息条数
-        this.getUnreadMessageCount();
+    local() {
+      return this.$store.state.app.local;
+    },
+    hasReadErrorPage() {
+      return this.$store.state.app.hasReadErrorPage;
+    },
+    unreadCount() {
+      // TODO 未读消息
+      return 0;
+    },
+    username() {
+      return Cookies.getJSON("userInfo").username
+    },
+    roleName() {
+      return Cookies.getJSON("userInfo").roleName
     }
+  },
+  methods: {
+    ...mapMutations([
+      "setBreadCrumb",
+      "setTagNavList",
+      "addTag",
+      "setLocal",
+      "setHomeRoute",
+      "closeTag"
+    ]),
+    ...mapActions([
+      "handleLogin",
+      "getUnreadMessageCount"
+    ]),
+    turnToPage(route) {
+      let {name, params, query} = {};
+      if (typeof route === "string") name = route;
+      else {
+        name = route.name;
+        params = route.params;
+        query = route.query;
+      }
+      if (name.indexOf("isTurnByHref_") > -1) {
+        window.open(name.split("_")[1]);
+        return;
+      }
+      this.$router.push({
+        name,
+        params,
+        query
+      });
+    },
+    handleCollapsedChange(state) {
+      this.collapsed = state;
+    },
+    handleCloseTag(res, type, route) {
+      if (type !== "others") {
+        if (type === "all") {
+          this.turnToPage(this.$systemConstant.HOME_PAGE_NAME);
+        } else {
+          if (routeEqual(this.$route, route)) {
+            this.closeTag(route);
+          }
+        }
+      }
+      this.setTagNavList(res);
+    },
+    handleClick(item) {
+      this.turnToPage(item);
+    }
+  },
+  watch: {
+    "$route"(newRoute) {
+      const {name, query, params, meta} = newRoute;
+      this.addTag({
+        route: {name, query, params, meta},
+        type: "push"
+      });
+      this.setBreadCrumb(newRoute);
+      this.setTagNavList(getNewTagList(this.tagNavList, newRoute));
+      this.$refs.sideMenu.updateOpenName(newRoute.name);
+    }
+  },
+  mounted() {
+    /**
+     * @description 初始化设置面包屑导航和标签导航
+     */
+    this.setTagNavList();
+    this.setHomeRoute(routers);
+    const {name, params, query, meta} = this.$route;
+    this.addTag({
+      route: {name, params, query, meta}
+    });
+    this.setBreadCrumb(this.$route);
+    // 如果当前打开页面不在标签栏中，跳到homeName页
+    if (!this.tagNavList.find(item => item.name === this.$route.name)) {
+      this.$router.push({
+        name: this.$systemConstant.HOME_PAGE_NAME
+      });
+    }
+    // 获取未读消息条数
+    this.getUnreadMessageCount();
+  }
 };
 </script>
