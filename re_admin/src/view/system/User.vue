@@ -60,22 +60,23 @@
           </Button>
         </FormItem>
         <FormItem>
-          <Dropdown>
+          <Dropdown @on-click="moreOperation">
             <Button type="primary">
               更多操作
               <Icon type="ios-arrow-down"/>
             </Button>
             <DropdownMenu slot="list">
-              <DropdownItem>删除选中项</DropdownItem>
-              <DropdownItem>导出选中项</DropdownItem>
+              <DropdownItem name="deleteChecked">删除选中项</DropdownItem>
             </DropdownMenu>
           </Dropdown>
         </FormItem>
       </Form>
+      <!-- 数据表格 -->
       <Table :columns="columns"
              stripe
              :data="userList"
              :loading="tableLoading"
+             @on-selection-change="selectChange"
              @on-sort-change="sortChange"
              ref="table">
         <template slot-scope="{ row, index }" slot="action">
@@ -156,7 +157,8 @@ export default {
       addFormSwitch: false,
       editFormUserId: null,
       roleNumPieData: [],
-      onlineNumPieData: []
+      onlineNumPieData: [],
+      selectedIdList: []
     }
   },
   methods: {
@@ -259,6 +261,10 @@ export default {
       // 重新请求一次
       this.getList();
     },
+    // 选择条件发生变化
+    selectChange(selection) {
+      this.selectedIdList = selection.map(s => s.id);
+    },
     // 清除获取列表的参数
     clearGetListParam() {
       this.getListParam = {
@@ -304,6 +310,43 @@ export default {
           ];
         }
       })
+    },
+    // 更多操作
+    moreOperation(itemName) {
+      if (itemName === "deleteChecked") {
+        this.logicDeleteChecked();
+        this.getList();
+      }
+    },
+    // 逻辑删除选中用户
+    logicDeleteChecked() {
+      // 然后重新请求一次
+      let that = this;
+      let idList = this.selectedIdList;
+      console.log(idList)
+      this.$Modal.confirm({
+        title: "是否删除该用户",
+        onOk() {
+          logicDelete({idList}).then(result => {
+            let data = result.data;
+            if (data.code === 0 && data.message === "success") {
+              this.$Message.success({
+                background: true,
+                content: "删除成功"
+              });
+              that.getList().then(result => {
+                that.setListData(result);
+              })
+            }
+          })
+        },
+        onCancel() {
+          this.$Message.info({
+            background: true,
+            content: "已取消删除"
+          });
+        }
+      });
     }
   },
   mounted() {
@@ -318,6 +361,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+
 .vertical-center-modal {
   display: flex;
   align-items: center;
