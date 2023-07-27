@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'cn.lingjiatong'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	sourceCompatibility = '17'
@@ -18,18 +18,21 @@ configurations {
 }
 
 repositories {
+	// 配置maven仓库
+	maven {
+		url 'https://maven.aliyun.com/repository/public'
+	}
 	mavenCentral()
 }
 
 dependencies {
+	// spring-web
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	// lombok
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
+	// mysql
+    implementation 'com.mysql:mysql-connector-j'
 }
