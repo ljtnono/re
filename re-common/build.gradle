@@ -1,0 +1,8 @@
+dependencies {
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    // lombok
+    implementation 'org.projectlombok:lombok'
+    // lombok
+    annotationProcessor 'org.projectlombok:lombok'
+}
+

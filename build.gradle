@@ -1,38 +1,55 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.2'
 	id 'io.spring.dependency-management' version '1.1.2'
 }
 
-group = 'cn.lingjiatong'
-version = '0.0.1'
-
-java {
-	sourceCompatibility = '17'
+jar {
+	enabled = false
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+version = '1.0.0'
+
+// 所有模块/项目的通用配置
+allprojects {
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java'
+	group = 'cn.lingjiatong'
+	version = '0.0.1'
+	java {
+		// 不推荐的用法
+		// sourceCompatibility = '17'
+		// 推荐的用法
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(17)
+		}
+	}
+	repositories {
+		// maven仓库
+		maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+		maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+		maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+		mavenCentral()
 	}
 }
 
-repositories {
-	// 配置maven仓库
-	maven {
-		url 'https://maven.aliyun.com/repository/public'
+subprojects {
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
 	}
-	mavenCentral()
+	dependencyManagement {
+		dependencies {
+			// spring-web
+			dependency 'org.springframework.boot:spring-boot-starter-web:3.1.2'
+			dependency 'org.springframework.boot:spring-boot-configuration-processor:3.1.2'
+			// lombok
+			dependency 'org.projectlombok:lombok:1.18.28'
+			// mysql
+			dependency 'com.mysql:mysql-connector-j:8.1.0'
+		}
+	}
 }
 
-dependencies {
-	// spring-web
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-	// lombok
-	compileOnly 'org.projectlombok:lombok'
-	// lombok
-	annotationProcessor 'org.projectlombok:lombok'
-	// mysql
-    implementation 'com.mysql:mysql-connector-j'
-}
+
+// 定义任务，打包所有子模块的 springboot jar包
