@@ -16,9 +16,6 @@ allprojects {
 	group = 'cn.lingjiatong'
 	version = '0.0.1'
 	java {
-		// 不推荐的用法
-		// sourceCompatibility = '17'
-		// 推荐的用法
 		toolchain {
 			languageVersion = JavaLanguageVersion.of(17)
 		}
