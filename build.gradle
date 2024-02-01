@@ -44,6 +44,8 @@ subprojects {
 			dependency 'org.projectlombok:lombok:1.18.28'
 			// mysql
 			dependency 'com.mysql:mysql-connector-j:8.1.0'
+			// mybatis-plus
+			dependency 'com.baomidou:mybatis-plus-boot-starter:3.5.2'
 		}
 	}
 }

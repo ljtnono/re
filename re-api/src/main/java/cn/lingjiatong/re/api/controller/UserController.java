@@ -1,13 +1,19 @@
-package cn.lingjiatong.re.api.entity;
+package cn.lingjiatong.re.api.controller;
 
-import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
+ * 用户模块controller层
+ *
  * @author Ling, Jiatong
- * Date: 2023/8/18 20:56
+ * Date: 2024/2/1 15:36
  */
-@Data
-public class User {
+@Slf4j
+@RestController
+@RequestMapping("/user")
+public class UserController {
     // ********************************新增类接口********************************
     // ********************************删除类接口********************************
     // ********************************修改类接口********************************
