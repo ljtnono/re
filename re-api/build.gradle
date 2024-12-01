@@ -8,7 +8,20 @@ bootJar {
     mainClass = 'cn.lingjiatong.re.api.ReApiApplication'
 }
 
+processResources {
+    from('src/main/java') {
+        include '**/*.xml'
+    }
+}
 
 dependencies {
+    // lombok
+    annotationProcessor "org.projectlombok:lombok"
     api project(":re-common")
+    // mysql
+    implementation "com.mysql:mysql-connector-j"
+    // mybatis-plus
+    implementation "com.baomidou:mybatis-plus-spring-boot3-starter"
+    // mybatis多数据源
+    implementation "com.baomidou:dynamic-datasource-spring-boot3-starter"
 }

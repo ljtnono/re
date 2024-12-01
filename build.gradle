@@ -42,9 +42,9 @@ subprojects {
                 // springdoc
                 SPRINGDOC_VERSION: '1.6.14',
                 // mybatis-plus
-                MYBATIS_PLUS_VERSION: '3.4.3',
+                MYBATIS_PLUS_VERSION: '3.5.5',
                 // mysql-connector
-                MYSQL_CONNECTOR_VERSION: '8.0.26',
+                MYSQL_CONNECTOR_VERSION: '8.4.0',
                 // xxl-job
                 XXL_JOB_VERSION: '2.3.0',
                 // webmagic
@@ -60,7 +60,7 @@ subprojects {
                 // k8s_client
                 K8S_CLIENT_VERSION: '16.0.2',
                 // dynamic-datasource
-                DYNAMIC_DATASOURCE_VERSION: '3.6.1',
+                DYNAMIC_DATASOURCE_VERSION: '4.3.1',
                 // redission
                 REDISSION_VERSION: '3.16.8',
                 // jsch
@@ -87,7 +87,7 @@ subprojects {
             // springdoc
             dependency "org.springdoc:springdoc-openapi-ui:$versions.SPRINGDOC_VERSION"
             // mybatis-plus
-            dependency "com.baomidou:mybatis-plus-boot-starter:$versions.MYBATIS_PLUS_VERSION"
+            dependency "com.baomidou:mybatis-plus-spring-boot3-starter:$versions.MYBATIS_PLUS_VERSION"
             // spring-web
             dependency "org.springframework.boot:spring-boot-starter-web:$versions.SPRINGBOOT_VERSION"
             // spring-aop
@@ -117,7 +117,7 @@ subprojects {
             // k8s-client
             dependency "io.kubernetes:client-java:$versions.K8S_CLIENT_VERSION"
             // mybatis多数据源
-            dependency "com.baomidou:dynamic-datasource-spring-boot-starter:$versions.DYNAMIC_DATASOURCE_VERSION"
+            dependency "com.baomidou:dynamic-datasource-spring-boot3-starter:$versions.DYNAMIC_DATASOURCE_VERSION"
             // redission分布式锁
             dependency "org.redisson:redisson:$versions.REDISSION_VERSION"
             // jsch

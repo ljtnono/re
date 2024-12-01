@@ -1,0 +1,34 @@
+server:
+  port: 8241
+  servlet:
+    context-path: /re
+spring:
+  application:
+    name: re
+  datasource:
+    username: root
+    password: re#mysql2022
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://www.lingjiatong.cn:30007/re?useUnicode=true&allowPublicKeyRetrieval=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    hikari:
+      connection-timeout: 600000
+      maximum-pool-size: 8
+      minimum-idle: 4
+# mybatis-plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    banner: false
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+  packages-to-scan: cn.lingjiatong.re.api
+
+# ===== 自定义swagger配置 ===== #
+swagger:
+  application-name: re-service-sys-server
+  application-version: 1.0
+  application-description: 根元素博客系统服务接口文档
