@@ -1,53 +1,135 @@
 plugins {
-	id 'java'
-	id 'io.spring.dependency-management' version '1.1.2'
+    id 'java'
+    id 'io.spring.dependency-management' version '1.1.2'
 }
 
 jar {
-	enabled = false
+    enabled = false
 }
 
 version = '1.0.0'
 
 // 所有模块/项目的通用配置
 allprojects {
-	apply plugin: 'io.spring.dependency-management'
-	apply plugin: 'java'
-	group = 'cn.lingjiatong'
-	version = '0.0.1'
-	java {
-		toolchain {
-			languageVersion = JavaLanguageVersion.of(17)
-		}
-	}
-	repositories {
-		// maven仓库
-		maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
-		maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
-		maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
-		mavenCentral()
-	}
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java'
+    group = 'cn.lingjiatong'
+    version = '0.0.1'
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+    repositories {
+        // maven仓库
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
+        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
+        mavenCentral()
+    }
 }
 
 subprojects {
-	configurations {
-		compileOnly {
-			extendsFrom annotationProcessor
-		}
-	}
-	dependencyManagement {
-		dependencies {
-			// spring-web
-			dependency 'org.springframework.boot:spring-boot-starter-web:3.1.2'
-			dependency 'org.springframework.boot:spring-boot-configuration-processor:3.1.2'
-			// lombok
-			dependency 'org.projectlombok:lombok:1.18.28'
-			// mysql
-			dependency 'com.mysql:mysql-connector-j:8.1.0'
-			// mybatis-plus
-			dependency 'com.baomidou:mybatis-plus-boot-starter:3.5.2'
-		}
-	}
+    ext {
+        // 版本号管理
+        versions = [
+                // springboot
+                SPRINGBOOT_VERSION: '3.1.2',
+                // lombok
+                LOMBOK_VERSION: '1.18.20',
+                // guava
+                GUAVA_VERSION: '30.1.1-jre',
+                // springdoc
+                SPRINGDOC_VERSION: '1.6.14',
+                // mybatis-plus
+                MYBATIS_PLUS_VERSION: '3.4.3',
+                // mysql-connector
+                MYSQL_CONNECTOR_VERSION: '8.0.26',
+                // xxl-job
+                XXL_JOB_VERSION: '2.3.0',
+                // webmagic
+                WEBMAGIC_VERSION: '0.7.5',
+                // minio
+                MINIO_VERSION: '8.2.2',
+                // jjwt
+                JJWT_VERSION: '0.9.1',
+                // selenium
+                SELENIUM_VERSION: '3.141.59',
+                // kaptcha
+                KAPTCHA_VERSION: '2.3.2',
+                // k8s_client
+                K8S_CLIENT_VERSION: '16.0.2',
+                // dynamic-datasource
+                DYNAMIC_DATASOURCE_VERSION: '3.6.1',
+                // redission
+                REDISSION_VERSION: '3.16.8',
+                // jsch
+                JSCH_VERSION: '0.1.54',
+                // oshi
+                OSHI_VERSION: '5.8.2',
+                // rocketmq
+                ROCKETMQ_VERSION: '2.2.3'
+        ]
+    }
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+    dependencyManagement {
+        dependencies {
+            // lombok
+            dependency "org.projectlombok:lombok:$versions.LOMBOK_VERSION"
+            // guava
+            dependency "com.google.guava:guava:$versions.GUAVA_VERSION"
+            // dev-tools
+            dependency "org.springframework.boot:spring-boot-devtools:$versions.SPRINGBOOT_VERSION"
+            // springdoc
+            dependency "org.springdoc:springdoc-openapi-ui:$versions.SPRINGDOC_VERSION"
+            // mybatis-plus
+            dependency "com.baomidou:mybatis-plus-boot-starter:$versions.MYBATIS_PLUS_VERSION"
+            // spring-web
+            dependency "org.springframework.boot:spring-boot-starter-web:$versions.SPRINGBOOT_VERSION"
+            // spring-aop
+            dependency "org.springframework.boot:spring-boot-starter-aop:$versions.SPRINGBOOT_VERSION"
+            // mysql
+            dependency "com.mysql:mysql-connector-j:$versions.MYSQL_CONNECTOR_VERSION"
+            // webmagic-core
+            dependency "us.codecraft:webmagic-core:$versions.WEBMAGIC_VERSION"
+            // webmagic-extension
+            dependency "us.codecraft:webmagic-extension:$versions.WEBMAGIC_VERSION"
+            // redis
+            dependency "org.springframework.boot:spring-boot-starter-data-redis:$versions.SPRINGBOOT_VERSION"
+            // elasticsearch
+            dependency "org.springframework.boot:spring-boot-starter-data-elasticsearch:$versions.SPRINGBOOT_VERSION"
+            // minio
+            dependency "io.minio:minio:$versions.MINIO_VERSION"
+            // selenium-java
+            dependency "org.seleniumhq.selenium:selenium-java:$versions.SELENIUM_VERSION"
+            // jwt
+            dependency "io.jsonwebtoken:jjwt:$versions.JJWT_VERSION"
+            // spring-boot-configuration-processor
+            dependency "org.springframework.boot:spring-boot-configuration-processor:$versions.SPRINGBOOT_VERSION"
+            // kaptcha
+            dependency "com.github.penggle:kaptcha:$versions.KAPTCHA_VERSION"
+            // xxl-job-core
+            dependency "com.xuxueli:xxl-job-core:$versions.XXL_JOB_VERSION"
+            // k8s-client
+            dependency "io.kubernetes:client-java:$versions.K8S_CLIENT_VERSION"
+            // mybatis多数据源
+            dependency "com.baomidou:dynamic-datasource-spring-boot-starter:$versions.DYNAMIC_DATASOURCE_VERSION"
+            // redission分布式锁
+            dependency "org.redisson:redisson:$versions.REDISSION_VERSION"
+            // jsch
+            dependency "com.jcraft:jsch:$versions.JSCH_VERSION"
+            // oshi
+            dependency "com.github.oshi:oshi-core:$versions.OSHI_VERSION"
+            // rocketmq
+            dependency "org.apache.rocketmq:rocketmq-spring-boot-starter:$versions.ROCKETMQ_VERSION"
+            // spring-security
+            dependency "org.springframework.boot:spring-boot-starter-security:$versions.SPRINGBOOT_VERSION"
+        }
+    }
 }
 
 

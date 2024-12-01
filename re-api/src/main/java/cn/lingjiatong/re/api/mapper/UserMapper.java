@@ -1,6 +1,6 @@
 package cn.lingjiatong.re.api.mapper;
 
-import cn.lingjiatong.re.entity.User;
+import cn.lingjiatong.re.common.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -8,14 +8,7 @@ bootJar {
     mainClass = 'cn.lingjiatong.re.api.ReApiApplication'
 }
 
+
 dependencies {
     api project(":re-common")
-    // spring-web
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    // mysql
-    implementation 'com.mysql:mysql-connector-j'
-    // lombok
-    annotationProcessor 'org.projectlombok:lombok'
-    // mybatis-plus
-    implementation 'com.baomidou:mybatis-plus-boot-starter'
 }

@@ -1,8 +1,33 @@
 dependencies {
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     // lombok
-    implementation 'org.projectlombok:lombok'
-    // lombok
-    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.projectlombok:lombok"
+    implementation "org.projectlombok:lombok"
+    // guava
+    implementation "com.google.guava:guava"
+    // jaxb-api
+    implementation "javax.xml.bind:jaxb-api:2.3.1"
+    // servlet-api
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+    // commons-pool2
+    implementation "org.apache.commons:commons-pool2:2.8.1"
+    // jwt
+    implementation "io.jsonwebtoken:jjwt"
+    // springdoc
+    implementation "org.springdoc:springdoc-openapi-ui"
+    // mybatis-plus-core
+    implementation "com.baomidou:mybatis-plus-core:$versions.MYBATIS_PLUS_VERSION"
+    // mybatis-plus-extension
+    implementation "com.baomidou:mybatis-plus-extension:$versions.MYBATIS_PLUS_VERSION"
+    // spring-web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // aop
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    // redis
+    implementation "org.springframework.boot:spring-boot-starter-data-redis"
+    // minio
+    implementation "io.minio:minio"
+    // spring-security
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    // elasticsearch
+    implementation "org.springframework.boot:spring-boot-starter-data-elasticsearch"
 }
-
