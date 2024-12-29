@@ -1,3 +1,4 @@
 rootProject.name = 're'
 include 're-common'
 include 're-api'
+include 're-service'

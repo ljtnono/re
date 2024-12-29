@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+}
+dependencies {
+    // lombok
+    annotationProcessor "org.projectlombok:lombok"
+    api project(":re-common")
+    // mysql
+    api "com.mysql:mysql-connector-j"
+    // mybatis-plus
+    api "com.baomidou:mybatis-plus-spring-boot3-starter"
+    // mybatis多数据源
+    api "com.baomidou:dynamic-datasource-spring-boot3-starter"
+}

@@ -4,7 +4,7 @@ server:
     context-path: /re
 spring:
   application:
-    name: re-api
+    name: re
   datasource:
     username: root
     password: re#mysql2022

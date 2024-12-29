@@ -1,6 +1,6 @@
-package cn.lingjiatong.re.api.service;
+package cn.lingjiatong.re.service.service;
 
-import cn.lingjiatong.re.api.mapper.UserMapper;
+import cn.lingjiatong.re.service.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 用户模块service层
  *
  * @author Ling, Jiatong
- * Date: 2024/2/1 15:43
+ * Date: 2024/12/1 20:39
  */
 @Slf4j
 @Service
@@ -22,6 +22,10 @@ public class UserService {
     // ********************************删除类接口********************************
     // ********************************修改类接口********************************
     // ********************************查询类接口********************************
+    // ********************************公共函数********************************
     // ********************************私有函数********************************
-    // ********************************公用函数********************************
+
+
+
+
 }
